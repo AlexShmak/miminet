@@ -1,4 +1,4 @@
-const EditJobInHost = function(host_id, job_id, network_guid) {
+export const EditJobInHost = function(host_id, job_id, network_guid) {
     const job = jobs.find(j => j.id === job_id);
 
     if (!job) {
@@ -59,7 +59,7 @@ const EditJobInHost = function(host_id, job_id, network_guid) {
 };
 
 // Edit job in router
-const EditJobInRouter = function(router_id, job_id, network_guid) {
+export const EditJobInRouter = function(router_id, job_id, network_guid) {
     const job = jobs.find(j => j.id === job_id);
 
     if (!job) {
@@ -163,7 +163,7 @@ const EditJobInRouter = function(router_id, job_id, network_guid) {
 };
 
 // Edit job in server
-const EditJobInServer = function(server_id, job_id, network_guid) {
+export const EditJobInServer = function(server_id, job_id, network_guid) {
     const job = jobs.find(j => j.id === job_id);
 
     if (!job) {
@@ -225,7 +225,7 @@ const EditJobInServer = function(server_id, job_id, network_guid) {
         }, 200)
     }
 };
-const EditJobInSwitch = function(switch_id, job_id, network_guid) {
+export const EditJobInSwitch = function(switch_id, job_id, network_guid) {
     const job = jobs.find(j => j.id === job_id);
 
     if (!job) {

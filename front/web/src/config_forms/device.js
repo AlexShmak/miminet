@@ -1,4 +1,4 @@
-const ConfigHostForm = function(host_id){
+export const ConfigHostForm = function(host_id){
     var form = document.getElementById('config_host_main_form_script').innerHTML;
     var button = document.getElementById('config_host_save_script').innerHTML;
     var banner = document.getElementById('config_host_edit_banner_script').innerHTML;
@@ -33,7 +33,7 @@ const ConfigHostForm = function(host_id){
     }
 }
 
-const ConfigRouterForm = function (router_id) {
+export const ConfigRouterForm = function (router_id) {
     var form = document.getElementById('config_router_main_form_script').innerHTML;
     var button = document.getElementById('config_router_save_script').innerHTML;
     var banner = document.getElementById('config_router_edit_banner_script').innerHTML;
@@ -78,7 +78,7 @@ const ConfigRouterForm = function (router_id) {
     }
 }
 
-const ConfigServerForm = function (server_id) {
+export const ConfigServerForm = function (server_id) {
     var form = document.getElementById('config_server_main_form_script').innerHTML;
     var button = document.getElementById('config_server_save_script').innerHTML;
     var banner = document.getElementById('config_server_edit_banner_script').innerHTML;
@@ -123,7 +123,7 @@ const ConfigServerForm = function (server_id) {
     }
 }
 
-const ConfigHubForm = function (hub_id) {
+export const ConfigHubForm = function (hub_id) {
     var form = document.getElementById('config_hub_main_form_script').innerHTML;
     var button = document.getElementById('config_hub_save_script').innerHTML;
 
@@ -165,7 +165,7 @@ const ConfigHubForm = function (hub_id) {
     }
 }
 
-const ConfigSwitchForm = function (switch_id) {
+export const ConfigSwitchForm = function (switch_id) {
     var form = document.getElementById('config_switch_main_form_script').innerHTML;
     var button = document.getElementById('config_switch_save_script').innerHTML;
 
@@ -212,7 +212,7 @@ const ConfigSwitchForm = function (switch_id) {
     }
 }
 
-const ConfigEdgeForm = function (edge_id) {
+export const ConfigEdgeForm = function (edge_id) {
     let edgeSaveXHR = null;
     var form = document.getElementById('config_edge_main_form_script').innerHTML;
     var button = document.getElementById('config_edge_save_script').innerHTML;
@@ -268,7 +268,7 @@ const ConfigEdgeForm = function (edge_id) {
     }
 }
 
-const ConfigHubName = function (hostname) {
+export const ConfigHubName = function (hostname) {
 
     var text = document.getElementById('config_hub_name_script').innerHTML;
 
@@ -276,14 +276,14 @@ const ConfigHubName = function (hostname) {
     $('#config_hub_name').val(hostname);
 }
 
-const ConfigEdgeNetworkIssues = function (edge_loss, edge_duplicate) {
+export const ConfigEdgeNetworkIssues = function (edge_loss, edge_duplicate) {
     var text = document.getElementById('config_edge_set_network_issues_script').innerHTML;
     $(config_edge_main_form_id).prepend(text);
     $('#edge_loss').val(edge_loss);
     $('#edge_duplicate').val(edge_duplicate);
 };
 
-const ConfigEdgeEndpoints = function (edge_source, edge_target) {
+export const ConfigEdgeEndpoints = function (edge_source, edge_target) {
 
     var text = document.getElementById('config_edge_edpoint_script').innerHTML;
 
@@ -292,7 +292,7 @@ const ConfigEdgeEndpoints = function (edge_source, edge_target) {
     $('#edge_target').val(edge_target);
 }
 
-const ConfigSwitchName = function (hostname) {
+export const ConfigSwitchName = function (hostname) {
 
     var text = document.getElementById('config_switch_name_script').innerHTML;
 
@@ -300,7 +300,7 @@ const ConfigSwitchName = function (hostname) {
     $('#switch_name').val(hostname);
 }
 
-const ConfigSwtichSTP = function (stp) {
+export const ConfigSwtichSTP = function (stp) {
     var elem = document.getElementById('config_switch_checkbox_stp_script');
 
     $(elem.innerHTML).insertBefore('#config_switch_end_form');
@@ -319,7 +319,7 @@ const ConfigSwtichSTP = function (stp) {
     });
 }
 
-const ConfigSwtichRSTP = function (rstp) {
+export const ConfigSwtichRSTP = function (rstp) {
     var elem = document.getElementById('config_switch_checkbox_rstp_script');
 
     $(elem.innerHTML).insertBefore('#config_switch_end_form');

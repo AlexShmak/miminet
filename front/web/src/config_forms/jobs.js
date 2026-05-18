@@ -1,6 +1,6 @@
-const UpdateHostForm = function(name) {
-    elem = document.getElementById(name).innerHTML;
-    host_job_list = document.getElementById('config_host_job_list');
+export const UpdateHostForm = function(name) {
+    let elem = document.getElementById(name).innerHTML;
+    let host_job_list = document.getElementById('config_host_job_list');
 
     if (!elem || !host_job_list) {
         return;
@@ -10,7 +10,7 @@ const UpdateHostForm = function(name) {
     $(elem).insertBefore(host_job_list);
 };
 
-const ConfigHostJobOnChange = function (evnt) {
+export const ConfigHostJobOnChange = function (evnt) {
 
     let elem = null;
     let host_job_list = null;
@@ -59,7 +59,7 @@ const ConfigHostJobOnChange = function (evnt) {
 
 }
 
-const ConfigHostJob = function (host_jobs, shared = 0) {
+export const ConfigHostJob = function (host_jobs, shared = 0) {
 
     let elem = document.getElementById('config_host_job_script').innerHTML;
     let host_id = document.getElementById('host_id');
@@ -126,7 +126,7 @@ const ConfigHostJob = function (host_jobs, shared = 0) {
     });
 }
 
-const ConfigHostGateway = function (gw) {
+export const ConfigHostGateway = function (gw) {
 
     var text = document.getElementById('config_host_default_gw_script').innerHTML;
 
@@ -134,7 +134,7 @@ const ConfigHostGateway = function (gw) {
     $('#config_host_default_gw').val(gw);
 }
 
-const ConfigRouterGateway = function (gw) {
+export const ConfigRouterGateway = function (gw) {
 
     var text = document.getElementById('config_router_default_gw_script').innerHTML;
 
@@ -142,7 +142,7 @@ const ConfigRouterGateway = function (gw) {
     $('#config_router_default_gw').val(gw);
 }
 
-const ConfigServerGateway = function (gw) {
+export const ConfigServerGateway = function (gw) {
 
     var text = document.getElementById('config_server_default_gw_script').innerHTML;
 
@@ -150,9 +150,9 @@ const ConfigServerGateway = function (gw) {
     $('#config_server_default_gw').val(gw);
 }
 
-const UpdateSwitchForm = function(name) {
-    elem = document.getElementById(name).innerHTML;
-    switch_job_list = document.getElementById('config_switch_job_list');
+export const UpdateSwitchForm = function(name) {
+    let elem = document.getElementById(name).innerHTML;
+    let switch_job_list = document.getElementById('config_switch_job_list');
 
     if (!elem || !switch_job_list) {
         return;
@@ -162,7 +162,7 @@ const UpdateSwitchForm = function(name) {
     $(elem).insertBefore(switch_job_list);
 };
 
-const ConfigSwitchJobOnChange = function(evnt) {
+export const ConfigSwitchJobOnChange = function(evnt) {
     switch (evnt.target.value) {
         case '0':
             $('div[name="config_switch_select_input"]').remove();
@@ -176,7 +176,7 @@ const ConfigSwitchJobOnChange = function(evnt) {
             UpdateSwitchForm('config_switch_sleep_script');
     }
 }
-const ConfigSwitchJob = function (switch_jobs, shared = 0) {
+export const ConfigSwitchJob = function (switch_jobs, shared = 0) {
 
     let elem = document.getElementById('config_switch_job_script').innerHTML;
     let switch_id = document.getElementById('switch_id');
@@ -243,7 +243,7 @@ const ConfigSwitchJob = function (switch_jobs, shared = 0) {
     });
 }
 
-const ConfigRouterJobOnChange = function(evnt) {
+export const ConfigRouterJobOnChange = function(evnt) {
 
     switch (evnt.target.value) {
         case '0':
@@ -299,7 +299,7 @@ const ConfigRouterJobOnChange = function(evnt) {
     }
 }
 
-const ConfigRouterJob = function (router_jobs, shared = 0) {
+export const ConfigRouterJob = function (router_jobs, shared = 0) {
 
     let elem = document.getElementById('config_router_job_script').innerHTML;
     let router_id = document.getElementById('router_id');
@@ -366,7 +366,7 @@ const ConfigRouterJob = function (router_jobs, shared = 0) {
     });
 }
 
-const ConfigServerJob = function (server_jobs, shared = 0) {
+export const ConfigServerJob = function (server_jobs, shared = 0) {
 
     let elem = document.getElementById('config_server_job_script').innerHTML;
     let server_id = document.getElementById('server_id');
@@ -435,9 +435,9 @@ const ConfigServerJob = function (server_jobs, shared = 0) {
     });
 }
 
-const UpdateServerForm = function(name) {
-    elem = document.getElementById(name).innerHTML;
-    server_job_list = document.getElementById('config_server_job_list');
+export const UpdateServerForm = function(name) {
+    let elem = document.getElementById(name).innerHTML;
+    let server_job_list = document.getElementById('config_server_job_list');
 
     if (!elem || !server_job_list) {
         return;
@@ -447,7 +447,7 @@ const UpdateServerForm = function(name) {
     $(elem).insertBefore(server_job_list);
 }
 
-const ConfigServerJobOnChange = function (evnt) {
+export const ConfigServerJobOnChange = function (evnt) {
 
     let elem = null;
     let server_job_list = null;
@@ -486,13 +486,13 @@ const ConfigServerJobOnChange = function (evnt) {
 
 }
 
-const DisableFormInputs = function () {
+export const DisableFormInputs = function () {
     let s = config_content_id + ' :input';
     $(s).prop("disabled", true);
     $(config_content_save_tag + ' :input').prop("disabled", true);
 }
 
-const DisableVLANInputs = function (n) {
+export const DisableVLANInputs = function (n) {
     var modalId = 'VlanModal_' + n.data.id;
 
     $(document).ready(function () {
@@ -502,12 +502,12 @@ const DisableVLANInputs = function (n) {
     });
 };
 
-const UpdateRouterForm = function(name) {
+export const UpdateRouterForm = function(name) {
     /**
      * Replace old form with new one
      */
-    elem = document.getElementById(name).innerHTML;
-    router_job_list = document.getElementById('config_router_job_list');
+    let elem = document.getElementById(name).innerHTML;
+    let router_job_list = document.getElementById('config_router_job_list');
 
     if (!elem || !router_job_list){
         return;
@@ -517,7 +517,7 @@ const UpdateRouterForm = function(name) {
     $(elem).insertBefore(router_job_list);
 }
 
-const FillDeviceSelectIntf = function(select_id, device, field_msg = 'Интерфейс начальной точки', return_ip = true) {
+export const FillDeviceSelectIntf = function(select_id, device, field_msg = 'Интерфейс начальной точки', return_ip = true) {
     /**
     * Fill select element with network hosts.
     * @param  {String} select_id ID(name) of the element to which you need to add data.
@@ -526,15 +526,15 @@ const FillDeviceSelectIntf = function(select_id, device, field_msg = 'Интер
    */
 
     // configured router id
-    device_id = $(device)[0].value;
+    let device_id = $(device)[0].value;
 
     if (!device_id) {
         console.log("Не нашел device_id");
         return
     }
 
-    device_node = nodes.find(n => n.data.id === device_id);
-    device_type = device.slice(1, -3 ) //example : #router_id  -> router
+    let device_node = nodes.find(n => n.data.id === device_id);
+    let device_type = device.slice(1, -3 ) //example : #router_id  -> router
     
     if (!device_node) {
         console.log("Не нашел device_node");
@@ -596,7 +596,7 @@ const FillDeviceSelectIntf = function(select_id, device, field_msg = 'Интер
 }
 
 
-const DisableVXLANInputs = function (n) {
+export const DisableVXLANInputs = function (n) {
     var modalId = 'VxlanConfigModal' + n.data.id;
 
 

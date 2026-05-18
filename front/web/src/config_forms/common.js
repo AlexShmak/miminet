@@ -7,17 +7,17 @@ $('#config_server').load(ExternalUrlFor("/config_server.html"));
 $('#config_vlan').load(ExternalUrlFor("/config_vlan.html"));
 $('#config_vxlan').load(ExternalUrlFor("/config_vxlan.html"));
 
-const config_content_id = "#config_content";
-const config_main_form_id = "#config_main_form";
-const config_router_main_form_id = "#config_router_main_form";
-const config_server_main_form_id = "#config_server_main_form";
-const config_hub_main_form_id = "#config_hub_main_form";
-const config_switch_main_form_id = "#config_switch_main_form";
-const config_edge_main_form_id = "#config_edge_main_form";
-const config_content_save_tag = "#config_content_save";
-const config_content_save_id = "config_content_save";
+export const config_content_id = "#config_content";
+export const config_main_form_id = "#config_main_form";
+export const config_router_main_form_id = "#config_router_main_form";
+export const config_server_main_form_id = "#config_server_main_form";
+export const config_hub_main_form_id = "#config_hub_main_form";
+export const config_switch_main_form_id = "#config_switch_main_form";
+export const config_edge_main_form_id = "#config_edge_main_form";
+export const config_content_save_tag = "#config_content_save";
+export const config_content_save_id = "config_content_save";
 
-const ClearConfigForm = function (text) {
+export const ClearConfigForm = function (text) {
 
     let txt = ''
 
@@ -37,22 +37,14 @@ const ClearConfigForm = function (text) {
     }
 }
 
-const HostWarningMsg = function (msg) {
+export const HostWarningMsg = function (msg) {
 
     let warning_msg = '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
         msg + '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 
     $(config_content_id).prepend(warning_msg);
 }
-const SwitchWarningMsg = function (msg) {
-
-    let warning_msg = '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
-        msg + '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-
-    $(config_content_id).prepend(warning_msg);
-}
-
-const ServerWarningMsg = function (msg) {
+export const SwitchWarningMsg = function (msg) {
 
     let warning_msg = '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
         msg + '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
@@ -60,7 +52,15 @@ const ServerWarningMsg = function (msg) {
     $(config_content_id).prepend(warning_msg);
 }
 
-const HostErrorMsg = function (msg) {
+export const ServerWarningMsg = function (msg) {
+
+    let warning_msg = '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
+        msg + '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+
+    $(config_content_id).prepend(warning_msg);
+}
+
+export const HostErrorMsg = function (msg) {
 
     $(config_content_id).find('.alert-info, .alert-danger').remove();
 
@@ -80,7 +80,7 @@ const HostErrorMsg = function (msg) {
     $('#config_switch_main_form_submit_button').text('Сохранить').removeClass('disabled');
 }
 
-const UpdateJobCounter = function (counterId, deviceId = null) {
+export const UpdateJobCounter = function (counterId, deviceId = null) {
     const counter = document.getElementById(counterId);
     if (!counter) {
         return;
@@ -89,7 +89,7 @@ const UpdateJobCounter = function (counterId, deviceId = null) {
     counter.style.display = 'none';
 }
 
-const UpdateHostConfigurationForm = function(host_id) {
+export const UpdateHostConfigurationForm = function(host_id) {
     let data = $('#config_main_form').serialize();
 
     // Disable all input fields
