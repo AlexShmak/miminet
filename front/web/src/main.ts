@@ -14,6 +14,11 @@
 
 import { attachGlobals } from "./lib/window-globals";
 
+// state.js initializes the window-level state variables that the bridge
+// in lib/state.ts and unmigrated classic scripts depend on. Must run
+// first so those values are set before anyone reads them.
+import * as netfrontState from "./netfront/state.js";
+
 import * as netfrontShowConfig from "./netfront/show_config.js";
 import * as netfrontNetworkOps from "./netfront/network_ops.js";
 import * as netfrontDraw from "./netfront/draw.js";
@@ -30,6 +35,7 @@ import * as configFormsHelpers from "./config_forms/helpers.js";
 import * as configFormsJobs from "./config_forms/jobs.js";
 import * as configFormsEditJobs from "./config_forms/edit_jobs.js";
 
+attachGlobals(netfrontState);
 attachGlobals(netfrontShowConfig);
 attachGlobals(netfrontNetworkOps);
 attachGlobals(netfrontDraw);
