@@ -27,7 +27,7 @@ const CLASSIC_BUNDLE = [
   'netfront/runtime.js',
   'config_forms/common.js',
   'config_forms/device.js',
-  'config_forms/shared.js',
+  // 'config_forms/shared.js' migrated to web/src/config_forms/shared.js
   'config_forms/helpers.js',
   'config_forms/jobs.js',
   'config_forms/edit_jobs.js',
