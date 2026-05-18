@@ -16,7 +16,7 @@ import {
     ShowSwitchConfig,
 } from "./show_config";
 
-export const UpdateHostConfiguration = function (data, host_id)
+export const UpdateHostConfiguration = function (data: any, host_id: string)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -25,7 +25,7 @@ export const UpdateHostConfiguration = function (data, host_id)
         type: 'POST',
         url: ExternalUrlFor('/host/save_config'),
         data: data,
-        success: function(data, textStatus, xhr) {
+        success: function (data: any, textStatus: any, xhr: any) {
 
             if (xhr.status === 200)
             {
@@ -44,7 +44,7 @@ export const UpdateHostConfiguration = function (data, host_id)
                 }
 
                 // Ok, let's try to update host config form
-                let n = nodes.find(n => n.data.id === host_id);
+                let n = nodes.find((n: any) => n.data.id === host_id);
 
                 if (!n) {
                     ClearConfigForm('Нет такого хоста');
@@ -66,7 +66,7 @@ export const UpdateHostConfiguration = function (data, host_id)
                 UpdateJobCounter('config_host_job_counter', host_id);
             }
         },
-        error: function(xhr) {
+        error: function (xhr: any) {
             console.log('Не удалось обновить конфигурацию хоста');
             console.log(xhr);
 
@@ -87,7 +87,7 @@ export const UpdateHostConfiguration = function (data, host_id)
 }
 
 // Delete job from host
-export const DeleteJobFromHost = function (host_id, job_id, network_guid)
+export const DeleteJobFromHost = function (host_id: string, job_id: string, network_guid: string)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -102,7 +102,7 @@ export const DeleteJobFromHost = function (host_id, job_id, network_guid)
         url: ExternalUrlFor('/host/delete_job'),
         data: data,
         encode: true,
-        success: function(data, textStatus, xhr) {
+        success: function (data: any, textStatus: any, xhr: any) {
 
             if (xhr.status === 200)
             {
@@ -113,7 +113,7 @@ export const DeleteJobFromHost = function (host_id, job_id, network_guid)
                 DrawGraph();
 
                 // Ok, let's try to update host config form
-                let n = nodes.find(n => n.data.id === host_id);
+                let n = nodes.find((n: any) => n.data.id === host_id);
 
                 if (!n) {
                     ClearConfigForm('Нет такого хоста');
@@ -131,7 +131,7 @@ export const DeleteJobFromHost = function (host_id, job_id, network_guid)
 
             }
         },
-        error: function(xhr) {
+        error: function (xhr: any) {
             console.log('Не удалось удалить команду');
             console.log(xhr);
         },
@@ -140,7 +140,7 @@ export const DeleteJobFromHost = function (host_id, job_id, network_guid)
 }
 
 // Delete job from router
-export const DeleteJobFromRouter = function (router_id, job_id, network_guid)
+export const DeleteJobFromRouter = function (router_id: string, job_id: string, network_guid: string)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -155,7 +155,7 @@ export const DeleteJobFromRouter = function (router_id, job_id, network_guid)
         url: '/host/delete_job',
         data: data,
         encode: true,
-        success: function(data, textStatus, xhr) {
+        success: function (data: any, textStatus: any, xhr: any) {
 
             if (xhr.status === 200)
             {
@@ -166,7 +166,7 @@ export const DeleteJobFromRouter = function (router_id, job_id, network_guid)
                 DrawGraph();
 
                 // Ok, let's try to update host config form
-                let n = nodes.find(n => n.data.id === router_id);
+                let n = nodes.find((n: any) => n.data.id === router_id);
 
                 if (!n) {
                     ClearConfigForm('Нет такого хоста');
@@ -183,7 +183,7 @@ export const DeleteJobFromRouter = function (router_id, job_id, network_guid)
                 UpdateJobCounter('config_router_job_counter', router_id);
             }
         },
-        error: function(xhr) {
+        error: function (xhr: any) {
             console.log('Не удалось удалить команду');
             console.log(xhr);
         },
@@ -191,7 +191,7 @@ export const DeleteJobFromRouter = function (router_id, job_id, network_guid)
     });
 }
 
-export const DeleteJobFromSwitch = function (switch_id, job_id, network_guid)
+export const DeleteJobFromSwitch = function (switch_id: string, job_id: string, network_guid: string)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -206,7 +206,7 @@ export const DeleteJobFromSwitch = function (switch_id, job_id, network_guid)
         url: '/host/delete_job',
         data: data,
         encode: true,
-        success: function(data, textStatus, xhr) {
+        success: function (data: any, textStatus: any, xhr: any) {
 
             if (xhr.status === 200)
             {
@@ -217,7 +217,7 @@ export const DeleteJobFromSwitch = function (switch_id, job_id, network_guid)
                 DrawGraph();
 
                 // Ok, let's try to update host config form
-                let n = nodes.find(n => n.data.id === switch_id);
+                let n = nodes.find((n: any) => n.data.id === switch_id);
 
                 if (!n) {
                     ClearConfigForm('Нет такого хоста');
@@ -232,7 +232,7 @@ export const DeleteJobFromSwitch = function (switch_id, job_id, network_guid)
                 UpdateJobCounter('config_switch_job_counter', switch_id);
             }
         },
-        error: function(xhr) {
+        error: function (xhr: any) {
             console.log('Не удалось удалить команду');
             console.log(xhr);
         },
@@ -241,7 +241,7 @@ export const DeleteJobFromSwitch = function (switch_id, job_id, network_guid)
 }
 
 // Delete job from server
-export const DeleteJobFromServer = function (server_id, job_id, network_guid)
+export const DeleteJobFromServer = function (server_id: string, job_id: string, network_guid: string)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -256,7 +256,7 @@ export const DeleteJobFromServer = function (server_id, job_id, network_guid)
         url: '/host/delete_job',
         data: data,
         encode: true,
-        success: function(data, textStatus, xhr) {
+        success: function (data: any, textStatus: any, xhr: any) {
 
             if (xhr.status === 200)
             {
@@ -267,7 +267,7 @@ export const DeleteJobFromServer = function (server_id, job_id, network_guid)
                 DrawGraph();
 
                 // Ok, let's try to update host config form
-                let n = nodes.find(n => n.data.id === server_id);
+                let n = nodes.find((n: any) => n.data.id === server_id);
 
                 if (!n) {
                     ClearConfigForm('Нет такого хоста');
@@ -284,7 +284,7 @@ export const DeleteJobFromServer = function (server_id, job_id, network_guid)
                 UpdateJobCounter('config_server_job_counter', server_id);
             }
         },
-        error: function(xhr) {
+        error: function (xhr: any) {
             console.log('Не удалось удалить команду');
             console.log(xhr);
         },
@@ -293,7 +293,7 @@ export const DeleteJobFromServer = function (server_id, job_id, network_guid)
 }
 
 // Update router configuration
-export const UpdateRouterConfiguration = function (data, router_id)
+export const UpdateRouterConfiguration = function (data: any, router_id: string)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -302,7 +302,7 @@ export const UpdateRouterConfiguration = function (data, router_id)
         type: 'POST',
         url: ExternalUrlFor('/host/router_save_config'),
         data: data,
-        success: function(data, textStatus, xhr) {
+        success: function (data: any, textStatus: any, xhr: any) {
 
             if (xhr.status === 200)
             {
@@ -328,7 +328,7 @@ export const UpdateRouterConfiguration = function (data, router_id)
                 DrawGraph();
 
                 // Ok, let's try to update router config form
-                let n = nodes.find(n => n.data.id === router_id);
+                let n = nodes.find((n: any) => n.data.id === router_id);
 
                 if (!n) {
                     ClearConfigForm('Нет такого раутера');
@@ -352,7 +352,7 @@ export const UpdateRouterConfiguration = function (data, router_id)
             }
 
         },
-        error: function(xhr) {
+        error: function (xhr: any) {
             console.log('Не удалось обновить конфигурацию хоста');
             console.log(xhr);
 
@@ -373,7 +373,7 @@ export const UpdateRouterConfiguration = function (data, router_id)
 }
 
 // Update server configuration
-export const UpdateServerConfiguration = function (data, router_id)
+export const UpdateServerConfiguration = function (data: any, router_id: string)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -382,7 +382,7 @@ export const UpdateServerConfiguration = function (data, router_id)
         type: 'POST',
         url: ExternalUrlFor('/host/server_save_config'),
         data: data,
-        success: function(data, textStatus, xhr) {
+        success: function (data: any, textStatus: any, xhr: any) {
 
             if (xhr.status === 200)
             {
@@ -407,7 +407,7 @@ export const UpdateServerConfiguration = function (data, router_id)
                 }
 
                 // Ok, let's try to update router config form
-                let n = nodes.find(n => n.data.id === router_id);
+                let n = nodes.find((n: any) => n.data.id === router_id);
 
                 if (!n) {
                     ClearConfigForm('Нет такого сервера');
@@ -431,7 +431,7 @@ export const UpdateServerConfiguration = function (data, router_id)
             }
 
         },
-        error: function(xhr) {
+        error: function (xhr: any) {
             console.log('Не удалось обновить конфигурацию сервера');
             console.log(xhr);
 
@@ -452,13 +452,13 @@ export const UpdateServerConfiguration = function (data, router_id)
 }
 
 // Update hub configuration
-export const UpdateHubConfiguration = function (data, hub_id)
+export const UpdateHubConfiguration = function (data: any, hub_id: string)
 {
     ajaxWithAuth({
         type: 'POST',
         url: ExternalUrlFor('/host/hub_save_config'),
         data: data,
-        success: function(data, textStatus, xhr) {
+        success: function (data: any, textStatus: any, xhr: any) {
 
             if (xhr.status === 200)
             {
@@ -472,7 +472,7 @@ export const UpdateHubConfiguration = function (data, hub_id)
                 DrawGraph();
 
                 // Ok, let's try to update host config form
-                let n = nodes.find(n => n.data.id === hub_id);
+                let n = nodes.find((n: any) => n.data.id === hub_id);
 
                 if (!n) {
                     ClearConfigForm('Нет такого узла');
@@ -486,7 +486,7 @@ export const UpdateHubConfiguration = function (data, hub_id)
                 }
             }
         },
-        error: function(xhr) {
+        error: function (xhr: any) {
             console.log('Cannot update host config');
             console.log(xhr);
         },
@@ -495,7 +495,7 @@ export const UpdateHubConfiguration = function (data, hub_id)
 }
 
 // Update Switch configuration
-export const UpdateSwitchConfiguration = function (data, switch_id)
+export const UpdateSwitchConfiguration = function (data: any, switch_id: string)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -504,7 +504,7 @@ export const UpdateSwitchConfiguration = function (data, switch_id)
         type: 'POST',
         url: ExternalUrlFor('/host/switch_save_config'),
         data: data,
-        success: function(data, textStatus, xhr) {
+        success: function (data: any, textStatus: any, xhr: any) {
 
             if (xhr.status === 200)
             {
@@ -527,7 +527,7 @@ export const UpdateSwitchConfiguration = function (data, switch_id)
                 // Hub can change only names
 
                 // Ok, let's try to update host config form
-                let n = nodes.find(n => n.data.id === switch_id);
+                let n = nodes.find((n: any) => n.data.id === switch_id);
 
                 if (!n) {
                     ClearConfigForm('Нет такого узла');
@@ -545,7 +545,7 @@ export const UpdateSwitchConfiguration = function (data, switch_id)
                 UpdateJobCounter('config_switch_job_counter', switch_id);
             }
         },
-        error: function(xhr) {
+        error: function (xhr: any) {
             console.log('Cannot update switch config');
             console.log(xhr);
             // Show error message to user

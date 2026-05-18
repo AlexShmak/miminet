@@ -11,12 +11,12 @@ import { state } from "../lib/state";
 import { SetPacketFilter, SetNetworkPlayerState } from "./runtime";
 import { DrawGraph } from "./draw";
 
-export const CheckSimulation = function (simulation_id) {
+export const CheckSimulation = function (simulation_id: number) {
     ajaxWithAuth({
         type: 'GET',
         url: ExternalUrlFor('/check_simulation?simulation_id=' + simulation_id + '&network_guid=' + network_guid),
         data: '',
-        success: function (data, textStatus, xhr) {
+        success: function (data: any, textStatus: any, xhr: any) {
             // If we got 210 (processing) wait 2 sec and call themself again
             if (xhr.status === 210) {
                 setTimeout(CheckSimulation, 2000, simulation_id);
@@ -37,7 +37,7 @@ export const CheckSimulation = function (simulation_id) {
                 }
             }
         },
-        error: function (xhr) {
+        error: function (xhr: any) {
             console.log('Cannot check simulation id = ' + simulation_id);
             if (state.lastSimulationId == simulation_id) {
                 SetNetworkPlayerState(-1);
@@ -49,7 +49,7 @@ export const CheckSimulation = function (simulation_id) {
 };
 
 // Update edge configuration
-export const UpdateEdgeConfiguration = (data) => {
+export const UpdateEdgeConfiguration = (data: any) => {
     SetNetworkPlayerState(-1);
 
     return ajaxWithAuth({
@@ -60,7 +60,7 @@ export const UpdateEdgeConfiguration = (data) => {
             DrawGraph();
             $('#config_edge_main_form_submit_button').html('Сохранить');
         },
-        error: function (xhr) {
+        error: function (xhr: any) {
             console.log('Не удалось обновить конфигурацию ребра');
             console.log(xhr);
         },
@@ -76,11 +76,11 @@ export const InsertWaitingTime = function () {
         type: 'GET',
         url: ExternalUrlFor('/emulation_queue/time'),
         data: '',
-        success: function (data) {
+        success: function (data: any) {
             // Run helper function with time param
             InsertWaitingTimeHelper(data.time);
         },
-        error: function (err) {
+        error: function (err: any) {
             console.error("Failed to fetch queue time:", err);
         },
         contentType: "application/json",
@@ -88,13 +88,13 @@ export const InsertWaitingTime = function () {
     });
 };
 
-export const InsertWaitingTimeHelper = function (time_filter) {
+export const InsertWaitingTimeHelper = function (time_filter: any) {
     // Insert field with queue size
     ajaxWithAuth({
         type: 'GET',
         url: ExternalUrlFor('/emulation_queue/size?time-filter=' + time_filter.toString()),
         data: '',
-        success: function (data) {
+        success: function (data: any) {
             const queue_size = parseInt(data.size);
             if (!$('#NetworkPlayer button:first').prop('disabled')) {
                 console.log($('#NetworkPlayer button:first').prop('disabled'));
@@ -109,7 +109,7 @@ export const InsertWaitingTimeHelper = function (time_filter) {
             }
 
         },
-        error: function (err) {
+        error: function (err: any) {
             console.error("Failed to fetch queue size:", err);
         },
         contentType: "application/json",

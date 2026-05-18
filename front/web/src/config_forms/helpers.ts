@@ -1,6 +1,6 @@
 import { config_main_form_id } from "./common";
 
-export const ConfigHostName = function (hostname) {
+export const ConfigHostName = function (hostname: string) {
 
     var text = document.getElementById('config_host_name_script')!.innerHTML;
 
@@ -8,7 +8,7 @@ export const ConfigHostName = function (hostname) {
     $('#config_host_name').val(hostname);
 }
 
-export const ConfigRouterName = function (hostname) {
+export const ConfigRouterName = function (hostname: string) {
 
     var text = document.getElementById('config_router_name_script')!.innerHTML;
 
@@ -16,7 +16,7 @@ export const ConfigRouterName = function (hostname) {
     $('#config_router_name').val(hostname);
 }
 
-export const ConfigServerName = function (hostname) {
+export const ConfigServerName = function (hostname: string) {
 
     var text = document.getElementById('config_server_name_script')!.innerHTML;
 
@@ -24,7 +24,7 @@ export const ConfigServerName = function (hostname) {
     $('#config_server_name').val(hostname);
 }
 
-export const ConfigItemInterface = function (name, ip, netmask, connected_to, item) {
+export const ConfigItemInterface = function (name: string, ip: any, netmask: any, connected_to: string, item: string) {
 
     let conf_item = 'config_' + item;
     let elem = document.getElementById(conf_item + '_interface_script');
@@ -55,27 +55,27 @@ export const ConfigItemInterface = function (name, ip, netmask, connected_to, it
     }
 }
 
-export const ConfigHostInterface = function (name, ip, netmask, connected_to) {
+export const ConfigHostInterface = function (name: string, ip: any, netmask: any, connected_to: string) {
     ConfigItemInterface(name, ip, netmask, connected_to, "host");
 }
 
-export const ConfigRouterInterface = function (name, ip, netmask, connected_to) {
+export const ConfigRouterInterface = function (name: string, ip: any, netmask: any, connected_to: string) {
     ConfigItemInterface(name, ip, netmask, connected_to, "router");
 }
 
-export const ConfigServerInterface = function (name, ip, netmask, connected_to) {
+export const ConfigServerInterface = function (name: string, ip: any, netmask: any, connected_to: string) {
     ConfigItemInterface(name, ip, netmask, connected_to, "server");
 }
 
-export const ConfigHubInterface = function (name, ip, netmask, connected_to) {
+export const ConfigHubInterface = function (name: string, ip: any, netmask: any, connected_to: string) {
     ConfigItemInterface(name, ip, netmask, connected_to, "hub");
 }
 
-export const ConfigSwitchInterface = function (name, ip, netmask, connected_to) {
+export const ConfigSwitchInterface = function (name: string, ip: any, netmask: any, connected_to: string) {
     ConfigItemInterface(name, ip, netmask, connected_to, "switch");
 }
 
-export const ConfigItemIndent = function (item) {
+export const ConfigItemIndent = function (item: string) {
     let conf_item = 'config_' + item
     let text = document.getElementById(conf_item + '_indent_script')!.innerHTML;
     $(text).insertBefore('#' + conf_item + '_end_form');
@@ -90,7 +90,7 @@ export const ConfigSwitchIndent = function () {
 }
 
 export const addIpFieldHandlers = function () {
-    document.addEventListener('input', function (e) {
+    document.addEventListener('input', function (e: any) {
         const input = e.target as HTMLInputElement;
 
         if (!input.matches('input[type="text"][id*="ip"], input[type="text"][name*="ip"], input[type="text"][id*="gw"], input[type="text"][name*="gw"]')) {

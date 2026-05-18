@@ -6,8 +6,8 @@ import {
     FillDeviceSelectIntf,
 } from "./jobs";
 
-export const EditJobInHost = function(host_id, job_id, network_guid) {
-    const job = jobs.find(j => j.id === job_id);
+export const EditJobInHost = function (host_id: string, job_id: string, network_guid: string) {
+    const job = jobs.find((j: any) => j.id === job_id);
 
     if (!job) {
         console.error('Job not found:', job_id);
@@ -67,8 +67,8 @@ export const EditJobInHost = function(host_id, job_id, network_guid) {
 };
 
 // Edit job in router
-export const EditJobInRouter = function(router_id, job_id, network_guid) {
-    const job = jobs.find(j => j.id === job_id);
+export const EditJobInRouter = function (router_id: string, job_id: string, network_guid: string) {
+    const job = jobs.find((j: any) => j.id === job_id);
 
     if (!job) {
         console.error('Job not found:', job_id);
@@ -171,8 +171,8 @@ export const EditJobInRouter = function(router_id, job_id, network_guid) {
 };
 
 // Edit job in server
-export const EditJobInServer = function(server_id, job_id, network_guid) {
-    const job = jobs.find(j => j.id === job_id);
+export const EditJobInServer = function (server_id: string, job_id: string, network_guid: string) {
+    const job = jobs.find((j: any) => j.id === job_id);
 
     if (!job) {
         console.error('Job not found:', job_id);
@@ -233,8 +233,8 @@ export const EditJobInServer = function(server_id, job_id, network_guid) {
         }, 200)
     }
 };
-export const EditJobInSwitch = function(switch_id, job_id, network_guid) {
-    const job = jobs.find(j => j.id === job_id);
+export const EditJobInSwitch = function (switch_id: string, job_id: string, network_guid: string) {
+    const job = jobs.find((j: any) => j.id === job_id);
 
     if (!job) {
         console.error('Job not found:', job_id);

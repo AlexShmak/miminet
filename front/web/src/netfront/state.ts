@@ -37,7 +37,7 @@ export const HostUid = function () {
     for (let host_number = 1; host_number < 100; host_number++) {
         let host = host_name + host_number;
 
-        let t = nodes.find(t => t.data.id === host);
+        let t = nodes.find((t: any) => t.data.id === host);
 
         if (!t) {
             return host;
@@ -53,7 +53,7 @@ export const RouterUid = function () {
     for (let host_number = 1; host_number < 100; host_number++) {
         let host = host_name + host_number;
 
-        let t = nodes.find(t => t.data.id === host);
+        let t = nodes.find((t: any) => t.data.id === host);
 
         if (!t) {
             return host;
@@ -69,7 +69,7 @@ export const ServerUid = function () {
     for (let host_number = 1; host_number < 100; host_number++) {
         let host = host_name + host_number;
 
-        let t = nodes.find(t => t.data.id === host);
+        let t = nodes.find((t: any) => t.data.id === host);
 
         if (!t) {
             return host;

@@ -68,13 +68,13 @@ export const DrawGraph = function() {
 
     // the default values of each option are outlined below:
     let defaults = {
-        canConnect: function( sourceNode, targetNode ){
+        canConnect: function (sourceNode: any, targetNode: any){
 
             // whether an edge can be created between source and target
         return !sourceNode.same(targetNode); // e.g. disallow loops
         },
 
-        edgeParams: function( sourceNode, targetNode ){
+        edgeParams: function (sourceNode: any, targetNode: any){
 
             // for edges between the specified source and target
             // return element object to be passed to cy.add() for edge
@@ -104,7 +104,7 @@ export const DrawGraph = function() {
     SnapNodesToGrid(cy);
 
     // Changing zoom
-    cy.on('zoom', function(evt){
+    cy.on('zoom', function (evt: any) {
 
         if (state.networkUpdateTimeoutId >= 0){
             clearTimeout(state.networkUpdateTimeoutId);
@@ -121,7 +121,7 @@ export const DrawGraph = function() {
     });
 
     // Changing the pan
-    cy.on('pan', function(evt){
+    cy.on('pan', function (evt: any) {
 
         if (state.networkUpdateTimeoutId >= 0){
             clearTimeout(state.networkUpdateTimeoutId);
@@ -137,10 +137,10 @@ export const DrawGraph = function() {
     });
 
     // Looking for a position changing
-    cy.on('dragfree', 'node', function(this: any, evt){
+    cy.on('dragfree', 'node', function (this: any, evt: any){
 
         //let node_id = evt.target.id();
-        let n = nodes.find(n => n.data.id === this.id());
+        let n = nodes.find((n: any) => n.data.id === this.id());
 
         if (!n) {
             return;
@@ -171,7 +171,7 @@ export const DrawGraph = function() {
     });
 
     // Click on object
-    cy.on('click', function (evt) {
+    cy.on('click', function (evt: any) {
 
         let evtTarget = evt.target;
 
@@ -193,7 +193,7 @@ export const DrawGraph = function() {
 
         // Maybe host ?
         var target_id = evt.target.id();
-        let n = nodes.find(n => n.data.id === target_id);
+        let n = nodes.find((n: any) => n.data.id === target_id);
 
         if (!n) {
             return;
@@ -216,7 +216,7 @@ export const DrawGraph = function() {
     });
 
     // Add edge to the edges[] and then save it to the server.
-    cy.on('ehcomplete', (event, sourceNode, targetNode, addedEdge) => {
+    cy.on('ehcomplete', (event: any, sourceNode: any, targetNode: any, addedEdge: any) => {
         AddEdge(sourceNode._private.data.id, targetNode._private.data.id);
         PostNodesEdges();
         TakeGraphPictureAndUpdate();
@@ -224,7 +224,7 @@ export const DrawGraph = function() {
         SetNetworkPlayerState(-1);
     });
 
-    $(document).on('keyup', function(e){
+    $(document).on('keyup', function (e: any) {
 
         const evtTarget = e.target as unknown as HTMLInputElement | null;
         if (evtTarget && evtTarget.form) {
@@ -259,7 +259,7 @@ export const DrawGraph = function() {
             SaveNetworkObject();
             
             // If the source or target is a switch, delete the jobs.
-            let ed = edges.find(ed => ed.data.id === selected_edge_id);
+            let ed = edges.find((ed: any) => ed.data.id === selected_edge_id);
             if (ed){
                 if (ed.data.source.startsWith("l2sw")){
                     DeleteJob(ed.data.source)
@@ -309,7 +309,7 @@ export const DrawGraph = function() {
     initGrid(cy);
 }
 
-export const DrawGraphStatic = function(nodes, edges, shared=0) {
+export const DrawGraphStatic = function (nodes: any, edges: any, shared: number = 0) {
 
     // Do we already have one?
     let cy: any;
@@ -357,7 +357,7 @@ export const DrawGraphStatic = function(nodes, edges, shared=0) {
     return;
 }
 
-export const DrawSharedGraph = function(nodes, edges) {
+export const DrawSharedGraph = function (nodes: any, edges: any) {
 
     let selecteed_node_id: any = 0;
     let selected_edge_id: any = 0;
@@ -395,7 +395,7 @@ export const DrawSharedGraph = function(nodes, edges) {
     MarkLinkDownEdges(cy);
 
     // Click on object
-    cy.on('click', function (evt) {
+    cy.on('click', function (evt: any) {
 
         let evtTarget = evt.target;
         if (evtTarget === cy) {
@@ -414,7 +414,7 @@ export const DrawSharedGraph = function(nodes, edges) {
         }
 
         var target_id = evt.target.id();
-        let n = nodes.find(n => n.data.id === target_id);
+        let n = nodes.find((n: any) => n.data.id === target_id);
 
         if (!n) {
             return;
@@ -440,8 +440,8 @@ export const DrawSharedGraph = function(nodes, edges) {
     initGrid(cy);
 }
 
-export const DrawIndexGraphStatic = function(nodes, edges, container_id, graph_network_zoom,
-                                    graph_network_pan_x, graph_network_pan_y)
+export const DrawIndexGraphStatic = function(nodes: any, edges: any, container_id: string, graph_network_zoom: number,
+                                    graph_network_pan_x: number, graph_network_pan_y: number)
 {
 
     let index_cy = cytoscape({

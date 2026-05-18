@@ -20,7 +20,7 @@ export const config_edge_main_form_id = "#config_edge_main_form";
 export const config_content_save_tag = "#config_content_save";
 export const config_content_save_id = "config_content_save";
 
-export const ClearConfigForm = function (text) {
+export const ClearConfigForm = function (text: string) {
 
     let txt = ''
 
@@ -40,22 +40,14 @@ export const ClearConfigForm = function (text) {
     }
 }
 
-export const HostWarningMsg = function (msg) {
+export const HostWarningMsg = function (msg: string) {
 
     let warning_msg = '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
         msg + '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 
     $(config_content_id).prepend(warning_msg);
 }
-export const SwitchWarningMsg = function (msg) {
-
-    let warning_msg = '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
-        msg + '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-
-    $(config_content_id).prepend(warning_msg);
-}
-
-export const ServerWarningMsg = function (msg) {
+export const SwitchWarningMsg = function (msg: string) {
 
     let warning_msg = '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
         msg + '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
@@ -63,7 +55,15 @@ export const ServerWarningMsg = function (msg) {
     $(config_content_id).prepend(warning_msg);
 }
 
-export const HostErrorMsg = function (msg) {
+export const ServerWarningMsg = function (msg: string) {
+
+    let warning_msg = '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
+        msg + '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+
+    $(config_content_id).prepend(warning_msg);
+}
+
+export const HostErrorMsg = function (msg: string) {
 
     $(config_content_id).find('.alert-info, .alert-danger').remove();
 
@@ -92,7 +92,7 @@ export const UpdateJobCounter = function (counterId: string, deviceId: string | 
     counter.style.display = 'none';
 }
 
-export const UpdateHostConfigurationForm = function(host_id) {
+export const UpdateHostConfigurationForm = function (host_id: string) {
     let data = $('#config_main_form').serialize();
 
     // Disable all input fields

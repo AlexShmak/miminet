@@ -4,13 +4,13 @@ import { DrawGraph, DrawGraphStatic, DrawSharedGraph } from "./draw";
 
 declare const ym: any;
 
-export const RunSimulation = function (network_guid)
+export const RunSimulation = function (network_guid: string)
 {
     ajaxWithAuth({
         type: 'POST',
         url: ExternalUrlFor('/run_simulation?guid=' + network_guid),
         data: '',
-        success: function(data, textStatus, xhr) {
+        success: function(data: any, textStatus: any, xhr: any) {
             if (xhr.status === 201)
             {
                 state.lastSimulationId = data.simulation_id
@@ -22,7 +22,7 @@ export const RunSimulation = function (network_guid)
                 }
             }
         },
-        error: function(err) {
+        error: function (err: any) {
             console.log('Cannot run simulation guid = ' + network_guid);
             SetNetworkPlayerState(-1);
         },
@@ -34,9 +34,9 @@ export const RunSimulation = function (network_guid)
 export const FilterPackets = function () {
     const tcpRegex = /TCP \((ACK|SYN|FIN)/;
     packets = packets
-        .map((step) =>
+        .map((step: any) =>
             step.filter(
-                (pkt) =>
+                (pkt: any) =>
                     !(
                         (state.packetFilterState.hideARP &&
                             pkt.data.label.startsWith("ARP")) ||
@@ -48,10 +48,10 @@ export const FilterPackets = function () {
                     )
             )
         )
-        .filter((step) => step.length > 0);
+        .filter((step: any) => step.length > 0);
 };
 
-export const UpdateFilterStates = function (settings) {
+export const UpdateFilterStates = function (settings: any) {
     if (!settings) {
         return;
     }
@@ -79,7 +79,7 @@ export const SaveAnimationFilters = function () {
         data: JSON.stringify(payload),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        success: function (data) {
+        success: function (data: any) {
             if (!data) {
                 return;
             }
@@ -99,7 +99,7 @@ export const SaveAnimationFilters = function () {
     });
 };
 
-export const SetPacketFilter = function (shared = 0) {
+export const SetPacketFilter = function (shared: number = 0) {
     // If network player UI is absent (e.g., not on network page), skip.
     if (!document.getElementById("NetworkPlayer") || !document.getElementById("PacketSliderInput")) {
         return;
@@ -132,7 +132,7 @@ export const SetPacketFilter = function (shared = 0) {
 // 2 states:
 // Do we need emulation
 // We have a packets and ready to play packets
-export const SetNetworkPlayerState = function (simulation_id) {
+export const SetNetworkPlayerState = function (simulation_id: number) {
 
     // Reset?
     if (simulation_id === -1) {
@@ -165,8 +165,8 @@ export const SetNetworkPlayerState = function (simulation_id) {
                 'max': packets.length,
             },
             format: {
-                to: function (val){return '' + val},
-                from: function (val){return '' + val},
+                to: function (val: any){return '' + val},
+                from: function (val: any){return '' + val},
             },
             tooltips: false,
         });
@@ -174,16 +174,16 @@ export const SetNetworkPlayerState = function (simulation_id) {
         // Show Slider on
         $('#PacketSliderInput').show();
 
-        const pkt_count = packets.reduce((currentCount, row) => currentCount + row.length, 0);
+        const pkt_count = packets.reduce((currentCount: number, row: any) => currentCount + row.length, 0);
         $('#NetworkPlayerLabel').text(packets.length + ' ' + NumWord(packets.length, ['шаг', 'шага', 'шагов']) + ' / ' + pkt_count + ' ' + NumWord(pkt_count, ['пакет', 'пакета', 'пакетов']));
 
-        ($('#PacketSliderInput')[0] as any).noUiSlider.on('slide', function (e) {
+        ($('#PacketSliderInput')[0] as any).noUiSlider.on('slide', function (e: any) {
             if (!e) return;
             let x =  Math.round(e[0]);
             PacketPlayer.getInstance().setAnimationTrafficStep(x-1);
         });
 
-        ($('#PacketSliderInput')[0] as any).noUiSlider.on('update', function (e) {
+        ($('#PacketSliderInput')[0] as any).noUiSlider.on('update', function (e: any) {
             if (!e) return;
             let x =  Math.round(e[0]);
             if (packets.length === 0){
@@ -323,8 +323,8 @@ export const SetSharedNetworkPlayerState = function()
                 'max': packets.length,
             },
             format: {
-                to: function (val){return '' + val},
-                from: function (val){return '' + val},
+                to: function (val: any){return '' + val},
+                from: function (val: any){return '' + val},
             },
             tooltips: false,
         });
@@ -332,16 +332,16 @@ export const SetSharedNetworkPlayerState = function()
         // Show Slider on
         $('#PacketSliderInput').show();
 
-        const pkt_count = packets.reduce((currentCount, row) => currentCount + row.length, 0);
+        const pkt_count = packets.reduce((currentCount: number, row: any) => currentCount + row.length, 0);
         $('#NetworkPlayerLabel').text(packets.length + ' ' + NumWord(packets.length, ['шаг', 'шага', 'шагов']) + ' / ' + pkt_count + ' ' + NumWord(pkt_count, ['пакет', 'пакета', 'пакетов']));
 
-        ($('#PacketSliderInput')[0] as any).noUiSlider.on('slide', function (e) {
+        ($('#PacketSliderInput')[0] as any).noUiSlider.on('slide', function (e: any) {
             if (!e) return;
             let x =  Math.round(e[0]);
             PacketPlayer.getInstance().setAnimationTrafficStep(x-1);
         });
 
-        ($('#PacketSliderInput')[0] as any).noUiSlider.on('update', function (e) {
+        ($('#PacketSliderInput')[0] as any).noUiSlider.on('update', function (e: any) {
             if (!e) return;
             let x =  Math.round(e[0]);
             if (packets.length === 0){
@@ -429,7 +429,7 @@ export const TakeGraphPictureAndUpdate = function()
         url: ExternalUrlFor('/network/upload_network_picture?guid=' + network_guid),
         data: png_blob,
         processData: false,
-        error: function(xhr) {
+        error: function(xhr: any) {
 
             if (xhr.status != 200){
                 console.log('Cannot upload graph picture');
@@ -441,7 +441,7 @@ export const TakeGraphPictureAndUpdate = function()
 }
 
 // Calculate drop offsets
-export const CalculateDropOffset = function(elem_x, elem_y)
+export const CalculateDropOffset = function (elem_x: number, elem_y: number)
 {
     const network_scheme = document.getElementById("network_scheme");
     let offset_left = 0;
@@ -486,9 +486,9 @@ export const UpdateNetworkConfig = function()
         url: ExternalUrlFor('/network/update_network_config?guid=' + network_guid),
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
-        success: function(data, textStatus, xhr) {
+        success: function(data: any, textStatus: any, xhr: any) {
         },
-        error: function(xhr) {
+        error: function(xhr: any) {
             console.log('Cannot update network config');
             console.log(xhr);
         },
@@ -503,7 +503,7 @@ export const CopyNetwork = function ()
         type: 'POST',
         url: ExternalUrlFor('/network/copy_network?guid=' + network_guid),
         data: '',
-        success: function(data, textStatus, xhr) {
+        success: function(data: any, textStatus: any, xhr: any) {
             if (xhr.status === 200)
             {
                 console.log("Copy network is made.");
@@ -521,7 +521,7 @@ export const CopyNetwork = function ()
                 });
             }
         },
-        error: function(err) {
+        error: function (err: any) {
             console.log('Copy has not been made.');
         },
         contentType: "application/json",
@@ -530,7 +530,7 @@ export const CopyNetwork = function ()
 }
 
 
-export const NumWord = function (value, words){
+export const NumWord = function (value: number, words: string[]){
     value = Math.abs(value) % 100;
     var num = value % 10;
     if(value > 10 && value < 20) return words[2];
@@ -567,7 +567,7 @@ export const RestoreNetworkObject = function (){
 export let editingJobId: any = null;
 export let editingDeviceType: any = null;
 
-export const EnterEditMode = function(deviceType, jobId, jobTypeId) {
+export const EnterEditMode = function (deviceType: string, jobId: string, jobTypeId: any) {
     editingJobId = jobId;
     editingDeviceType = deviceType;
 
@@ -637,7 +637,7 @@ export const EnterEditMode = function(deviceType, jobId, jobTypeId) {
 };
 
 // Function to exit edit mode
-export const ExitEditMode = function(deviceType) {
+export const ExitEditMode = function (deviceType: string) {
     editingJobId = null;
     editingDeviceType = null;
 
@@ -675,7 +675,7 @@ export const ExitEditMode = function(deviceType) {
 };
 
 // Function to delete old job and save new configuration
-export const DeleteAndSaveJob = function(deviceType, updateFunction, formData, deviceId) {
+export const DeleteAndSaveJob = function (deviceType: string, updateFunction: (data: any, deviceId: string) => any, formData: any, deviceId: string) {
     if (!editingJobId || editingDeviceType !== deviceType) {
         // Not in edit mode, just save
         updateFunction(formData, deviceId);
@@ -690,7 +690,7 @@ export const DeleteAndSaveJob = function(deviceType, updateFunction, formData, d
 };
 
 // Grid drawing functions
-export const initGrid = function(cy) {
+export const initGrid = function (cy: any) {
     if (!cy) return;
 
     // Clean up previous listener

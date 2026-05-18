@@ -1,4 +1,4 @@
-export const ConfigHostForm = function(host_id){
+export const ConfigHostForm = function (host_id: string) {
     var form = document.getElementById('config_host_main_form_script')!.innerHTML;
     var button = document.getElementById('config_host_save_script')!.innerHTML;
     var banner = document.getElementById('config_host_edit_banner_script')!.innerHTML;
@@ -20,7 +20,7 @@ export const ConfigHostForm = function(host_id){
     $('#host_id').val(host_id);
     $('#net_guid').val(network_guid);
 
-    function handleHostClick(event) {
+    function handleHostClick(event: any) {
         event.preventDefault();
         UpdateHostConfigurationForm(host_id);
     }
@@ -33,7 +33,7 @@ export const ConfigHostForm = function(host_id){
     }
 }
 
-export const ConfigRouterForm = function (router_id) {
+export const ConfigRouterForm = function (router_id: string) {
     var form = document.getElementById('config_router_main_form_script')!.innerHTML;
     var button = document.getElementById('config_router_save_script')!.innerHTML;
     var banner = document.getElementById('config_router_edit_banner_script')!.innerHTML;
@@ -55,7 +55,7 @@ export const ConfigRouterForm = function (router_id) {
     $('#router_id').val(router_id);
     $('#net_guid').val(network_guid);
 
-    function handleRouterClick(event) {
+    function handleRouterClick(event: any) {
         event.preventDefault();
         let data = $('#config_main_form').serialize();
 
@@ -78,7 +78,7 @@ export const ConfigRouterForm = function (router_id) {
     }
 }
 
-export const ConfigServerForm = function (server_id) {
+export const ConfigServerForm = function (server_id: string) {
     var form = document.getElementById('config_server_main_form_script')!.innerHTML;
     var button = document.getElementById('config_server_save_script')!.innerHTML;
     var banner = document.getElementById('config_server_edit_banner_script')!.innerHTML;
@@ -100,7 +100,7 @@ export const ConfigServerForm = function (server_id) {
     $('#server_id').val(server_id);
     $('#net_guid').val(network_guid);
 
-    function handleServerClick(event) {
+    function handleServerClick(event: any) {
         event.preventDefault();
         let data = $('#config_main_form').serialize();
 
@@ -123,7 +123,7 @@ export const ConfigServerForm = function (server_id) {
     }
 }
 
-export const ConfigHubForm = function (hub_id) {
+export const ConfigHubForm = function (hub_id: string) {
     var form = document.getElementById('config_hub_main_form_script')!.innerHTML;
     var button = document.getElementById('config_hub_save_script')!.innerHTML;
 
@@ -143,7 +143,7 @@ export const ConfigHubForm = function (hub_id) {
     $('#hub_id').val(hub_id);
     $('#net_guid').val(network_guid);
 
-    function handleHubClick(event) {
+    function handleHubClick(event: any) {
         event.preventDefault();
         let data = $('#config_hub_main_form').serialize();
 
@@ -165,7 +165,7 @@ export const ConfigHubForm = function (hub_id) {
     }
 }
 
-export const ConfigSwitchForm = function (switch_id) {
+export const ConfigSwitchForm = function (switch_id: string) {
     var form = document.getElementById('config_switch_main_form_script')!.innerHTML;
     var button = document.getElementById('config_switch_save_script')!.innerHTML;
 
@@ -189,7 +189,7 @@ export const ConfigSwitchForm = function (switch_id) {
     $('#switch_id').val(switch_id);
     $('#net_guid').val(network_guid);
 
-    function handleSwitchClick(event) {
+    function handleSwitchClick(event: any) {
         $("#config_switch_main_form [name='config_rstp_stp']").val($('#config_button_rstp').val() ?? '');
         event.preventDefault();
         let data = $('#config_switch_main_form').serialize();
@@ -212,7 +212,7 @@ export const ConfigSwitchForm = function (switch_id) {
     }
 }
 
-export const ConfigEdgeForm = function (edge_id) {
+export const ConfigEdgeForm = function (edge_id: string) {
     let edgeSaveXHR: any = null;
     var form = document.getElementById('config_edge_main_form_script')!.innerHTML;
     var button = document.getElementById('config_edge_save_script')!.innerHTML;
@@ -232,7 +232,7 @@ export const ConfigEdgeForm = function (edge_id) {
     $('#edge_id').val(edge_id);
     $('#net_guid').val(network_guid);
 
-    function handleEdgeClick(event) {
+    function handleEdgeClick(event: any) {
         event.preventDefault();
 
         if (edgeSaveXHR) {
@@ -240,7 +240,7 @@ export const ConfigEdgeForm = function (edge_id) {
         }
 
         let data = $('#config_edge_main_form').serialize();
-        const edge = edges.find(e => e.data.id === edge_id);
+        const edge = edges.find((e: any) => e.data.id === edge_id);
         console.log(edge);
         const lossValue = $("#edge_loss").val();
         const duplicateValue = $("#edge_duplicate").val();
@@ -268,7 +268,7 @@ export const ConfigEdgeForm = function (edge_id) {
     }
 }
 
-export const ConfigHubName = function (hostname) {
+export const ConfigHubName = function (hostname: string) {
 
     var text = document.getElementById('config_hub_name_script')!.innerHTML;
 
@@ -276,14 +276,14 @@ export const ConfigHubName = function (hostname) {
     $('#config_hub_name').val(hostname);
 }
 
-export const ConfigEdgeNetworkIssues = function (edge_loss, edge_duplicate) {
+export const ConfigEdgeNetworkIssues = function (edge_loss: any, edge_duplicate: any) {
     var text = document.getElementById('config_edge_set_network_issues_script')!.innerHTML;
     $(config_edge_main_form_id).prepend(text);
     $('#edge_loss').val(edge_loss);
     $('#edge_duplicate').val(edge_duplicate);
 };
 
-export const ConfigEdgeEndpoints = function (edge_source, edge_target) {
+export const ConfigEdgeEndpoints = function (edge_source: any, edge_target: any) {
 
     var text = document.getElementById('config_edge_edpoint_script')!.innerHTML;
 
@@ -292,7 +292,7 @@ export const ConfigEdgeEndpoints = function (edge_source, edge_target) {
     $('#edge_target').val(edge_target);
 }
 
-export const ConfigSwitchName = function (hostname) {
+export const ConfigSwitchName = function (hostname: string) {
 
     var text = document.getElementById('config_switch_name_script')!.innerHTML;
 
@@ -300,7 +300,7 @@ export const ConfigSwitchName = function (hostname) {
     $('#switch_name').val(hostname);
 }
 
-export const ConfigSwtichSTP = function (stp) {
+export const ConfigSwtichSTP = function (stp: number) {
     var elem = document.getElementById('config_switch_checkbox_stp_script');
 
     $(elem!.innerHTML).insertBefore('#config_switch_end_form');
@@ -319,7 +319,7 @@ export const ConfigSwtichSTP = function (stp) {
     });
 }
 
-export const ConfigSwtichRSTP = function (rstp) {
+export const ConfigSwtichRSTP = function (rstp: number) {
     var elem = document.getElementById('config_switch_checkbox_rstp_script');
 
     $(elem!.innerHTML).insertBefore('#config_switch_end_form');

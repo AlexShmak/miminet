@@ -6,7 +6,7 @@
 // `config_content_id` still resolve via the global scope — they are
 // owned by the remaining classic scripts and inline <script> tags.
 
-export const SharedConfigHostForm = function (host_id) {
+export const SharedConfigHostForm = function (host_id: string) {
     var form = document.getElementById('config_host_main_form_script')!.innerHTML;
 
     // Clear all child
@@ -23,7 +23,7 @@ export const SharedConfigHostForm = function (host_id) {
     $('#config_host_main_form_submit_button').prop('disabled', true);
 };
 
-export const SharedConfigRouterForm = function (router_id) {
+export const SharedConfigRouterForm = function (router_id: string) {
     var form = document.getElementById('config_router_main_form_script')!.innerHTML;
 
     // Clear all child
@@ -41,7 +41,7 @@ export const SharedConfigRouterForm = function (router_id) {
     $('#config_router_main_form_submit_button').prop('disabled', true);
 };
 
-export const SharedConfigServerForm = function (router_id) {
+export const SharedConfigServerForm = function (router_id: string) {
     var form = document.getElementById('config_server_main_form_script')!.innerHTML;
 
     // Clear all child
@@ -59,7 +59,7 @@ export const SharedConfigServerForm = function (router_id) {
     $('#config_server_main_form_submit_button').prop('disabled', true);
 };
 
-export const SharedConfigHubForm = function (hub_id) {
+export const SharedConfigHubForm = function (hub_id: string) {
     var form = document.getElementById('config_hub_main_form_script')!.innerHTML;
 
     // Clear all child
@@ -72,7 +72,7 @@ export const SharedConfigHubForm = function (hub_id) {
     $('#config_hub_main_form_submit_button').prop('disabled', true);
 };
 
-export const SharedConfigSwitchForm = function (switch_id) {
+export const SharedConfigSwitchForm = function (switch_id: string) {
     var form = document.getElementById('config_switch_main_form_script')!.innerHTML;
 
     // Clear all child
@@ -85,7 +85,7 @@ export const SharedConfigSwitchForm = function (switch_id) {
     $('#config_switch_main_form_submit_button').prop('disabled', true);
 };
 
-export const SharedConfigEdgeForm = function (edge_id) {
+export const SharedConfigEdgeForm = function (edge_id: string) {
     var form = document.getElementById('config_edge_main_form_script')!.innerHTML;
 
     // Clear all child
