@@ -7,12 +7,12 @@
 // owned by the remaining classic scripts and inline <script> tags.
 
 export const SharedConfigHostForm = function (host_id) {
-    var form = document.getElementById('config_host_main_form_script').innerHTML;
+    var form = document.getElementById('config_host_main_form_script')!.innerHTML;
 
     // Clear all child
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
-    document.getElementById(config_content_save_id).style.display = 'none';
+    document.getElementById(config_content_save_id)!.style.display = 'none';
 
     // Add new form
     $(config_content_id).append(form);
@@ -24,12 +24,12 @@ export const SharedConfigHostForm = function (host_id) {
 };
 
 export const SharedConfigRouterForm = function (router_id) {
-    var form = document.getElementById('config_router_main_form_script').innerHTML;
+    var form = document.getElementById('config_router_main_form_script')!.innerHTML;
 
     // Clear all child
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
-    document.getElementById(config_content_save_id).style.display = 'none';
+    document.getElementById(config_content_save_id)!.style.display = 'none';
 
     // Add new form
     $(config_content_id).append(form);
@@ -42,12 +42,12 @@ export const SharedConfigRouterForm = function (router_id) {
 };
 
 export const SharedConfigServerForm = function (router_id) {
-    var form = document.getElementById('config_server_main_form_script').innerHTML;
+    var form = document.getElementById('config_server_main_form_script')!.innerHTML;
 
     // Clear all child
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
-    document.getElementById(config_content_save_id).style.display = 'none';
+    document.getElementById(config_content_save_id)!.style.display = 'none';
 
     // Add new form
     $(config_content_id).append(form);
@@ -60,12 +60,12 @@ export const SharedConfigServerForm = function (router_id) {
 };
 
 export const SharedConfigHubForm = function (hub_id) {
-    var form = document.getElementById('config_hub_main_form_script').innerHTML;
+    var form = document.getElementById('config_hub_main_form_script')!.innerHTML;
 
     // Clear all child
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
-    document.getElementById(config_content_save_id).style.display = 'none';
+    document.getElementById(config_content_save_id)!.style.display = 'none';
 
     // Add new form
     $(config_content_id).append(form);
@@ -73,12 +73,12 @@ export const SharedConfigHubForm = function (hub_id) {
 };
 
 export const SharedConfigSwitchForm = function (switch_id) {
-    var form = document.getElementById('config_switch_main_form_script').innerHTML;
+    var form = document.getElementById('config_switch_main_form_script')!.innerHTML;
 
     // Clear all child
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
-    document.getElementById(config_content_save_id).style.display = 'none';
+    document.getElementById(config_content_save_id)!.style.display = 'none';
 
     // Add new form
     $(config_content_id).append(form);
@@ -86,12 +86,12 @@ export const SharedConfigSwitchForm = function (switch_id) {
 };
 
 export const SharedConfigEdgeForm = function (edge_id) {
-    var form = document.getElementById('config_edge_main_form_script').innerHTML;
+    var form = document.getElementById('config_edge_main_form_script')!.innerHTML;
 
     // Clear all child
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
-    document.getElementById(config_content_save_id).style.display = 'block';
+    document.getElementById(config_content_save_id)!.style.display = 'block';
 
     // Add new form
     $(config_content_id).append(form);

@@ -1,3 +1,7 @@
+import { SaveNetworkObject } from "./runtime";
+import { EdgeUid, InterfaceUid, l2SwitchPortUid, l1HubPortUid } from "./show_config";
+import { LINK_DOWN_JOB_ID } from "./state";
+
 export const PostNodesEdges = function(){
     ajaxWithAuth({
         type: 'POST',
@@ -115,7 +119,7 @@ export const AddEdge = function(source_id, target_id){
 
 export const DeleteJob = function(node_id){
 
-    let jobs_to_delete = [];
+    let jobs_to_delete: any[] = [];
 
     $.each(jobs , function(idx, job) {
 
@@ -142,7 +146,7 @@ export const DeleteNode = function(node_id) {
         return;
     }
 
-    let edges_to_delete = [];
+    let edges_to_delete: any[] = [];
 
     // Find all edges that connected to the deleted node
     $.each(edges , function(idx, edge) {
@@ -337,20 +341,20 @@ export const prepareStylesheet = function() {
                 return;
             }
 
-            let label = label + '\n' + ip_addr + "/" + netmask;
+            label = label + '\n' + ip_addr + "/" + netmask;
         }
         );
 
         if (n.config.default_gw)
         {
-            let label = label + '\n' + 'gw:' + n.config.default_gw;
+            label = label + '\n' + 'gw:' + n.config.default_gw;
         }
 
         $.each(jobs, function (i) {
             let j = jobs[i];
 
             if (j.host_id === n.data.id){
-                let label = label + '\n' + '(' + j.print_cmd + ')';
+                label = label + '\n' + '(' + j.print_cmd + ')';
             }
 
         });
@@ -361,7 +365,7 @@ export const prepareStylesheet = function() {
                 const proto = (stpMode === 2) ? 'rstp on' : 'stp on';
                 const pr = (n.config.priority !== undefined && n.config.priority !== null)
                     ? ` prior ${n.config.priority}` : '';
-                let label = label + '\n' + `(${proto}${pr})`;
+                label = label + '\n' + `(${proto}${pr})`;
             }
             if (Array.isArray(n.interface)) {
                 n.interface.forEach((iface) => {
@@ -499,7 +503,7 @@ export const prepareStylesheet = function() {
     for (const prop in DiagramIcons) {
 
       if (Object.prototype.hasOwnProperty.call(DiagramIcons, prop)) {
-        let sheet = appendIconClass(sheet, prop);
+        sheet = appendIconClass(sheet, prop);
       }
     }
 

@@ -8,6 +8,8 @@
 // inherits that scope.
 
 import { state } from "../lib/state";
+import { SetPacketFilter, SetNetworkPlayerState } from "./runtime";
+import { DrawGraph } from "./draw";
 
 export const CheckSimulation = function (simulation_id) {
     ajaxWithAuth({
@@ -29,7 +31,7 @@ export const CheckSimulation = function (simulation_id) {
                 state.packetsNotFiltered = null;
                 SetPacketFilter();
 
-                const answerButton = document.querySelector('button[name="answerQuestion"]');
+                const answerButton = document.querySelector('button[name="answerQuestion"]') as HTMLButtonElement | null;
                 if (answerButton) {
                     answerButton.disabled = false;
                 }

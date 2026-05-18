@@ -1,5 +1,19 @@
+import { UpdateJobCounter } from "./common";
+import {
+    DeleteJobFromHost,
+    DeleteJobFromRouter,
+    DeleteJobFromSwitch,
+    DeleteJobFromServer,
+} from "../netfront/update_config";
+import {
+    EditJobInHost,
+    EditJobInRouter,
+    EditJobInSwitch,
+    EditJobInServer,
+} from "./edit_jobs";
+
 export const UpdateHostForm = function(name) {
-    let elem = document.getElementById(name).innerHTML;
+    let elem = document.getElementById(name)!.innerHTML;
     let host_job_list = document.getElementById('config_host_job_list');
 
     if (!elem || !host_job_list) {
@@ -61,8 +75,8 @@ export const ConfigHostJobOnChange = function (evnt) {
 
 export const ConfigHostJob = function (host_jobs, shared = 0) {
 
-    let elem = document.getElementById('config_host_job_script').innerHTML;
-    let host_id = document.getElementById('host_id');
+    let elem: any = document.getElementById('config_host_job_script')!.innerHTML;
+    const host_id = document.getElementById('host_id') as HTMLInputElement | null;
 
     if (!elem || !host_id) {
         return;
@@ -71,12 +85,12 @@ export const ConfigHostJob = function (host_jobs, shared = 0) {
     $(elem).insertBefore(host_id);
 
     // Set onchange
-    document.getElementById('config_host_job_select_field').addEventListener('change', ConfigHostJobOnChange);
+    document.getElementById('config_host_job_select_field')!.addEventListener('change', ConfigHostJobOnChange);
 
     // Update job counter with device ID
     UpdateJobCounter('config_host_job_counter', host_id.value);
 
-    elem = document.getElementById('config_host_job_list_script').innerHTML;
+    elem = document.getElementById('config_host_job_list_script')!.innerHTML;
     if (!elem) {
         return;
     }
@@ -128,7 +142,7 @@ export const ConfigHostJob = function (host_jobs, shared = 0) {
 
 export const ConfigHostGateway = function (gw) {
 
-    var text = document.getElementById('config_host_default_gw_script').innerHTML;
+    var text = document.getElementById('config_host_default_gw_script')!.innerHTML;
 
     $(text).insertBefore('#config_host_end_form');
     $('#config_host_default_gw').val(gw);
@@ -136,7 +150,7 @@ export const ConfigHostGateway = function (gw) {
 
 export const ConfigRouterGateway = function (gw) {
 
-    var text = document.getElementById('config_router_default_gw_script').innerHTML;
+    var text = document.getElementById('config_router_default_gw_script')!.innerHTML;
 
     $(text).insertBefore('#config_router_end_form');
     $('#config_router_default_gw').val(gw);
@@ -144,14 +158,14 @@ export const ConfigRouterGateway = function (gw) {
 
 export const ConfigServerGateway = function (gw) {
 
-    var text = document.getElementById('config_server_default_gw_script').innerHTML;
+    var text = document.getElementById('config_server_default_gw_script')!.innerHTML;
 
     $(text).insertBefore('#config_server_end_form');
     $('#config_server_default_gw').val(gw);
 }
 
 export const UpdateSwitchForm = function(name) {
-    let elem = document.getElementById(name).innerHTML;
+    let elem = document.getElementById(name)!.innerHTML;
     let switch_job_list = document.getElementById('config_switch_job_list');
 
     if (!elem || !switch_job_list) {
@@ -178,8 +192,8 @@ export const ConfigSwitchJobOnChange = function(evnt) {
 }
 export const ConfigSwitchJob = function (switch_jobs, shared = 0) {
 
-    let elem = document.getElementById('config_switch_job_script').innerHTML;
-    let switch_id = document.getElementById('switch_id');
+    let elem: any = document.getElementById('config_switch_job_script')!.innerHTML;
+    const switch_id = document.getElementById('switch_id') as HTMLInputElement | null;
 
     if (!elem || !switch_id) {
         return;
@@ -188,12 +202,12 @@ export const ConfigSwitchJob = function (switch_jobs, shared = 0) {
     $(elem).insertBefore(switch_id);
 
     // Set onchange
-    document.getElementById('config_switch_job_select_field').addEventListener('change', ConfigSwitchJobOnChange);
+    document.getElementById('config_switch_job_select_field')!.addEventListener('change', ConfigSwitchJobOnChange);
 
     // Update job counter with device ID
     UpdateJobCounter('config_switch_job_counter', switch_id.value);
 
-    elem = document.getElementById('config_switch_job_list_script').innerHTML;
+    elem = document.getElementById('config_switch_job_list_script')!.innerHTML;
     if (!elem) {
         return;
     }
@@ -301,8 +315,8 @@ export const ConfigRouterJobOnChange = function(evnt) {
 
 export const ConfigRouterJob = function (router_jobs, shared = 0) {
 
-    let elem = document.getElementById('config_router_job_script').innerHTML;
-    let router_id = document.getElementById('router_id');
+    let elem: any = document.getElementById('config_router_job_script')!.innerHTML;
+    const router_id = document.getElementById('router_id') as HTMLInputElement | null;
 
     if (!elem || !router_id) {
         return;
@@ -311,12 +325,12 @@ export const ConfigRouterJob = function (router_jobs, shared = 0) {
     $(elem).insertBefore(router_id);
 
     // Set onchange
-    document.getElementById('config_router_job_select_field').addEventListener('change', ConfigRouterJobOnChange);
+    document.getElementById('config_router_job_select_field')!.addEventListener('change', ConfigRouterJobOnChange);
 
     // Update job counter with device ID
     UpdateJobCounter('config_router_job_counter', router_id.value);
 
-    elem = document.getElementById('config_router_job_list_script').innerHTML;
+    elem = document.getElementById('config_router_job_list_script')!.innerHTML;
     if (!elem) {
         return;
     }
@@ -368,8 +382,8 @@ export const ConfigRouterJob = function (router_jobs, shared = 0) {
 
 export const ConfigServerJob = function (server_jobs, shared = 0) {
 
-    let elem = document.getElementById('config_server_job_script').innerHTML;
-    let server_id = document.getElementById('server_id');
+    let elem: any = document.getElementById('config_server_job_script')!.innerHTML;
+    const server_id = document.getElementById('server_id') as HTMLInputElement | null;
 
     if (!elem || !server_id) {
         return;
@@ -378,12 +392,12 @@ export const ConfigServerJob = function (server_jobs, shared = 0) {
     $(elem).insertBefore(server_id);
 
     // Set onchange
-    document.getElementById('config_server_job_select_field').addEventListener('change', ConfigServerJobOnChange);
+    document.getElementById('config_server_job_select_field')!.addEventListener('change', ConfigServerJobOnChange);
 
     // Update job counter with device ID
     UpdateJobCounter('config_server_job_counter', server_id.value);
 
-    elem = document.getElementById('config_server_job_list_script').innerHTML;
+    elem = document.getElementById('config_server_job_list_script')!.innerHTML;
     if (!elem) {
         return;
     }
@@ -436,7 +450,7 @@ export const ConfigServerJob = function (server_jobs, shared = 0) {
 }
 
 export const UpdateServerForm = function(name) {
-    let elem = document.getElementById(name).innerHTML;
+    let elem = document.getElementById(name)!.innerHTML;
     let server_job_list = document.getElementById('config_server_job_list');
 
     if (!elem || !server_job_list) {
@@ -506,7 +520,7 @@ export const UpdateRouterForm = function(name) {
     /**
      * Replace old form with new one
      */
-    let elem = document.getElementById(name).innerHTML;
+    let elem = document.getElementById(name)!.innerHTML;
     let router_job_list = document.getElementById('config_router_job_list');
 
     if (!elem || !router_job_list){
@@ -550,7 +564,7 @@ export const FillDeviceSelectIntf = function(select_id, device, field_msg = 'И�
     $(select_id).on('change', function () {
         let selectedOption = $(this).find('option:selected'); // Получаем выбранный элемент
         let selectedLabel = selectedOption.text(); // Получаем текст выбранного элемента
-        document.getElementById(device_type + '_connection_host_label_hidden').value = selectedLabel; // Записываем его в скрытое поле
+        (document.getElementById(device_type + '_connection_host_label_hidden') as HTMLInputElement).value = selectedLabel; // Записываем его в скрытое поле
     });
 
     device_node.interface.forEach(function(iface) {

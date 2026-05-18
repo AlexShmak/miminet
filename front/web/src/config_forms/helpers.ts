@@ -1,6 +1,8 @@
+import { config_main_form_id } from "./common";
+
 export const ConfigHostName = function (hostname) {
 
-    var text = document.getElementById('config_host_name_script').innerHTML;
+    var text = document.getElementById('config_host_name_script')!.innerHTML;
 
     $(config_main_form_id).prepend((text));
     $('#config_host_name').val(hostname);
@@ -8,7 +10,7 @@ export const ConfigHostName = function (hostname) {
 
 export const ConfigRouterName = function (hostname) {
 
-    var text = document.getElementById('config_router_name_script').innerHTML;
+    var text = document.getElementById('config_router_name_script')!.innerHTML;
 
     $(config_main_form_id).prepend((text));
     $('#config_router_name').val(hostname);
@@ -16,7 +18,7 @@ export const ConfigRouterName = function (hostname) {
 
 export const ConfigServerName = function (hostname) {
 
-    var text = document.getElementById('config_server_name_script').innerHTML;
+    var text = document.getElementById('config_server_name_script')!.innerHTML;
 
     $(config_main_form_id).prepend((text));
     $('#config_server_name').val(hostname);
@@ -75,7 +77,7 @@ export const ConfigSwitchInterface = function (name, ip, netmask, connected_to) 
 
 export const ConfigItemIndent = function (item) {
     let conf_item = 'config_' + item
-    let text = document.getElementById(conf_item + '_indent_script').innerHTML;
+    let text = document.getElementById(conf_item + '_indent_script')!.innerHTML;
     $(text).insertBefore('#' + conf_item + '_end_form');
 }
 
@@ -89,7 +91,7 @@ export const ConfigSwitchIndent = function () {
 
 export const addIpFieldHandlers = function () {
     document.addEventListener('input', function (e) {
-        const input = e.target;
+        const input = e.target as HTMLInputElement;
 
         if (!input.matches('input[type="text"][id*="ip"], input[type="text"][name*="ip"], input[type="text"][id*="gw"], input[type="text"][name*="gw"]')) {
             return;

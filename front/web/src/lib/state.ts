@@ -35,12 +35,12 @@ export interface MiminetState {
   simulationId: number;
   lastSimulationId: number;
   global_cy?: cytoscape.Core;
-  global_eh?: unknown;
-  networkUpdateTimeoutId: number;
+  global_eh?: any;
+  networkUpdateTimeoutId: any;
   networkCache: unknown[];
-  packetsNotFiltered: unknown;
+  packetsNotFiltered: any;
   packetFilterState: PacketFilterState;
-  gridCanvasLayer?: unknown;
+  gridCanvasLayer?: any;
   gridEnabled: boolean;
   currentGridZoom: number;
 }

@@ -1,3 +1,6 @@
+import { DeleteAndSaveJob, updateGridForConfigPanel } from "../netfront/runtime";
+import { UpdateHostConfiguration } from "../netfront/update_config";
+
 $('#config_host').load(ExternalUrlFor("/config_host.html"));
 $('#config_hub').load(ExternalUrlFor("/config_hub.html"));
 $('#config_switch').load(ExternalUrlFor("/config_switch.html"));
@@ -29,7 +32,7 @@ export const ClearConfigForm = function (text) {
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
     $(config_content_id).append('<span>' + txt + '</span>');
-    document.getElementById(config_content_save_id).style.display='none';
+    document.getElementById(config_content_save_id)!.style.display='none';
 
     // Update grid to reclaim full width
     if (typeof updateGridForConfigPanel === 'function') {
@@ -80,7 +83,7 @@ export const HostErrorMsg = function (msg) {
     $('#config_switch_main_form_submit_button').text('Сохранить').removeClass('disabled');
 }
 
-export const UpdateJobCounter = function (counterId, deviceId = null) {
+export const UpdateJobCounter = function (counterId: string, deviceId: string | null = null) {
     const counter = document.getElementById(counterId);
     if (!counter) {
         return;

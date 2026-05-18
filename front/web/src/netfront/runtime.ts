@@ -1,4 +1,8 @@
 import { state } from "../lib/state";
+import { CheckSimulation, InsertWaitingTime } from "./simulation";
+import { DrawGraph, DrawGraphStatic, DrawSharedGraph } from "./draw";
+
+declare const ym: any;
 
 export const RunSimulation = function (network_guid)
 {
@@ -29,17 +33,17 @@ export const RunSimulation = function (network_guid)
 
 export const FilterPackets = function () {
     const tcpRegex = /TCP \((ACK|SYN|FIN)/;
-    let packets = packets
+    packets = packets
         .map((step) =>
             step.filter(
                 (pkt) =>
                     !(
-                        (packetFilterState.hideARP &&
+                        (state.packetFilterState.hideARP &&
                             pkt.data.label.startsWith("ARP")) ||
-                        (packetFilterState.hideSTP &&
+                        (state.packetFilterState.hideSTP &&
                             (pkt.data.label.startsWith("STP") ||
                             pkt.data.label.startsWith("RSTP"))) ||
-                        (packetFilterState.hideSYN &&
+                        (state.packetFilterState.hideSYN &&
                             tcpRegex.test(pkt.data.label))
                     )
             )
@@ -52,10 +56,10 @@ export const UpdateFilterStates = function (settings) {
         return;
     }
 
-    Object.assign(packetFilterState, settings);
-    $("#ARPFilterCheckbox").prop("checked", packetFilterState.hideARP);
-    $("#STPFilterCheckbox").prop("checked", packetFilterState.hideSTP);
-    $("#SYNFilterCheckbox").prop("checked", packetFilterState.hideSYN);
+    Object.assign(state.packetFilterState, settings);
+    $("#ARPFilterCheckbox").prop("checked", state.packetFilterState.hideARP);
+    $("#STPFilterCheckbox").prop("checked", state.packetFilterState.hideSTP);
+    $("#SYNFilterCheckbox").prop("checked", state.packetFilterState.hideSYN);
 };
 
 export const SaveAnimationFilters = function () {
@@ -64,9 +68,9 @@ export const SaveAnimationFilters = function () {
     }
 
     const payload = {
-        hideARP: Boolean(packetFilterState.hideARP),
-        hideSTP: Boolean(packetFilterState.hideSTP),
-        hideSYN: Boolean(packetFilterState.hideSYN),
+        hideARP: Boolean(state.packetFilterState.hideARP),
+        hideSTP: Boolean(state.packetFilterState.hideSTP),
+        hideSYN: Boolean(state.packetFilterState.hideSYN),
     };
 
     $.ajax({
@@ -103,17 +107,17 @@ export const SetPacketFilter = function (shared = 0) {
 
     console.log("Packet filter call");
     // SetPacketFilter first call on emulated network
-    if (packets && !packetsNotFiltered) {
+    if (packets && !state.packetsNotFiltered) {
         state.packetsNotFiltered = JSON.parse(JSON.stringify(packets)); // Array deep copy
     }
     // Numerous filter call, we grab our packets copy to filter it
-    else if (packetsNotFiltered) {
-        let packets = JSON.parse(JSON.stringify(packetsNotFiltered));
+    else if (state.packetsNotFiltered) {
+        packets = JSON.parse(JSON.stringify(state.packetsNotFiltered));
     }
 
-    packetFilterState.hideARP = $("#ARPFilterCheckbox").is(":checked");
-    packetFilterState.hideSTP = $("#STPFilterCheckbox").is(":checked");
-    packetFilterState.hideSYN = $("#SYNFilterCheckbox").is(":checked");
+    state.packetFilterState.hideARP = $("#ARPFilterCheckbox").is(":checked");
+    state.packetFilterState.hideSTP = $("#STPFilterCheckbox").is(":checked");
+    state.packetFilterState.hideSYN = $("#SYNFilterCheckbox").is(":checked");
 
     if (packets) {
         FilterPackets();
@@ -133,8 +137,8 @@ export const SetNetworkPlayerState = function (simulation_id) {
     // Reset?
     if (simulation_id === -1) {
         state.packetsNotFiltered = null;
-        let packets = null;
-        let pcaps = [];
+        packets = null;
+        pcaps = [];
         SetNetworkPlayerState(0);
         return;
     }
@@ -150,11 +154,11 @@ export const SetNetworkPlayerState = function (simulation_id) {
         PacketPlayer.getInstance().InitPlayer(packets);
 
         // Configure the slider
-        if (!$('#PacketSliderInput')[0] || !$('#PacketSliderInput')[0].noUiSlider) {
+        if (!$('#PacketSliderInput')[0] || !($('#PacketSliderInput')[0] as any).noUiSlider) {
             return;
         }
 
-        $('#PacketSliderInput')[0].noUiSlider.updateOptions({
+        ($('#PacketSliderInput')[0] as any).noUiSlider.updateOptions({
             start: [1],
             range: {
                 'min': 1,
@@ -173,13 +177,13 @@ export const SetNetworkPlayerState = function (simulation_id) {
         const pkt_count = packets.reduce((currentCount, row) => currentCount + row.length, 0);
         $('#NetworkPlayerLabel').text(packets.length + ' ' + NumWord(packets.length, ['шаг', 'шага', 'шагов']) + ' / ' + pkt_count + ' ' + NumWord(pkt_count, ['пакет', 'пакета', 'пакетов']));
 
-        $('#PacketSliderInput')[0].noUiSlider.on('slide', function (e) {
+        ($('#PacketSliderInput')[0] as any).noUiSlider.on('slide', function (e) {
             if (!e) return;
             let x =  Math.round(e[0]);
             PacketPlayer.getInstance().setAnimationTrafficStep(x-1);
         });
 
-        $('#PacketSliderInput')[0].noUiSlider.on('update', function (e) {
+        ($('#PacketSliderInput')[0] as any).noUiSlider.on('update', function (e) {
             if (!e) return;
             let x =  Math.round(e[0]);
             if (packets.length === 0){
@@ -207,10 +211,10 @@ export const SetNetworkPlayerState = function (simulation_id) {
                 }
 
                 PacketPlayer.getInstance().setAnimationTrafficStepCallback(function() {
-                    $('#PacketSliderInput')[0].noUiSlider.set(PacketPlayer.getInstance().getAnimationTrafficStep());
+                    ($('#PacketSliderInput')[0] as any).noUiSlider.set(PacketPlayer.getInstance().getAnimationTrafficStep());
                 });
 
-                PacketPlayer.getInstance().StartPlayer(global_cy);
+                PacketPlayer.getInstance().StartPlayer(state.global_cy);
                 return;
             } else {
 
@@ -230,9 +234,9 @@ export const SetNetworkPlayerState = function (simulation_id) {
             PacketPlayer.getInstance().StopPlayer();
 
             // Reset slider.
-            $('#PacketSliderInput')[0].noUiSlider.set(0);
+            ($('#PacketSliderInput')[0] as any).noUiSlider.set(0);
 
-            DrawGraph(nodes, edges);
+            DrawGraphStatic(nodes, edges);
 
             $('#NetworkPlayPauseButton').removeClass('btn-success');
             $('#NetworkPlayPauseButton').removeClass('btn-warning');
@@ -268,13 +272,13 @@ export const SetNetworkPlayerState = function (simulation_id) {
         // Check for job. If no job - show modal and exit.
         if (!jobs.length)
         {
-            $('#noJobsModal').modal('toggle');
+            ($('#noJobsModal') as any).modal('toggle');
             return;
         }
 
         if (nodes.length > 80)
         {
-            $('#tooManyHostModal').modal('toggle');
+            ($('#tooManyHostModal') as any).modal('toggle');
             return;
         }
 
@@ -312,7 +316,7 @@ export const SetSharedNetworkPlayerState = function()
         PacketPlayer.getInstance().InitPlayer(packets);
 
         // Configure the slider
-        $('#PacketSliderInput')[0].noUiSlider.updateOptions({
+        ($('#PacketSliderInput')[0] as any).noUiSlider.updateOptions({
             start: [1],
             range: {
                 'min': 1,
@@ -331,13 +335,13 @@ export const SetSharedNetworkPlayerState = function()
         const pkt_count = packets.reduce((currentCount, row) => currentCount + row.length, 0);
         $('#NetworkPlayerLabel').text(packets.length + ' ' + NumWord(packets.length, ['шаг', 'шага', 'шагов']) + ' / ' + pkt_count + ' ' + NumWord(pkt_count, ['пакет', 'пакета', 'пакетов']));
 
-        $('#PacketSliderInput')[0].noUiSlider.on('slide', function (e) {
+        ($('#PacketSliderInput')[0] as any).noUiSlider.on('slide', function (e) {
             if (!e) return;
             let x =  Math.round(e[0]);
             PacketPlayer.getInstance().setAnimationTrafficStep(x-1);
         });
 
-        $('#PacketSliderInput')[0].noUiSlider.on('update', function (e) {
+        ($('#PacketSliderInput')[0] as any).noUiSlider.on('update', function (e) {
             if (!e) return;
             let x =  Math.round(e[0]);
             if (packets.length === 0){
@@ -365,10 +369,10 @@ export const SetSharedNetworkPlayerState = function()
                 }
 
                 PacketPlayer.getInstance().setAnimationTrafficStepCallback(function() {
-                    $('#PacketSliderInput')[0].noUiSlider.set(PacketPlayer.getInstance().getAnimationTrafficStep());
+                    ($('#PacketSliderInput')[0] as any).noUiSlider.set(PacketPlayer.getInstance().getAnimationTrafficStep());
                 });
 
-                PacketPlayer.getInstance().StartPlayer(global_cy);
+                PacketPlayer.getInstance().StartPlayer(state.global_cy);
             } else {
                 $(this).removeClass('btn-warning');
                 $(this).addClass('btn-success');
@@ -386,7 +390,7 @@ export const SetSharedNetworkPlayerState = function()
             PacketPlayer.getInstance().StopPlayer();
 
             // Reset slider.
-            $('#PacketSliderInput')[0].noUiSlider.set(0);
+            ($('#PacketSliderInput')[0] as any).noUiSlider.set(0);
 
             DrawSharedGraph(nodes, edges);
 
@@ -413,12 +417,12 @@ export const SetSharedNetworkPlayerState = function()
 // Take a picture and update it.
 export const TakeGraphPictureAndUpdate = function()
 {
-    if (!global_cy)
+    if (!state.global_cy)
     {
         return;
     }
 
-    let png_blob = global_cy.png({output: 'blob', maxWidth: 512, maxHeight: 512});
+    let png_blob = state.global_cy.png({output: 'blob', maxWidth: 512, maxHeight: 512});
 
     ajaxWithAuth({
         type: 'POST',
@@ -451,13 +455,13 @@ export const CalculateDropOffset = function(elem_x, elem_y)
         ret.y += network_scheme.offsetTop - 15;
     }
 
-    if (global_cy)
+    if (state.global_cy)
     {
-        ret.x = ret.x + global_cy.pan().x;
-        ret.y = ret.y + global_cy.pan().y;
+        ret.x = ret.x + state.global_cy.pan().x;
+        ret.y = ret.y + state.global_cy.pan().y;
 
-        ret.x = (elem_x - ret.x) / global_cy.zoom();
-        ret.y = (elem_y - ret.y) / global_cy.zoom();
+        ret.x = (elem_x - ret.x) / state.global_cy.zoom();
+        ret.y = (elem_y - ret.y) / state.global_cy.zoom();
         
         // Apply snap-to-grid
         const baseGridSize = 25;
@@ -470,12 +474,12 @@ export const CalculateDropOffset = function(elem_x, elem_y)
 
 export const UpdateNetworkConfig = function()
 {
-    if (!global_cy){
+    if (!state.global_cy){
         return;
     }
 
     let data = {'network_title' : network_title, 'network_description' : network_description,
-    'zoom' : global_cy.zoom(),'pan_x' : global_cy.pan().x, 'pan_y' : global_cy.pan().y};
+    'zoom' : state.global_cy.zoom(),'pan_x' : state.global_cy.pan().x, 'pan_y' : state.global_cy.pan().y};
 
     ajaxWithAuth({
         type: 'POST',
@@ -503,7 +507,7 @@ export const CopyNetwork = function ()
             if (xhr.status === 200)
             {
                 console.log("Copy network is made.");
-                $('#ModalCopy').modal('show');
+                ($('#ModalCopy') as any).modal('show');
                 $('.modal-option').click(function() {
                 var selectedOption = $(this).attr('data-option');
                     if (selectedOption === 'edit') {
@@ -513,7 +517,7 @@ export const CopyNetwork = function ()
                     } else if (selectedOption === 'continue') {
                         console.log('Continue here');
                     }
-                $('#ModalCopy').modal('hide');
+                ($('#ModalCopy') as any).modal('hide');
                 });
             }
         },
@@ -539,7 +543,7 @@ export const SaveNetworkObject = function (){
     let n = JSON.parse(JSON.stringify(nodes));
     let e = JSON.parse(JSON.stringify(edges));
 
-    NetworkCache.push({
+    state.networkCache.push({
         nodes: n,
         edges: e,
     });
@@ -548,7 +552,7 @@ export const SaveNetworkObject = function (){
 }
 
 export const RestoreNetworkObject = function (){
-    let x = NetworkCache.pop();
+    let x: any = state.networkCache.pop();
 
     if (!x){
         return;
@@ -560,15 +564,12 @@ export const RestoreNetworkObject = function (){
     return 0;
 }
 
-// ========== COMMAND EDITING UTILITIES ==========
-// Global variables to track editing state
-let editingJobId = null;
-let editingDeviceType = null;
+export let editingJobId: any = null;
+export let editingDeviceType: any = null;
 
-// Function to enter edit mode
 export const EnterEditMode = function(deviceType, jobId, jobTypeId) {
-    let editingJobId = jobId;
-    let editingDeviceType = deviceType;
+    editingJobId = jobId;
+    editingDeviceType = deviceType;
 
     // Change submit button text
     const submitButton = document.getElementById(`config_${deviceType}_main_form_submit_button`);
@@ -604,7 +605,7 @@ export const EnterEditMode = function(deviceType, jobId, jobTypeId) {
         commandDisplay.className = 'form-control form-control-sm';
         commandDisplay.value = commandName;
         commandDisplay.disabled = true;
-        selectField.parentNode.insertBefore(commandDisplay, selectField.nextSibling);
+        selectField.parentNode!.insertBefore(commandDisplay, selectField.nextSibling);
     }
 
     // Highlight the editing command
@@ -637,8 +638,8 @@ export const EnterEditMode = function(deviceType, jobId, jobTypeId) {
 
 // Function to exit edit mode
 export const ExitEditMode = function(deviceType) {
-    let editingJobId = null;
-    let editingDeviceType = null;
+    editingJobId = null;
+    editingDeviceType = null;
 
     // Reset submit button text
     const submitButton = document.getElementById(`config_${deviceType}_main_form_submit_button`);
@@ -659,7 +660,7 @@ export const ExitEditMode = function(deviceType) {
     }
 
     // Show the select dropdown again
-    const selectField = document.getElementById(`config_${deviceType}_job_select_field`);
+    const selectField = document.getElementById(`config_${deviceType}_job_select_field`) as HTMLSelectElement | null;
     if (selectField) {
         selectField.style.display = 'block';
         selectField.value = '0';
@@ -693,8 +694,8 @@ export const initGrid = function(cy) {
     if (!cy) return;
 
     // Clean up previous listener
-    if (typeof gridCanvasLayer !== 'undefined' && gridCanvasLayer && gridCanvasLayer.resizeAndDrawCanvas) {
-        window.removeEventListener('resize', gridCanvasLayer.resizeAndDrawCanvas);
+    if (typeof state.gridCanvasLayer !== 'undefined' && state.gridCanvasLayer && state.gridCanvasLayer.resizeAndDrawCanvas) {
+        window.removeEventListener('resize', state.gridCanvasLayer.resizeAndDrawCanvas);
     }
 
     // Remove old grid canvas if exists
@@ -727,7 +728,7 @@ export const initGrid = function(cy) {
         canvas.height = container.clientHeight * pixelRatio;
 
         // Always redraw when resizing
-        if (gridCanvasLayer) {
+        if (state.gridCanvasLayer) {
             drawGrid();
         }
     };
@@ -758,19 +759,19 @@ export const initGrid = function(cy) {
 };
 
 export const drawGrid = function() {
-    if (!gridCanvasLayer) {
+    if (!state.gridCanvasLayer) {
         return;
     }
 
-    const canvas = gridCanvasLayer.canvas;
-    const ctx = gridCanvasLayer.ctx;
+    const canvas = state.gridCanvasLayer.canvas;
+    const ctx = state.gridCanvasLayer.ctx;
 
     if (!canvas || !ctx) {
         return;
     }
 
     // Scale grid with zoom: at max zoom (2.0) = 50px like before, at min zoom (0.5) = small cells
-    const gridSize = 25 * currentGridZoom; // 25 * 2.0 = 50px (max zoom), 25 * 0.5 = 12.5px (min zoom)
+    const gridSize = 25 * state.currentGridZoom; // 25 * 2.0 = 50px (max zoom), 25 * 0.5 = 12.5px (min zoom)
     const pixelRatio = window.devicePixelRatio || 1;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -781,8 +782,8 @@ export const drawGrid = function() {
     // Get pan offset to align grid with cytoscape coordinate system
     let panX = 0;
     let panY = 0;
-    if (global_cy && global_cy.pan) {
-        const pan = global_cy.pan();
+    if (state.global_cy && state.global_cy.pan) {
+        const pan = state.global_cy.pan();
         let panX = pan.x;
         let panY = pan.y;
     }
@@ -824,10 +825,10 @@ export const drawGrid = function() {
 
 // Update grid when config panel opens/closes
 export const updateGridForConfigPanel = function() {
-    if (gridCanvasLayer && gridCanvasLayer.resizeAndDrawCanvas) {
+    if (state.gridCanvasLayer && state.gridCanvasLayer.resizeAndDrawCanvas) {
         // Small delay to let DOM update
         setTimeout(function() {
-            gridCanvasLayer.resizeAndDrawCanvas();
+            state.gridCanvasLayer.resizeAndDrawCanvas();
         }, 50);
     }
 }

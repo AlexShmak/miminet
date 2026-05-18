@@ -3,8 +3,6 @@ FROM node:22-slim AS web-build
 
 WORKDIR /front
 COPY ./web/ /front/web/
-COPY ./src/static/netfront/ /front/src/static/netfront/
-COPY ./src/static/config_forms/ /front/src/static/config_forms/
 
 WORKDIR /front/web
 RUN npm install --no-audit --no-fund --prefer-offline

@@ -1,3 +1,52 @@
+import { ExitEditMode, editingJobId, editingDeviceType } from "./runtime";
+import {
+    ConfigHostForm,
+    ConfigRouterForm,
+    ConfigServerForm,
+    ConfigHubForm,
+    ConfigSwitchForm,
+    ConfigEdgeForm,
+} from "../config_forms/device";
+import {
+    SharedConfigHostForm,
+    SharedConfigRouterForm,
+    SharedConfigServerForm,
+    SharedConfigHubForm,
+    SharedConfigSwitchForm,
+    SharedConfigEdgeForm,
+} from "../config_forms/shared";
+import {
+    ConfigHostName,
+    ConfigRouterName,
+    ConfigServerName,
+    ConfigHostInterface,
+    ConfigRouterInterface,
+    ConfigServerInterface,
+    ConfigHubInterface,
+    ConfigSwitchInterface,
+    ConfigHubIndent,
+    ConfigSwitchIndent,
+} from "../config_forms/helpers";
+import {
+    ConfigHubName,
+    ConfigSwitchName,
+    ConfigEdgeNetworkIssues,
+    ConfigEdgeEndpoints,
+} from "../config_forms/device";
+import { uid } from "./state";
+import {
+    ConfigHostJob,
+    ConfigRouterJob,
+    ConfigServerJob,
+    ConfigSwitchJob,
+    ConfigHostGateway,
+    ConfigRouterGateway,
+    ConfigServerGateway,
+    DisableFormInputs,
+    DisableVLANInputs,
+    DisableVXLANInputs,
+} from "../config_forms/jobs";
+
 export const ActionWithInterface = function (n, i, fun) {
 
     let iface_id = n.interface[i].id;
@@ -77,7 +126,7 @@ export const ShowHostConfig = function(n, shared = 0){
     let host_jobs = [];
 
     if (jobs){
-        let host_jobs = jobs.filter(j => j.host_id === n.data.id);
+        host_jobs = jobs.filter(j => j.host_id === n.data.id);
     }
 
     ConfigHostJob(host_jobs, shared);
@@ -92,7 +141,7 @@ export const ShowHostConfig = function(n, shared = 0){
         let default_gw = '';
 
         if ("default_gw" in n.config){
-            let default_gw = n.config.default_gw;
+            default_gw = n.config.default_gw;
         }
 
         ConfigHostGateway(default_gw);
@@ -127,7 +176,7 @@ export const ShowRouterConfig = function(n, shared = 0){
     let router_jobs = [];
 
     if (jobs){
-        let router_jobs = jobs.filter(j => j.host_id === n.data.id);
+        router_jobs = jobs.filter(j => j.host_id === n.data.id);
     }
 
     ConfigRouterJob(router_jobs, shared);
@@ -142,7 +191,7 @@ export const ShowRouterConfig = function(n, shared = 0){
         let default_gw = '';
 
         if ("default_gw" in n.config){
-            let default_gw = n.config.default_gw;
+            default_gw = n.config.default_gw;
         }
 
         ConfigRouterGateway(default_gw);
@@ -180,7 +229,7 @@ export const ShowServerConfig = function(n, shared = 0){
     let host_jobs = [];
 
     if (jobs){
-        let host_jobs = jobs.filter(j => j.host_id === n.data.id);
+        host_jobs = jobs.filter(j => j.host_id === n.data.id);
     }
 
     ConfigServerJob(host_jobs, shared);
@@ -195,7 +244,7 @@ export const ShowServerConfig = function(n, shared = 0){
         let default_gw = '';
 
         if ("default_gw" in n.config){
-            let default_gw = n.config.default_gw;
+            default_gw = n.config.default_gw;
         }
 
         ConfigServerGateway(default_gw);
@@ -252,7 +301,7 @@ export const ShowSwitchConfig = function(n, shared = 0){
     let switch_jobs = [];
 
     if (jobs){
-        let switch_jobs = jobs.filter(j => j.host_id === n.data.id);
+        switch_jobs = jobs.filter(j => j.host_id === n.data.id);
     }
 
     ConfigSwitchJob(switch_jobs, shared);

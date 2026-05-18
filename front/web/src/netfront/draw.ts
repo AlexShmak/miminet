@@ -1,13 +1,45 @@
 import { state } from "../lib/state";
+import {
+    MarkLinkDownEdges,
+    SnapNodesToGrid,
+    prepareStylesheet,
+    AddEdge,
+    MoveNodes,
+    DeleteNode,
+    DeleteEdge,
+    DeleteJob,
+    PostNodesEdges,
+} from "./network_ops";
+import {
+    UpdateNetworkConfig,
+    drawGrid,
+    TakeGraphPictureAndUpdate,
+    SetNetworkPlayerState,
+    SaveNetworkObject,
+    RestoreNetworkObject,
+    initGrid,
+} from "./runtime";
+import {
+    ShowHostConfig,
+    ShowRouterConfig,
+    ShowServerConfig,
+    ShowHubConfig,
+    ShowSwitchConfig,
+    ShowEdgeConfig,
+} from "./show_config";
+import { ClearConfigForm } from "../config_forms/common";
 
 export const DrawGraph = function() {
 
-    // Do we already have one?
-    let cy = undefined;
+    let selecteed_node_id: any = 0;
+    let selected_edge_id: any = 0;
 
-    if (global_cy)
+    // Do we already have one?
+    let cy: any;
+
+    if (state.global_cy)
     {
-        let cy = global_cy;
+        let cy = state.global_cy;
 
         var collection = cy.elements();
         cy.remove(collection);
@@ -16,7 +48,7 @@ export const DrawGraph = function() {
         cy.add(edges);
         MarkLinkDownEdges(cy);
         cy.nodes().grabify();
-        global_eh.enable();
+        state.global_eh.enable();
         return;
     }
 
@@ -74,15 +106,15 @@ export const DrawGraph = function() {
     // Changing zoom
     cy.on('zoom', function(evt){
 
-        if (NetworkUpdateTimeoutId >= 0){
-            clearTimeout(NetworkUpdateTimeoutId);
+        if (state.networkUpdateTimeoutId >= 0){
+            clearTimeout(state.networkUpdateTimeoutId);
             state.networkUpdateTimeoutId = -1;
         }
 
         state.networkUpdateTimeoutId = setTimeout(UpdateNetworkConfig, 2000);
         
         // Update grid zoom and redraw
-        if (gridCanvasLayer) {
+        if (state.gridCanvasLayer) {
             state.currentGridZoom = cy.zoom();
             drawGrid();
         }
@@ -91,21 +123,21 @@ export const DrawGraph = function() {
     // Changing the pan
     cy.on('pan', function(evt){
 
-        if (NetworkUpdateTimeoutId >= 0){
-            clearTimeout(NetworkUpdateTimeoutId);
+        if (state.networkUpdateTimeoutId >= 0){
+            clearTimeout(state.networkUpdateTimeoutId);
             state.networkUpdateTimeoutId = -1;
         }
 
         state.networkUpdateTimeoutId = setTimeout(UpdateNetworkConfig, 2000);
         
         // Update grid when panning to keep it aligned with nodes
-        if (gridCanvasLayer) {
+        if (state.gridCanvasLayer) {
             drawGrid();
         }
     });
 
     // Looking for a position changing
-    cy.on('dragfree', 'node', function(evt){
+    cy.on('dragfree', 'node', function(this: any, evt){
 
         //let node_id = evt.target.id();
         let n = nodes.find(n => n.data.id === this.id());
@@ -146,16 +178,16 @@ export const DrawGraph = function() {
         // Is this cy ?
         if (evtTarget === cy) {
             ClearConfigForm('');
-            let selecteed_node_id = 0;
-            let selected_edge_id = 0;
+            selecteed_node_id = 0;
+            selected_edge_id = 0;
             return;
         }
 
         // Is this edge ?
         if (evtTarget.group() === 'edges'){
-            let selected_edge_id = evtTarget.data().id;
+            selected_edge_id = evtTarget.data().id;
             ShowEdgeConfig(selected_edge_id);
-            let selecteed_node_id = 0;
+            selecteed_node_id = 0;
             return;
         }
 
@@ -167,8 +199,8 @@ export const DrawGraph = function() {
             return;
         }
 
-        let selecteed_node_id = n.data.id;
-        let selected_edge_id = 0;
+        selecteed_node_id = n.data.id;
+        selected_edge_id = 0;
 
         if (n.config.type === 'host'){
             ShowHostConfig(n);
@@ -194,7 +226,7 @@ export const DrawGraph = function() {
 
     $(document).on('keyup', function(e){
 
-        const evtTarget = e.target;
+        const evtTarget = e.target as unknown as HTMLInputElement | null;
         if (evtTarget && evtTarget.form) {
             return;
         }
@@ -208,8 +240,8 @@ export const DrawGraph = function() {
             DeleteJob(selecteed_node_id);
 
             ClearConfigForm('');
-            let selecteed_node_id = 0;
-            let selected_edge_id = 0;
+            selecteed_node_id = 0;
+            selected_edge_id = 0;
 
             PostNodesEdges();               // Update network on server
             cy.elements().remove();
@@ -239,7 +271,7 @@ export const DrawGraph = function() {
             DeleteEdge(selected_edge_id);
 
             ClearConfigForm('');
-            let selected_edge_id = 0;
+            selected_edge_id = 0;
 
             PostNodesEdges();               // Update network on server
             cy.elements().remove();
@@ -255,8 +287,8 @@ export const DrawGraph = function() {
         if (e.keyCode == 90 && e.ctrlKey){
 
             ClearConfigForm('');
-            let selecteed_node_id = 0;
-            let selected_edge_id = 0;
+            selecteed_node_id = 0;
+            selected_edge_id = 0;
 
             RestoreNetworkObject();
 
@@ -280,7 +312,7 @@ export const DrawGraph = function() {
 export const DrawGraphStatic = function(nodes, edges, shared=0) {
 
     // Do we already have one?
-    let cy = undefined;
+    let cy: any;
 
     let network_scheme_id = "network_scheme";
 
@@ -288,9 +320,9 @@ export const DrawGraphStatic = function(nodes, edges, shared=0) {
         let network_scheme_id = "network_scheme_shared";
     }
 
-    if (global_cy)
+    if (state.global_cy)
     {
-        let cy = global_cy;
+        let cy = state.global_cy;
         cy.elements().remove();
     } else {
         cy = cytoscape({
@@ -309,8 +341,8 @@ export const DrawGraphStatic = function(nodes, edges, shared=0) {
     }
 
     // Turn off edges creation.
-    if (global_eh){
-        global_eh.disable();
+    if (state.global_eh){
+        state.global_eh.disable();
     }
 
     cy.autounselectify(false);
@@ -327,12 +359,15 @@ export const DrawGraphStatic = function(nodes, edges, shared=0) {
 
 export const DrawSharedGraph = function(nodes, edges) {
 
-    // Do we already have one?
-    let cy = undefined;
+    let selecteed_node_id: any = 0;
+    let selected_edge_id: any = 0;
 
-    if (global_cy)
+    // Do we already have one?
+    let cy: any;
+
+    if (state.global_cy)
     {
-        let cy = global_cy;
+        let cy = state.global_cy;
         cy.elements().remove();
     } else {
         cy = cytoscape({
@@ -365,16 +400,16 @@ export const DrawSharedGraph = function(nodes, edges) {
         let evtTarget = evt.target;
         if (evtTarget === cy) {
             ClearConfigForm('');
-            let selecteed_node_id = 0;
-            let selected_edge_id = 0;
+            selecteed_node_id = 0;
+            selected_edge_id = 0;
             return;
         }
 
         // Is this edge ?
         if (evtTarget.group() === 'edges'){
-            let selected_edge_id = evtTarget.data().id;
+            selected_edge_id = evtTarget.data().id;
             ShowEdgeConfig(selected_edge_id, 1);
-            let selecteed_node_id = 0;
+            selecteed_node_id = 0;
             return;
         }
 
@@ -385,8 +420,8 @@ export const DrawSharedGraph = function(nodes, edges) {
             return;
         }
 
-        let selecteed_node_id = n.data.id;
-        let selected_edge_id = 0;
+        selecteed_node_id = n.data.id;
+        selected_edge_id = 0;
 
         if (n.config.type === 'host'){
             ShowHostConfig(n, 1);

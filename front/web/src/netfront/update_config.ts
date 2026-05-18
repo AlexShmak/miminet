@@ -1,3 +1,21 @@
+import { SetNetworkPlayerState, ExitEditMode, editingJobId, editingDeviceType } from "./runtime";
+import { DrawGraph } from "./draw";
+import {
+    ClearConfigForm,
+    HostWarningMsg,
+    HostErrorMsg,
+    ServerWarningMsg,
+    SwitchWarningMsg,
+    UpdateJobCounter,
+} from "../config_forms/common";
+import {
+    ShowHostConfig,
+    ShowRouterConfig,
+    ShowServerConfig,
+    ShowHubConfig,
+    ShowSwitchConfig,
+} from "./show_config";
+
 export const UpdateHostConfiguration = function (data, host_id)
 {
     // Reset network player
@@ -17,9 +35,9 @@ export const UpdateHostConfiguration = function (data, host_id)
                 }
                 if (!data.warning){
                     // Update nodes
-                    let nodes = data.nodes;
+                    nodes = data.nodes;
                     // Update jobs
-                    let jobs = data.jobs;
+                    jobs = data.jobs;
                     
                     // Update graph
                     DrawGraph();
@@ -55,7 +73,7 @@ export const UpdateHostConfiguration = function (data, host_id)
             // Show error message to user
             let errorMsg = 'Ошибка при сохранении конфигурации';
             if (xhr.responseJSON && xhr.responseJSON.message) {
-                let errorMsg = xhr.responseJSON.message;
+                errorMsg = xhr.responseJSON.message;
             }
             HostErrorMsg(errorMsg);
 
@@ -89,7 +107,7 @@ export const DeleteJobFromHost = function (host_id, job_id, network_guid)
             if (xhr.status === 200)
             {
                 // Update jobs
-                let jobs = data.jobs;
+                jobs = data.jobs;
 
                 // Update graph
                 DrawGraph();
@@ -132,7 +150,7 @@ export const DeleteJobFromRouter = function (router_id, job_id, network_guid)
       guid: network_guid,
     };
 
-    $.ajax({
+    ($.ajax as any)({
         type: 'POST',
         url: '/host/delete_job',
         data: data,
@@ -142,7 +160,7 @@ export const DeleteJobFromRouter = function (router_id, job_id, network_guid)
             if (xhr.status === 200)
             {
                 // Update jobs
-                let jobs = data.jobs;
+                jobs = data.jobs;
 
                 // Update graph
                 DrawGraph();
@@ -183,7 +201,7 @@ export const DeleteJobFromSwitch = function (switch_id, job_id, network_guid)
       guid: network_guid,
     };
 
-    $.ajax({
+    ($.ajax as any)({
         type: 'POST',
         url: '/host/delete_job',
         data: data,
@@ -193,7 +211,7 @@ export const DeleteJobFromSwitch = function (switch_id, job_id, network_guid)
             if (xhr.status === 200)
             {
                 // Update jobs
-                let jobs = data.jobs;
+                jobs = data.jobs;
 
                 // Update graph
                 DrawGraph();
@@ -233,7 +251,7 @@ export const DeleteJobFromServer = function (server_id, job_id, network_guid)
       guid: network_guid,
     };
 
-    $.ajax({
+    ($.ajax as any)({
         type: 'POST',
         url: '/host/delete_job',
         data: data,
@@ -243,7 +261,7 @@ export const DeleteJobFromServer = function (server_id, job_id, network_guid)
             if (xhr.status === 200)
             {
                 // Update jobs
-                let jobs = data.jobs;
+                jobs = data.jobs;
 
                 // Update graph
                 DrawGraph();
@@ -297,13 +315,13 @@ export const UpdateRouterConfiguration = function (data, router_id)
                 // Update nodes
                 if (data.nodes)
                 {
-                    let nodes = data.nodes;
+                    nodes = data.nodes;
                 }
 
                 // Update jobs
                 if (data.jobs)
                 {
-                    let jobs = data.jobs;
+                    jobs = data.jobs;
                 }
 
                 // Update graph
@@ -341,7 +359,7 @@ export const UpdateRouterConfiguration = function (data, router_id)
             // Show error message to user
             let errorMsg = 'Ошибка при сохранении конфигурации роутера';
             if (xhr.responseJSON && xhr.responseJSON.message) {
-                let errorMsg = xhr.responseJSON.message;
+                errorMsg = xhr.responseJSON.message;
             }
             HostErrorMsg(errorMsg);
 
@@ -377,11 +395,11 @@ export const UpdateServerConfiguration = function (data, router_id)
                 if (!data.warning){
 
                     if (data.nodes){
-                        let nodes = data.nodes;
+                        nodes = data.nodes;
                     }
 
                     if (data.jobs){
-                        let jobs = data.jobs;
+                        jobs = data.jobs;
                     }
 
                     // Update graph
@@ -420,7 +438,7 @@ export const UpdateServerConfiguration = function (data, router_id)
             // Show error message to user
             let errorMsg = 'Ошибка при сохранении конфигурации сервера';
             if (xhr.responseJSON && xhr.responseJSON.message) {
-                let errorMsg = xhr.responseJSON.message;
+                errorMsg = xhr.responseJSON.message;
             }
             HostErrorMsg(errorMsg);
 
@@ -445,7 +463,7 @@ export const UpdateHubConfiguration = function (data, hub_id)
             if (xhr.status === 200)
             {
                 // Update nodes
-                let nodes = data.nodes;
+                nodes = data.nodes;
 
                 // We don't clear packets and RunButtonState.
                 // Hub can change only names
@@ -496,10 +514,10 @@ export const UpdateSwitchConfiguration = function (data, switch_id)
                 if (!data.warning){
 
                     // Update nodes
-                    let nodes = data.nodes;
+                    nodes = data.nodes;
 
                     // Update jobs
-                    let jobs = data.jobs;
+                    jobs = data.jobs;
 
                     // Update graph
                     DrawGraph();
@@ -533,7 +551,7 @@ export const UpdateSwitchConfiguration = function (data, switch_id)
             // Show error message to user
             let errorMsg = 'Ошибка при сохранении конфигурации свитча';
             if (xhr.responseJSON && xhr.responseJSON.message) {
-                let errorMsg = xhr.responseJSON.message;
+                errorMsg = xhr.responseJSON.message;
             }
             HostErrorMsg(errorMsg);
 

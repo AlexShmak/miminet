@@ -1,13 +1,13 @@
 export const ConfigHostForm = function(host_id){
-    var form = document.getElementById('config_host_main_form_script').innerHTML;
-    var button = document.getElementById('config_host_save_script').innerHTML;
-    var banner = document.getElementById('config_host_edit_banner_script').innerHTML;
+    var form = document.getElementById('config_host_main_form_script')!.innerHTML;
+    var button = document.getElementById('config_host_save_script')!.innerHTML;
+    var banner = document.getElementById('config_host_edit_banner_script')!.innerHTML;
 
     // Clear all child
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
 
-    document.getElementById(config_content_save_id).style.display='block';
+    document.getElementById(config_content_save_id)!.style.display='block';
 
     // Add new form
     $(config_content_id).append(form);
@@ -34,15 +34,15 @@ export const ConfigHostForm = function(host_id){
 }
 
 export const ConfigRouterForm = function (router_id) {
-    var form = document.getElementById('config_router_main_form_script').innerHTML;
-    var button = document.getElementById('config_router_save_script').innerHTML;
-    var banner = document.getElementById('config_router_edit_banner_script').innerHTML;
+    var form = document.getElementById('config_router_main_form_script')!.innerHTML;
+    var button = document.getElementById('config_router_save_script')!.innerHTML;
+    var banner = document.getElementById('config_router_edit_banner_script')!.innerHTML;
 
     // Clear all child
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
 
-    document.getElementById(config_content_save_id).style.display='block';
+    document.getElementById(config_content_save_id)!.style.display='block';
 
     // Add new form
     $(config_content_id).append(form);
@@ -79,15 +79,15 @@ export const ConfigRouterForm = function (router_id) {
 }
 
 export const ConfigServerForm = function (server_id) {
-    var form = document.getElementById('config_server_main_form_script').innerHTML;
-    var button = document.getElementById('config_server_save_script').innerHTML;
-    var banner = document.getElementById('config_server_edit_banner_script').innerHTML;
+    var form = document.getElementById('config_server_main_form_script')!.innerHTML;
+    var button = document.getElementById('config_server_save_script')!.innerHTML;
+    var banner = document.getElementById('config_server_edit_banner_script')!.innerHTML;
 
     // Clear all child
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
 
-    document.getElementById(config_content_save_id).style.display='block';
+    document.getElementById(config_content_save_id)!.style.display='block';
 
     // Add new form
     $(config_content_id).append(form);
@@ -124,14 +124,14 @@ export const ConfigServerForm = function (server_id) {
 }
 
 export const ConfigHubForm = function (hub_id) {
-    var form = document.getElementById('config_hub_main_form_script').innerHTML;
-    var button = document.getElementById('config_hub_save_script').innerHTML;
+    var form = document.getElementById('config_hub_main_form_script')!.innerHTML;
+    var button = document.getElementById('config_hub_save_script')!.innerHTML;
 
     // Clear all child
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
 
-    document.getElementById(config_content_save_id).style.display='block';
+    document.getElementById(config_content_save_id)!.style.display='block';
 
     // Add new form
     $(config_content_id).append(form);
@@ -166,14 +166,14 @@ export const ConfigHubForm = function (hub_id) {
 }
 
 export const ConfigSwitchForm = function (switch_id) {
-    var form = document.getElementById('config_switch_main_form_script').innerHTML;
-    var button = document.getElementById('config_switch_save_script').innerHTML;
+    var form = document.getElementById('config_switch_main_form_script')!.innerHTML;
+    var button = document.getElementById('config_switch_save_script')!.innerHTML;
 
     // Clear all child
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
 
-    document.getElementById(config_content_save_id).style.display='block';
+    document.getElementById(config_content_save_id)!.style.display='block';
 
     // Add new form
     $(config_content_id).append(form);
@@ -190,7 +190,7 @@ export const ConfigSwitchForm = function (switch_id) {
     $('#net_guid').val(network_guid);
 
     function handleSwitchClick(event) {
-        $("#config_switch_main_form [name='config_rstp_stp']").val($('#config_button_rstp').val());
+        $("#config_switch_main_form [name='config_rstp_stp']").val($('#config_button_rstp').val() ?? '');
         event.preventDefault();
         let data = $('#config_switch_main_form').serialize();
 
@@ -213,16 +213,16 @@ export const ConfigSwitchForm = function (switch_id) {
 }
 
 export const ConfigEdgeForm = function (edge_id) {
-    let edgeSaveXHR = null;
-    var form = document.getElementById('config_edge_main_form_script').innerHTML;
-    var button = document.getElementById('config_edge_save_script').innerHTML;
+    let edgeSaveXHR: any = null;
+    var form = document.getElementById('config_edge_main_form_script')!.innerHTML;
+    var button = document.getElementById('config_edge_save_script')!.innerHTML;
 
 
     // Clear all child
     $(config_content_id).empty();
     $(config_content_save_tag).empty();
 
-    document.getElementById(config_content_save_id).style.display='block';
+    document.getElementById(config_content_save_id)!.style.display='block';
 
     // Add new form
     $(config_content_id).append(form);
@@ -270,14 +270,14 @@ export const ConfigEdgeForm = function (edge_id) {
 
 export const ConfigHubName = function (hostname) {
 
-    var text = document.getElementById('config_hub_name_script').innerHTML;
+    var text = document.getElementById('config_hub_name_script')!.innerHTML;
 
     $(config_hub_main_form_id).prepend((text));
     $('#config_hub_name').val(hostname);
 }
 
 export const ConfigEdgeNetworkIssues = function (edge_loss, edge_duplicate) {
-    var text = document.getElementById('config_edge_set_network_issues_script').innerHTML;
+    var text = document.getElementById('config_edge_set_network_issues_script')!.innerHTML;
     $(config_edge_main_form_id).prepend(text);
     $('#edge_loss').val(edge_loss);
     $('#edge_duplicate').val(edge_duplicate);
@@ -285,7 +285,7 @@ export const ConfigEdgeNetworkIssues = function (edge_loss, edge_duplicate) {
 
 export const ConfigEdgeEndpoints = function (edge_source, edge_target) {
 
-    var text = document.getElementById('config_edge_edpoint_script').innerHTML;
+    var text = document.getElementById('config_edge_edpoint_script')!.innerHTML;
 
     $(config_edge_main_form_id).prepend((text));
     $('#edge_source').val(edge_source);
@@ -294,7 +294,7 @@ export const ConfigEdgeEndpoints = function (edge_source, edge_target) {
 
 export const ConfigSwitchName = function (hostname) {
 
-    var text = document.getElementById('config_switch_name_script').innerHTML;
+    var text = document.getElementById('config_switch_name_script')!.innerHTML;
 
     $(config_switch_main_form_id).prepend((text));
     $('#switch_name').val(hostname);
@@ -303,13 +303,13 @@ export const ConfigSwitchName = function (hostname) {
 export const ConfigSwtichSTP = function (stp) {
     var elem = document.getElementById('config_switch_checkbox_stp_script');
 
-    $(elem.innerHTML).insertBefore('#config_switch_end_form');
+    $(elem!.innerHTML).insertBefore('#config_switch_end_form');
 
     if (stp === 1) {
         $('#config_switch_stp').attr('checked', 'checked');
     }
 
-    var warning_text = document.getElementById('config_switch_warning_stp_script').innerHTML;
+    var warning_text = document.getElementById('config_switch_warning_stp_script')!.innerHTML;
     $('#config_switch_stp').on('click', function () {
         if ($(this).is(':checked')) {
             $(warning_text).insertBefore('#config_switch_end_form');
@@ -322,13 +322,13 @@ export const ConfigSwtichSTP = function (stp) {
 export const ConfigSwtichRSTP = function (rstp) {
     var elem = document.getElementById('config_switch_checkbox_rstp_script');
 
-    $(elem.innerHTML).insertBefore('#config_switch_end_form');
+    $(elem!.innerHTML).insertBefore('#config_switch_end_form');
 
     if (rstp === 1) {
         $('#config_switch_rstp').attr('checked', 'checked');
     }
 
-    var warning_text = document.getElementById('config_switch_warning_rstp_script').innerHTML;
+    var warning_text = document.getElementById('config_switch_warning_rstp_script')!.innerHTML;
     $('#config_switch_rstp').on('click', function () {
         if ($(this).is(':checked')) {
             $(warning_text).insertBefore('#config_switch_end_form');

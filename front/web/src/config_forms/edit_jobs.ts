@@ -1,3 +1,11 @@
+import { EnterEditMode } from "../netfront/runtime";
+import {
+    UpdateRouterForm,
+    UpdateServerForm,
+    UpdateSwitchForm,
+    FillDeviceSelectIntf,
+} from "./jobs";
+
 export const EditJobInHost = function(host_id, job_id, network_guid) {
     const job = jobs.find(j => j.id === job_id);
 
@@ -9,7 +17,7 @@ export const EditJobInHost = function(host_id, job_id, network_guid) {
     EnterEditMode('host', job_id, job.job_id);
 
     // Set the select field to the job type
-    const selectField = document.getElementById('config_host_job_select_field');
+    const selectField = document.getElementById('config_host_job_select_field') as HTMLSelectElement | null;
     if (selectField) {
         selectField.value = job.job_id.toString();
 
@@ -70,7 +78,7 @@ export const EditJobInRouter = function(router_id, job_id, network_guid) {
     EnterEditMode('router', job_id, job.job_id);
 
     // Set the select field to the job type
-    const selectField = document.getElementById('config_router_job_select_field');
+    const selectField = document.getElementById('config_router_job_select_field') as HTMLSelectElement | null;
     if (selectField) {
         selectField.value = job.job_id.toString();
 
@@ -174,7 +182,7 @@ export const EditJobInServer = function(server_id, job_id, network_guid) {
     EnterEditMode('server', job_id, job.job_id);
 
     // Set the select field to the job type
-    const selectField = document.getElementById('config_server_job_select_field');
+    const selectField = document.getElementById('config_server_job_select_field') as HTMLSelectElement | null;
     if (selectField) {
         selectField.value = job.job_id.toString();
 
@@ -236,7 +244,7 @@ export const EditJobInSwitch = function(switch_id, job_id, network_guid) {
     EnterEditMode('switch', job_id, job.job_id);
 
     // Set the select field to the job type
-    const selectField = document.getElementById('config_switch_job_select_field');
+    const selectField = document.getElementById('config_switch_job_select_field') as HTMLSelectElement | null;
     if (selectField) {
         selectField.value = job.job_id.toString();
 
