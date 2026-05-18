@@ -1,12 +1,15 @@
-let SimulationId = 0;
-let global_cy = undefined;
-let global_eh = undefined;
+// State vars declared with `var` so the bindings become properties on
+// `window`. This is the source of truth for the bridge in
+// front/web/src/lib/state.ts, which proxies state.X to window.X.
+var SimulationId = 0;
+var global_cy = undefined;
+var global_eh = undefined;
 var NetworkUpdateTimeoutId = -1;
-let NetworkCache = [];
-let lastSimulationId = 0
+var NetworkCache = [];
+var lastSimulationId = 0;
 
-let packetsNotFiltered = null;
-let packetFilterState = {
+var packetsNotFiltered = null;
+var packetFilterState = {
     hideARP: false,
     hideSTP: false,
     hideSYN: false,
@@ -14,9 +17,9 @@ let packetFilterState = {
 
 const LINK_DOWN_JOB_ID = 6;
 
-let gridCanvasLayer = undefined;
-let gridEnabled = true;
-let currentGridZoom = 1.0;
+var gridCanvasLayer = undefined;
+var gridEnabled = true;
+var currentGridZoom = 1.0;
 
 const uid = function(){
     return Date.now().toString(36) + Math.random().toString(36).substr(2);

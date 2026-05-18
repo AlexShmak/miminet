@@ -14,8 +14,10 @@
 
 import { attachGlobals } from "./lib/window-globals";
 
+import * as netfrontSimulation from "./netfront/simulation.js";
 import * as configFormsShared from "./config_forms/shared.js";
 
+attachGlobals(netfrontSimulation);
 attachGlobals(configFormsShared);
 
 declare global {
