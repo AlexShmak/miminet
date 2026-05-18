@@ -1,4 +1,4 @@
-const UpdateHostConfiguration = function (data, host_id)
+export const UpdateHostConfiguration = function (data, host_id)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -17,9 +17,9 @@ const UpdateHostConfiguration = function (data, host_id)
                 }
                 if (!data.warning){
                     // Update nodes
-                    nodes = data.nodes;
+                    let nodes = data.nodes;
                     // Update jobs
-                    jobs = data.jobs;
+                    let jobs = data.jobs;
                     
                     // Update graph
                     DrawGraph();
@@ -55,7 +55,7 @@ const UpdateHostConfiguration = function (data, host_id)
             // Show error message to user
             let errorMsg = 'Ошибка при сохранении конфигурации';
             if (xhr.responseJSON && xhr.responseJSON.message) {
-                errorMsg = xhr.responseJSON.message;
+                let errorMsg = xhr.responseJSON.message;
             }
             HostErrorMsg(errorMsg);
 
@@ -69,7 +69,7 @@ const UpdateHostConfiguration = function (data, host_id)
 }
 
 // Delete job from host
-const DeleteJobFromHost = function (host_id, job_id, network_guid)
+export const DeleteJobFromHost = function (host_id, job_id, network_guid)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -89,7 +89,7 @@ const DeleteJobFromHost = function (host_id, job_id, network_guid)
             if (xhr.status === 200)
             {
                 // Update jobs
-                jobs = data.jobs;
+                let jobs = data.jobs;
 
                 // Update graph
                 DrawGraph();
@@ -122,7 +122,7 @@ const DeleteJobFromHost = function (host_id, job_id, network_guid)
 }
 
 // Delete job from router
-const DeleteJobFromRouter = function (router_id, job_id, network_guid)
+export const DeleteJobFromRouter = function (router_id, job_id, network_guid)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -142,7 +142,7 @@ const DeleteJobFromRouter = function (router_id, job_id, network_guid)
             if (xhr.status === 200)
             {
                 // Update jobs
-                jobs = data.jobs;
+                let jobs = data.jobs;
 
                 // Update graph
                 DrawGraph();
@@ -173,7 +173,7 @@ const DeleteJobFromRouter = function (router_id, job_id, network_guid)
     });
 }
 
-const DeleteJobFromSwitch = function (switch_id, job_id, network_guid)
+export const DeleteJobFromSwitch = function (switch_id, job_id, network_guid)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -193,7 +193,7 @@ const DeleteJobFromSwitch = function (switch_id, job_id, network_guid)
             if (xhr.status === 200)
             {
                 // Update jobs
-                jobs = data.jobs;
+                let jobs = data.jobs;
 
                 // Update graph
                 DrawGraph();
@@ -223,7 +223,7 @@ const DeleteJobFromSwitch = function (switch_id, job_id, network_guid)
 }
 
 // Delete job from server
-const DeleteJobFromServer = function (server_id, job_id, network_guid)
+export const DeleteJobFromServer = function (server_id, job_id, network_guid)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -243,7 +243,7 @@ const DeleteJobFromServer = function (server_id, job_id, network_guid)
             if (xhr.status === 200)
             {
                 // Update jobs
-                jobs = data.jobs;
+                let jobs = data.jobs;
 
                 // Update graph
                 DrawGraph();
@@ -275,7 +275,7 @@ const DeleteJobFromServer = function (server_id, job_id, network_guid)
 }
 
 // Update router configuration
-const UpdateRouterConfiguration = function (data, router_id)
+export const UpdateRouterConfiguration = function (data, router_id)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -297,13 +297,13 @@ const UpdateRouterConfiguration = function (data, router_id)
                 // Update nodes
                 if (data.nodes)
                 {
-                    nodes = data.nodes;
+                    let nodes = data.nodes;
                 }
 
                 // Update jobs
                 if (data.jobs)
                 {
-                    jobs = data.jobs;
+                    let jobs = data.jobs;
                 }
 
                 // Update graph
@@ -341,7 +341,7 @@ const UpdateRouterConfiguration = function (data, router_id)
             // Show error message to user
             let errorMsg = 'Ошибка при сохранении конфигурации роутера';
             if (xhr.responseJSON && xhr.responseJSON.message) {
-                errorMsg = xhr.responseJSON.message;
+                let errorMsg = xhr.responseJSON.message;
             }
             HostErrorMsg(errorMsg);
 
@@ -355,7 +355,7 @@ const UpdateRouterConfiguration = function (data, router_id)
 }
 
 // Update server configuration
-const UpdateServerConfiguration = function (data, router_id)
+export const UpdateServerConfiguration = function (data, router_id)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -377,11 +377,11 @@ const UpdateServerConfiguration = function (data, router_id)
                 if (!data.warning){
 
                     if (data.nodes){
-                        nodes = data.nodes;
+                        let nodes = data.nodes;
                     }
 
                     if (data.jobs){
-                        jobs = data.jobs;
+                        let jobs = data.jobs;
                     }
 
                     // Update graph
@@ -420,7 +420,7 @@ const UpdateServerConfiguration = function (data, router_id)
             // Show error message to user
             let errorMsg = 'Ошибка при сохранении конфигурации сервера';
             if (xhr.responseJSON && xhr.responseJSON.message) {
-                errorMsg = xhr.responseJSON.message;
+                let errorMsg = xhr.responseJSON.message;
             }
             HostErrorMsg(errorMsg);
 
@@ -434,7 +434,7 @@ const UpdateServerConfiguration = function (data, router_id)
 }
 
 // Update hub configuration
-const UpdateHubConfiguration = function (data, hub_id)
+export const UpdateHubConfiguration = function (data, hub_id)
 {
     ajaxWithAuth({
         type: 'POST',
@@ -445,7 +445,7 @@ const UpdateHubConfiguration = function (data, hub_id)
             if (xhr.status === 200)
             {
                 // Update nodes
-                nodes = data.nodes;
+                let nodes = data.nodes;
 
                 // We don't clear packets and RunButtonState.
                 // Hub can change only names
@@ -477,7 +477,7 @@ const UpdateHubConfiguration = function (data, hub_id)
 }
 
 // Update Switch configuration
-const UpdateSwitchConfiguration = function (data, switch_id)
+export const UpdateSwitchConfiguration = function (data, switch_id)
 {
     // Reset network player
     SetNetworkPlayerState(-1);
@@ -496,10 +496,10 @@ const UpdateSwitchConfiguration = function (data, switch_id)
                 if (!data.warning){
 
                     // Update nodes
-                    nodes = data.nodes;
+                    let nodes = data.nodes;
 
                     // Update jobs
-                    jobs = data.jobs;
+                    let jobs = data.jobs;
 
                     // Update graph
                     DrawGraph();
@@ -533,7 +533,7 @@ const UpdateSwitchConfiguration = function (data, switch_id)
             // Show error message to user
             let errorMsg = 'Ошибка при сохранении конфигурации свитча';
             if (xhr.responseJSON && xhr.responseJSON.message) {
-                errorMsg = xhr.responseJSON.message;
+                let errorMsg = xhr.responseJSON.message;
             }
             HostErrorMsg(errorMsg);
 

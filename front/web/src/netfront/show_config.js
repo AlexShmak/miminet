@@ -1,4 +1,4 @@
-const ActionWithInterface = function (n, i, fun) {
+export const ActionWithInterface = function (n, i, fun) {
 
     let iface_id = n.interface[i].id;
 
@@ -27,33 +27,33 @@ const ActionWithInterface = function (n, i, fun) {
 
     let connected_to = target_host;
     if (n.data.id === target_host){
-        connected_to = source_host;
+        let connected_to = source_host;
     }
 
     let connected_to_host = nodes.find(n => n.data.id === connected_to);
     let connected_to_host_label = "Unknown";
 
     if (connected_to_host){
-        connected_to_host_label = connected_to_host.data.label;
+        let connected_to_host_label = connected_to_host.data.label;
     }
 
-    ip_addr = n.interface[i].ip;
+    let ip_addr = n.interface[i].ip;
 
     if (!ip_addr){
-        ip_addr = '';
+        let ip_addr = '';
     }
 
-    netmask = n.interface[i].netmask;
+    let netmask = n.interface[i].netmask;
 
     if (!netmask){
-        netmask = '';
+        let netmask = '';
     }
 
     fun(iface_id, ip_addr, netmask, connected_to_host_label);
 
 }
 
-const ShowHostConfig = function(n, shared = 0){
+export const ShowHostConfig = function(n, shared = 0){
 
     // Exit edit mode when switching to different device
     if (editingJobId && editingDeviceType) {
@@ -77,7 +77,7 @@ const ShowHostConfig = function(n, shared = 0){
     let host_jobs = [];
 
     if (jobs){
-        host_jobs = jobs.filter(j => j.host_id === n.data.id);
+        let host_jobs = jobs.filter(j => j.host_id === n.data.id);
     }
 
     ConfigHostJob(host_jobs, shared);
@@ -92,7 +92,7 @@ const ShowHostConfig = function(n, shared = 0){
         let default_gw = '';
 
         if ("default_gw" in n.config){
-            default_gw = n.config.default_gw;
+            let default_gw = n.config.default_gw;
         }
 
         ConfigHostGateway(default_gw);
@@ -103,7 +103,7 @@ const ShowHostConfig = function(n, shared = 0){
     }
 }
 
-const ShowRouterConfig = function(n, shared = 0){
+export const ShowRouterConfig = function(n, shared = 0){
 
     // Exit edit mode when switching to different device
     if (editingJobId && editingDeviceType) {
@@ -127,7 +127,7 @@ const ShowRouterConfig = function(n, shared = 0){
     let router_jobs = [];
 
     if (jobs){
-        router_jobs = jobs.filter(j => j.host_id === n.data.id);
+        let router_jobs = jobs.filter(j => j.host_id === n.data.id);
     }
 
     ConfigRouterJob(router_jobs, shared);
@@ -142,7 +142,7 @@ const ShowRouterConfig = function(n, shared = 0){
         let default_gw = '';
 
         if ("default_gw" in n.config){
-            default_gw = n.config.default_gw;
+            let default_gw = n.config.default_gw;
         }
 
         ConfigRouterGateway(default_gw);
@@ -156,7 +156,7 @@ const ShowRouterConfig = function(n, shared = 0){
     }
 }
 
-const ShowServerConfig = function(n, shared = 0){
+export const ShowServerConfig = function(n, shared = 0){
 
     // Exit edit mode when switching to different device
     if (editingJobId && editingDeviceType) {
@@ -180,7 +180,7 @@ const ShowServerConfig = function(n, shared = 0){
     let host_jobs = [];
 
     if (jobs){
-        host_jobs = jobs.filter(j => j.host_id === n.data.id);
+        let host_jobs = jobs.filter(j => j.host_id === n.data.id);
     }
 
     ConfigServerJob(host_jobs, shared);
@@ -195,7 +195,7 @@ const ShowServerConfig = function(n, shared = 0){
         let default_gw = '';
 
         if ("default_gw" in n.config){
-            default_gw = n.config.default_gw;
+            let default_gw = n.config.default_gw;
         }
 
         ConfigServerGateway(default_gw);
@@ -206,7 +206,7 @@ const ShowServerConfig = function(n, shared = 0){
     }
 }
 
-const ShowHubConfig = function(n, shared = 0){
+export const ShowHubConfig = function(n, shared = 0){
 
     let hostname = n.config.label;
     hostname = hostname || n.data.id;
@@ -235,7 +235,7 @@ const ShowHubConfig = function(n, shared = 0){
     }
 }
 
-const ShowSwitchConfig = function(n, shared = 0){
+export const ShowSwitchConfig = function(n, shared = 0){
 
     let hostname = n.config.label;
     hostname = hostname || n.data.id;
@@ -252,7 +252,7 @@ const ShowSwitchConfig = function(n, shared = 0){
     let switch_jobs = [];
 
     if (jobs){
-        switch_jobs = jobs.filter(j => j.host_id === n.data.id);
+        let switch_jobs = jobs.filter(j => j.host_id === n.data.id);
     }
 
     ConfigSwitchJob(switch_jobs, shared);
@@ -282,7 +282,7 @@ const ShowSwitchConfig = function(n, shared = 0){
     }
 }
 
-const ShowEdgeConfig = function(edge_id, shared = 0){
+export const ShowEdgeConfig = function(edge_id, shared = 0){
 
     let ed = edges.find(ed => ed.data.id === edge_id);
 
@@ -312,18 +312,18 @@ const ShowEdgeConfig = function(edge_id, shared = 0){
     }
 }
 
-const PacketUid = function(){
+export const PacketUid = function(){
     return "pkt_" + uid();
 }
 
-const l1HubUid = function(){
+export const l1HubUid = function(){
 
     let hub_name = "l1hub";
 
     for (let hub_number = 1; hub_number < 100; hub_number++) {
-        hub = hub_name + hub_number;
+        let hub = hub_name + hub_number;
 
-        t = nodes.find(t => t.data.id === hub);
+        let t = nodes.find(t => t.data.id === hub);
 
         if (!t)
         {
@@ -334,14 +334,14 @@ const l1HubUid = function(){
     return "hub_" + uid();
 }
 
-const l2SwitchUid = function(){
+export const l2SwitchUid = function(){
 
     let sw_name = "l2sw";
 
     for (let sw_number = 1; sw_number < 100; sw_number++) {
-        sw = sw_name + sw_number;
+        let sw = sw_name + sw_number;
 
-        t = nodes.find(t => t.data.id === sw);
+        let t = nodes.find(t => t.data.id === sw);
 
         if (!t)
         {
@@ -352,7 +352,7 @@ const l2SwitchUid = function(){
     return "sw_" + uid();
 }
 
-const l2SwitchPortUid = function(switch_id){
+export const l2SwitchPortUid = function(switch_id){
 
     let t = nodes.find(t => t.data.id === switch_id);
 
@@ -362,7 +362,7 @@ const l2SwitchPortUid = function(switch_id){
     }
 
     for (let port_number = 1; port_number < 128; port_number++) {
-        port = t.data.id + "_" + port_number;
+        let port = t.data.id + "_" + port_number;
 
         let i = t.interface.find(i => i.id === port);
 
@@ -372,7 +372,7 @@ const l2SwitchPortUid = function(switch_id){
     }
 }
 
-const l1HubPortUid = function(hub_id){
+export const l1HubPortUid = function(hub_id){
 
     let t = nodes.find(t => t.data.id === hub_id);
 
@@ -382,7 +382,7 @@ const l1HubPortUid = function(hub_id){
     }
 
     for (let port_number = 1; port_number < 128; port_number++) {
-        port = t.data.id + "_" + port_number;
+        let port = t.data.id + "_" + port_number;
 
         let i = t.interface.find(i => i.id === port);
 
@@ -392,11 +392,11 @@ const l1HubPortUid = function(hub_id){
     }
 }
 
-const EdgeUid = function(){
+export const EdgeUid = function(){
     return "edge_" + uid();
 }
 
-const InterfaceUid = function(){
+export const InterfaceUid = function(){
     return "iface_" + Math.random().toString(9).substring(2, 10);
 }
 

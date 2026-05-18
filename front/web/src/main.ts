@@ -14,7 +14,12 @@
 
 import { attachGlobals } from "./lib/window-globals";
 
+import * as netfrontShowConfig from "./netfront/show_config.js";
+import * as netfrontNetworkOps from "./netfront/network_ops.js";
+import * as netfrontDraw from "./netfront/draw.js";
 import * as netfrontSimulation from "./netfront/simulation.js";
+import * as netfrontUpdateConfig from "./netfront/update_config.js";
+import * as netfrontRuntime from "./netfront/runtime.js";
 
 // config_forms — common.js exports the shared selectors and is imported
 // first so its top-level jQuery `.load()` calls run before the rest.
@@ -25,7 +30,12 @@ import * as configFormsHelpers from "./config_forms/helpers.js";
 import * as configFormsJobs from "./config_forms/jobs.js";
 import * as configFormsEditJobs from "./config_forms/edit_jobs.js";
 
+attachGlobals(netfrontShowConfig);
+attachGlobals(netfrontNetworkOps);
+attachGlobals(netfrontDraw);
 attachGlobals(netfrontSimulation);
+attachGlobals(netfrontUpdateConfig);
+attachGlobals(netfrontRuntime);
 attachGlobals(configFormsCommon);
 attachGlobals(configFormsDevice);
 attachGlobals(configFormsShared);

@@ -18,14 +18,9 @@ const STATIC_ROOT = resolve(__dirname, '../src/static');
 const DIST_ROOT = resolve(STATIC_ROOT, 'dist');
 
 const CLASSIC_BUNDLE = [
+  // state.js is the only file remaining as a classic script. It declares
+  // the window-level state variables that web/src/lib/state.ts bridges.
   'netfront/state.js',
-  'netfront/show_config.js',
-  'netfront/network_ops.js',
-  'netfront/draw.js',
-  // 'netfront/simulation.js' migrated to web/src/netfront/simulation.js
-  'netfront/update_config.js',
-  'netfront/runtime.js',
-  // config_forms/* migrated to web/src/config_forms/
 ];
 
 const concatClassicScripts = (): PluginOption => ({

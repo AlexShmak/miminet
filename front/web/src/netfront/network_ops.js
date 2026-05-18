@@ -1,4 +1,4 @@
-const PostNodesEdges = function(){
+export const PostNodesEdges = function(){
     ajaxWithAuth({
         type: 'POST',
         url: ExternalUrlFor('/post_nodes_edges?guid=' + network_guid),
@@ -10,7 +10,7 @@ const PostNodesEdges = function(){
     });
 }
 
-const AddEdge = function(source_id, target_id){
+export const AddEdge = function(source_id, target_id){
 
         let source_node = nodes.find(n => n.data.id === source_id);
         let target_node = nodes.find(n => n.data.id === target_id);
@@ -60,8 +60,8 @@ const AddEdge = function(source_id, target_id){
             var type_connection = null;
 
             if (areInterfaceFieldsFilled(target_node)) {
-                vlan = 1;
-                type_connection = 0;
+                let vlan = 1;
+                let type_connection = 0;
             }
 
             let iface_id = l2SwitchPortUid(target_node.data.id);
@@ -79,8 +79,8 @@ const AddEdge = function(source_id, target_id){
             var type_connection = null;
 
             if (areInterfaceFieldsFilled(source_node)) {
-                vlan = 1;
-                type_connection = 0;
+                let vlan = 1;
+                let type_connection = 0;
             }
 
             let iface_id = l2SwitchPortUid(source_node.data.id);
@@ -113,7 +113,7 @@ const AddEdge = function(source_id, target_id){
         }
 }
 
-const DeleteJob = function(node_id){
+export const DeleteJob = function(node_id){
 
     let jobs_to_delete = [];
 
@@ -133,7 +133,7 @@ const DeleteJob = function(node_id){
     });
 }
 
-const DeleteNode = function(node_id) {
+export const DeleteNode = function(node_id) {
 
     // Find node in nodes
     let n = nodes.find(n => n.data.id === node_id);
@@ -203,7 +203,7 @@ const DeleteNode = function(node_id) {
     nodes.splice(node_index,1);
 }
 
-const DeleteEdge = function (edge_id) {
+export const DeleteEdge = function (edge_id) {
 
     let ed = edges.find(ed => ed.data.id === edge_id);
 
@@ -236,7 +236,7 @@ const DeleteEdge = function (edge_id) {
     return;
 }
 
-const PostNodes = function(){
+export const PostNodes = function(){
     ajaxWithAuth({
         type: 'POST',
         url: ExternalUrlFor('/post_network_nodes?guid=' + network_guid),
@@ -248,7 +248,7 @@ const PostNodes = function(){
     });
 }
 
-const MoveNodes = function(){
+export const MoveNodes = function(){
 
     ajaxWithAuth({
         type: 'POST',
@@ -261,7 +261,7 @@ const MoveNodes = function(){
     });
 }
 
-const prepareStylesheet = function() {
+export const prepareStylesheet = function() {
     const getColor = function(ele) {
         if (ele.group() === "edges") {
             const dup = ele.data('duplicate_percentage');
@@ -337,20 +337,20 @@ const prepareStylesheet = function() {
                 return;
             }
 
-            label = label + '\n' + ip_addr + "/" + netmask;
+            let label = label + '\n' + ip_addr + "/" + netmask;
         }
         );
 
         if (n.config.default_gw)
         {
-            label = label + '\n' + 'gw:' + n.config.default_gw;
+            let label = label + '\n' + 'gw:' + n.config.default_gw;
         }
 
         $.each(jobs, function (i) {
             let j = jobs[i];
 
             if (j.host_id === n.data.id){
-                label = label + '\n' + '(' + j.print_cmd + ')';
+                let label = label + '\n' + '(' + j.print_cmd + ')';
             }
 
         });
@@ -361,7 +361,7 @@ const prepareStylesheet = function() {
                 const proto = (stpMode === 2) ? 'rstp on' : 'stp on';
                 const pr = (n.config.priority !== undefined && n.config.priority !== null)
                     ? ` prior ${n.config.priority}` : '';
-                label = label + '\n' + `(${proto}${pr})`;
+                let label = label + '\n' + `(${proto}${pr})`;
             }
             if (Array.isArray(n.interface)) {
                 n.interface.forEach((iface) => {
@@ -499,14 +499,14 @@ const prepareStylesheet = function() {
     for (const prop in DiagramIcons) {
 
       if (Object.prototype.hasOwnProperty.call(DiagramIcons, prop)) {
-        sheet = appendIconClass(sheet, prop);
+        let sheet = appendIconClass(sheet, prop);
       }
     }
 
     return sheet;
   };
 
-const SnapNodesToGrid = function(cy_instance) {
+export const SnapNodesToGrid = function(cy_instance) {
     if (!cy_instance) return;
 
     let anyMoved = false;
@@ -533,7 +533,7 @@ const SnapNodesToGrid = function(cy_instance) {
                  if (n) {
                      n.position.x = newX;
                      n.position.y = newY;
-                     anyMoved = true;
+                     let anyMoved = true;
                  }
             }
         }
@@ -544,14 +544,14 @@ const SnapNodesToGrid = function(cy_instance) {
     }
 }
 
-const FindEdgeIdByJob = function(job) {
+export const FindEdgeIdByJob = function(job) {
     const node = nodes.find(n => n.data.id === job.host_id);
     if (!node || !Array.isArray(node.interface)) return null;
     const iface = node.interface.find(i => i.id === job.arg_1);
     return iface?.connect || null;
 };
 
-const MarkLinkDownEdges = function(cy_instance) {
+export const MarkLinkDownEdges = function(cy_instance) {
     if (!cy_instance) return;
 
     cy_instance.edges('.link-down, .link-down-active')

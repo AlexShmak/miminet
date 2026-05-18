@@ -1,4 +1,6 @@
-const RunSimulation = function (network_guid)
+import { state } from "../lib/state";
+
+export const RunSimulation = function (network_guid)
 {
     ajaxWithAuth({
         type: 'POST',
@@ -7,7 +9,7 @@ const RunSimulation = function (network_guid)
         success: function(data, textStatus, xhr) {
             if (xhr.status === 201)
             {
-                lastSimulationId = data.simulation_id
+                state.lastSimulationId = data.simulation_id
                 console.log("Simulation is running!");
                 // Ok, run CheckSimulation
                 if (data.simulation_id)
@@ -25,9 +27,9 @@ const RunSimulation = function (network_guid)
     });
 }
 
-const FilterPackets = function () {
+export const FilterPackets = function () {
     const tcpRegex = /TCP \((ACK|SYN|FIN)/;
-    packets = packets
+    let packets = packets
         .map((step) =>
             step.filter(
                 (pkt) =>
@@ -45,7 +47,7 @@ const FilterPackets = function () {
         .filter((step) => step.length > 0);
 };
 
-const UpdateFilterStates = function (settings) {
+export const UpdateFilterStates = function (settings) {
     if (!settings) {
         return;
     }
@@ -56,7 +58,7 @@ const UpdateFilterStates = function (settings) {
     $("#SYNFilterCheckbox").prop("checked", packetFilterState.hideSYN);
 };
 
-const SaveAnimationFilters = function () {
+export const SaveAnimationFilters = function () {
     if (!window.isAuthenticated) {
         return;
     }
@@ -93,7 +95,7 @@ const SaveAnimationFilters = function () {
     });
 };
 
-const SetPacketFilter = function (shared = 0) {
+export const SetPacketFilter = function (shared = 0) {
     // If network player UI is absent (e.g., not on network page), skip.
     if (!document.getElementById("NetworkPlayer") || !document.getElementById("PacketSliderInput")) {
         return;
@@ -102,11 +104,11 @@ const SetPacketFilter = function (shared = 0) {
     console.log("Packet filter call");
     // SetPacketFilter first call on emulated network
     if (packets && !packetsNotFiltered) {
-        packetsNotFiltered = JSON.parse(JSON.stringify(packets)); // Array deep copy
+        state.packetsNotFiltered = JSON.parse(JSON.stringify(packets)); // Array deep copy
     }
     // Numerous filter call, we grab our packets copy to filter it
     else if (packetsNotFiltered) {
-        packets = JSON.parse(JSON.stringify(packetsNotFiltered));
+        let packets = JSON.parse(JSON.stringify(packetsNotFiltered));
     }
 
     packetFilterState.hideARP = $("#ARPFilterCheckbox").is(":checked");
@@ -126,13 +128,13 @@ const SetPacketFilter = function (shared = 0) {
 // 2 states:
 // Do we need emulation
 // We have a packets and ready to play packets
-const SetNetworkPlayerState = function (simulation_id) {
+export const SetNetworkPlayerState = function (simulation_id) {
 
     // Reset?
     if (simulation_id === -1) {
-        packetsNotFiltered = null;
-        packets = null;
-        pcaps = [];
+        state.packetsNotFiltered = null;
+        let packets = null;
+        let pcaps = [];
         SetNetworkPlayerState(0);
         return;
     }
@@ -296,7 +298,7 @@ const SetNetworkPlayerState = function (simulation_id) {
 // 2 states:
 // No packets - disable button.
 // We have a packets and ready to play packets
-const SetSharedNetworkPlayerState = function()
+export const SetSharedNetworkPlayerState = function()
 {
 
     // If we have packets, then we're ready to run
@@ -409,7 +411,7 @@ const SetSharedNetworkPlayerState = function()
 }
 
 // Take a picture and update it.
-const TakeGraphPictureAndUpdate = function()
+export const TakeGraphPictureAndUpdate = function()
 {
     if (!global_cy)
     {
@@ -435,7 +437,7 @@ const TakeGraphPictureAndUpdate = function()
 }
 
 // Calculate drop offsets
-const CalculateDropOffset = function(elem_x, elem_y)
+export const CalculateDropOffset = function(elem_x, elem_y)
 {
     const network_scheme = document.getElementById("network_scheme");
     let offset_left = 0;
@@ -466,7 +468,7 @@ const CalculateDropOffset = function(elem_x, elem_y)
     return ret;
 }
 
-const UpdateNetworkConfig = function()
+export const UpdateNetworkConfig = function()
 {
     if (!global_cy){
         return;
@@ -491,7 +493,7 @@ const UpdateNetworkConfig = function()
 
 }
 
-const CopyNetwork = function ()
+export const CopyNetwork = function ()
 {
     ajaxWithAuth({
         type: 'POST',
@@ -524,7 +526,7 @@ const CopyNetwork = function ()
 }
 
 
-const NumWord = function (value, words){
+export const NumWord = function (value, words){
     value = Math.abs(value) % 100;
     var num = value % 10;
     if(value > 10 && value < 20) return words[2];
@@ -533,7 +535,7 @@ const NumWord = function (value, words){
     return words[2];
 }
 
-const SaveNetworkObject = function (){
+export const SaveNetworkObject = function (){
     let n = JSON.parse(JSON.stringify(nodes));
     let e = JSON.parse(JSON.stringify(edges));
 
@@ -545,7 +547,7 @@ const SaveNetworkObject = function (){
     return 0;
 }
 
-const RestoreNetworkObject = function (){
+export const RestoreNetworkObject = function (){
     let x = NetworkCache.pop();
 
     if (!x){
@@ -564,9 +566,9 @@ let editingJobId = null;
 let editingDeviceType = null;
 
 // Function to enter edit mode
-const EnterEditMode = function(deviceType, jobId, jobTypeId) {
-    editingJobId = jobId;
-    editingDeviceType = deviceType;
+export const EnterEditMode = function(deviceType, jobId, jobTypeId) {
+    let editingJobId = jobId;
+    let editingDeviceType = deviceType;
 
     // Change submit button text
     const submitButton = document.getElementById(`config_${deviceType}_main_form_submit_button`);
@@ -634,9 +636,9 @@ const EnterEditMode = function(deviceType, jobId, jobTypeId) {
 };
 
 // Function to exit edit mode
-const ExitEditMode = function(deviceType) {
-    editingJobId = null;
-    editingDeviceType = null;
+export const ExitEditMode = function(deviceType) {
+    let editingJobId = null;
+    let editingDeviceType = null;
 
     // Reset submit button text
     const submitButton = document.getElementById(`config_${deviceType}_main_form_submit_button`);
@@ -672,7 +674,7 @@ const ExitEditMode = function(deviceType) {
 };
 
 // Function to delete old job and save new configuration
-const DeleteAndSaveJob = function(deviceType, updateFunction, formData, deviceId) {
+export const DeleteAndSaveJob = function(deviceType, updateFunction, formData, deviceId) {
     if (!editingJobId || editingDeviceType !== deviceType) {
         // Not in edit mode, just save
         updateFunction(formData, deviceId);
@@ -687,7 +689,7 @@ const DeleteAndSaveJob = function(deviceType, updateFunction, formData, deviceId
 };
 
 // Grid drawing functions
-const initGrid = function(cy) {
+export const initGrid = function(cy) {
     if (!cy) return;
 
     // Clean up previous listener
@@ -730,7 +732,7 @@ const initGrid = function(cy) {
         }
     };
 
-    gridCanvasLayer = {
+    state.gridCanvasLayer = {
         canvas: canvas,
         ctx: ctx,
         resizeAndDrawCanvas: resizeAndDrawCanvas
@@ -748,14 +750,14 @@ const initGrid = function(cy) {
 
     // Initialize current zoom from cytoscape
     if (cy && cy.zoom) {
-        currentGridZoom = cy.zoom();
+        state.currentGridZoom = cy.zoom();
     }
 
     // Draw grid
     drawGrid();
 };
 
-const drawGrid = function() {
+export const drawGrid = function() {
     if (!gridCanvasLayer) {
         return;
     }
@@ -781,8 +783,8 @@ const drawGrid = function() {
     let panY = 0;
     if (global_cy && global_cy.pan) {
         const pan = global_cy.pan();
-        panX = pan.x;
-        panY = pan.y;
+        let panX = pan.x;
+        let panY = pan.y;
     }
 
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
@@ -821,7 +823,7 @@ const drawGrid = function() {
 
 
 // Update grid when config panel opens/closes
-const updateGridForConfigPanel = function() {
+export const updateGridForConfigPanel = function() {
     if (gridCanvasLayer && gridCanvasLayer.resizeAndDrawCanvas) {
         // Small delay to let DOM update
         setTimeout(function() {

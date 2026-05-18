@@ -1,11 +1,13 @@
-const DrawGraph = function() {
+import { state } from "../lib/state";
+
+export const DrawGraph = function() {
 
     // Do we already have one?
     let cy = undefined;
 
     if (global_cy)
     {
-        cy = global_cy;
+        let cy = global_cy;
 
         var collection = cy.elements();
         cy.remove(collection);
@@ -30,7 +32,7 @@ const DrawGraph = function() {
         fit: true,
     });
 
-    global_cy = cy;
+    state.global_cy = cy;
 
     // the default values of each option are outlined below:
     let defaults = {
@@ -55,7 +57,7 @@ const DrawGraph = function() {
         disableBrowserGestures: true // during an edge drawing gesture, disable browser gestures such as two-finger trackpad swipe and pinch-to-zoom
     };
 
-    global_eh = cy.edgehandles(defaults);
+    state.global_eh = cy.edgehandles(defaults);
 
     cy.minZoom(0.5);
     cy.maxZoom(2);
@@ -74,14 +76,14 @@ const DrawGraph = function() {
 
         if (NetworkUpdateTimeoutId >= 0){
             clearTimeout(NetworkUpdateTimeoutId);
-            NetworkUpdateTimeoutId = -1;
+            state.networkUpdateTimeoutId = -1;
         }
 
-        NetworkUpdateTimeoutId = setTimeout(UpdateNetworkConfig, 2000);
+        state.networkUpdateTimeoutId = setTimeout(UpdateNetworkConfig, 2000);
         
         // Update grid zoom and redraw
         if (gridCanvasLayer) {
-            currentGridZoom = cy.zoom();
+            state.currentGridZoom = cy.zoom();
             drawGrid();
         }
     });
@@ -91,10 +93,10 @@ const DrawGraph = function() {
 
         if (NetworkUpdateTimeoutId >= 0){
             clearTimeout(NetworkUpdateTimeoutId);
-            NetworkUpdateTimeoutId = -1;
+            state.networkUpdateTimeoutId = -1;
         }
 
-        NetworkUpdateTimeoutId = setTimeout(UpdateNetworkConfig, 2000);
+        state.networkUpdateTimeoutId = setTimeout(UpdateNetworkConfig, 2000);
         
         // Update grid when panning to keep it aligned with nodes
         if (gridCanvasLayer) {
@@ -144,16 +146,16 @@ const DrawGraph = function() {
         // Is this cy ?
         if (evtTarget === cy) {
             ClearConfigForm('');
-            selecteed_node_id = 0;
-            selected_edge_id = 0;
+            let selecteed_node_id = 0;
+            let selected_edge_id = 0;
             return;
         }
 
         // Is this edge ?
         if (evtTarget.group() === 'edges'){
-            selected_edge_id = evtTarget.data().id;
+            let selected_edge_id = evtTarget.data().id;
             ShowEdgeConfig(selected_edge_id);
-            selecteed_node_id = 0;
+            let selecteed_node_id = 0;
             return;
         }
 
@@ -165,8 +167,8 @@ const DrawGraph = function() {
             return;
         }
 
-        selecteed_node_id = n.data.id;
-        selected_edge_id = 0;
+        let selecteed_node_id = n.data.id;
+        let selected_edge_id = 0;
 
         if (n.config.type === 'host'){
             ShowHostConfig(n);
@@ -206,8 +208,8 @@ const DrawGraph = function() {
             DeleteJob(selecteed_node_id);
 
             ClearConfigForm('');
-            selecteed_node_id = 0;
-            selected_edge_id = 0;
+            let selecteed_node_id = 0;
+            let selected_edge_id = 0;
 
             PostNodesEdges();               // Update network on server
             cy.elements().remove();
@@ -237,7 +239,7 @@ const DrawGraph = function() {
             DeleteEdge(selected_edge_id);
 
             ClearConfigForm('');
-            selected_edge_id = 0;
+            let selected_edge_id = 0;
 
             PostNodesEdges();               // Update network on server
             cy.elements().remove();
@@ -253,8 +255,8 @@ const DrawGraph = function() {
         if (e.keyCode == 90 && e.ctrlKey){
 
             ClearConfigForm('');
-            selecteed_node_id = 0;
-            selected_edge_id = 0;
+            let selecteed_node_id = 0;
+            let selected_edge_id = 0;
 
             RestoreNetworkObject();
 
@@ -275,7 +277,7 @@ const DrawGraph = function() {
     initGrid(cy);
 }
 
-const DrawGraphStatic = function(nodes, edges, shared=0) {
+export const DrawGraphStatic = function(nodes, edges, shared=0) {
 
     // Do we already have one?
     let cy = undefined;
@@ -283,12 +285,12 @@ const DrawGraphStatic = function(nodes, edges, shared=0) {
     let network_scheme_id = "network_scheme";
 
     if (shared){
-        network_scheme_id = "network_scheme_shared";
+        let network_scheme_id = "network_scheme_shared";
     }
 
     if (global_cy)
     {
-        cy = global_cy;
+        let cy = global_cy;
         cy.elements().remove();
     } else {
         cy = cytoscape({
@@ -303,7 +305,7 @@ const DrawGraphStatic = function(nodes, edges, shared=0) {
             fit: true,
         });
 
-         global_cy = cy;
+         state.global_cy = cy;
     }
 
     // Turn off edges creation.
@@ -323,14 +325,14 @@ const DrawGraphStatic = function(nodes, edges, shared=0) {
     return;
 }
 
-const DrawSharedGraph = function(nodes, edges) {
+export const DrawSharedGraph = function(nodes, edges) {
 
     // Do we already have one?
     let cy = undefined;
 
     if (global_cy)
     {
-        cy = global_cy;
+        let cy = global_cy;
         cy.elements().remove();
     } else {
         cy = cytoscape({
@@ -345,7 +347,7 @@ const DrawSharedGraph = function(nodes, edges) {
             fit: true,
         });
 
-        global_cy = cy;
+        state.global_cy = cy;
     }
 
     cy.autounselectify(true);
@@ -363,16 +365,16 @@ const DrawSharedGraph = function(nodes, edges) {
         let evtTarget = evt.target;
         if (evtTarget === cy) {
             ClearConfigForm('');
-            selecteed_node_id = 0;
-            selected_edge_id = 0;
+            let selecteed_node_id = 0;
+            let selected_edge_id = 0;
             return;
         }
 
         // Is this edge ?
         if (evtTarget.group() === 'edges'){
-            selected_edge_id = evtTarget.data().id;
+            let selected_edge_id = evtTarget.data().id;
             ShowEdgeConfig(selected_edge_id, 1);
-            selecteed_node_id = 0;
+            let selecteed_node_id = 0;
             return;
         }
 
@@ -383,8 +385,8 @@ const DrawSharedGraph = function(nodes, edges) {
             return;
         }
 
-        selecteed_node_id = n.data.id;
-        selected_edge_id = 0;
+        let selecteed_node_id = n.data.id;
+        let selected_edge_id = 0;
 
         if (n.config.type === 'host'){
             ShowHostConfig(n, 1);
@@ -403,7 +405,7 @@ const DrawSharedGraph = function(nodes, edges) {
     initGrid(cy);
 }
 
-const DrawIndexGraphStatic = function(nodes, edges, container_id, graph_network_zoom,
+export const DrawIndexGraphStatic = function(nodes, edges, container_id, graph_network_zoom,
                                     graph_network_pan_x, graph_network_pan_y)
 {
 
