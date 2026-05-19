@@ -32,12 +32,12 @@ export const uid = function () {
 };
 
 export const HostUid = function () {
-    let host_name = "host_";
+    const host_name = "host_";
 
     for (let host_number = 1; host_number < 100; host_number++) {
-        let host = host_name + host_number;
+        const host = host_name + host_number;
 
-        let t = nodes.find((t: any) => t.data.id === host);
+        const t = nodes.find((target: any) => target.data.id === host);
 
         if (!t) {
             return host;
@@ -48,12 +48,12 @@ export const HostUid = function () {
 };
 
 export const RouterUid = function () {
-    let host_name = "router_";
+    const host_name = "router_";
 
     for (let host_number = 1; host_number < 100; host_number++) {
-        let host = host_name + host_number;
+        const host = host_name + host_number;
 
-        let t = nodes.find((t: any) => t.data.id === host);
+        const t = nodes.find((target: any) => target.data.id === host);
 
         if (!t) {
             return host;
@@ -64,12 +64,12 @@ export const RouterUid = function () {
 };
 
 export const ServerUid = function () {
-    let host_name = "server_";
+    const host_name = "server_";
 
     for (let host_number = 1; host_number < 100; host_number++) {
-        let host = host_name + host_number;
+        const host = host_name + host_number;
 
-        let t = nodes.find((t: any) => t.data.id === host);
+        const t = nodes.find((target: any) => target.data.id === host);
 
         if (!t) {
             return host;

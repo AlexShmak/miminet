@@ -8,9 +8,9 @@
  */
 
 declare global {
-  interface Window {
-    [key: string]: unknown;
-  }
+    interface Window {
+        [key: string]: unknown;
+    }
 }
 
 /**
@@ -18,8 +18,8 @@ declare global {
  * `onclick="X(...)"` handlers keep resolving.
  */
 export function attachGlobals(exports: Record<string, unknown>): void {
-  for (const [name, value] of Object.entries(exports)) {
-    if (name === "default" || name === "__esModule") continue;
-    (window as Record<string, unknown>)[name] = value;
-  }
+    for (const [name, value] of Object.entries(exports)) {
+        if (name === "default" || name === "__esModule") continue;
+        (window as Record<string, unknown>)[name] = value;
+    }
 }

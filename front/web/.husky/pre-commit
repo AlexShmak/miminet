@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+# Husky pre-commit hook for front/web. Runs typecheck and lint-staged
+# only when staged files under front/web/ have changed.
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+FRONT_WEB="$REPO_ROOT/front/web"
+
+# Skip if no staged changes under front/web/.
+if ! git diff --cached --name-only | grep -q "^front/web/"; then
+    exit 0
+fi
+
+cd "$FRONT_WEB" || exit 1
+
+# lint-staged: eslint --fix + prettier --write on staged files (re-added by lint-staged).
+npx --no -- lint-staged || exit 1
+
+# Typecheck the whole front/web project (tsc can't be reduced to a file list cleanly).
+npm run -s typecheck || exit 1

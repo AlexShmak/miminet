@@ -50,9 +50,9 @@ attachGlobals(configFormsJobs);
 attachGlobals(configFormsEditJobs);
 
 declare global {
-  interface Window {
-    miminetEntryLoaded?: boolean;
-  }
+    interface Window {
+        miminetEntryLoaded?: boolean;
+    }
 }
 
 window.miminetEntryLoaded = true;

@@ -1,4 +1,11 @@
 .*
+# Unignore selected dotfiles/dirs that are part of the project config.
+!.github/
+!.gitignore
+!front/web/.prettierrc.json
+!front/web/.prettierignore
+!front/web/.husky/
+front/web/.husky/_/
 celery_restart.sh
 restart_front.sh
 mimidump/

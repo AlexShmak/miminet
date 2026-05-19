@@ -89,4 +89,4 @@ export interface PacketFilterState {
 }
 
 // Device kinds referenced in EnterEditMode/ExitEditMode.
-export type DeviceKind = 'host' | 'router' | 'server' | 'switch' | 'hub';
+export type DeviceKind = "host" | "router" | "server" | "switch" | "hub";

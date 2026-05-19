@@ -1,0 +1,42 @@
+name: Front lint + typecheck
+
+on:
+  push:
+    paths:
+      - "front/web/**"
+      - ".github/workflows/front_lint.yml"
+  pull_request:
+    paths:
+      - "front/web/**"
+      - ".github/workflows/front_lint.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front/web
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: front/web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Prettier check
+        run: npm run format:check
+
+      - name: Build
+        run: npm run build
