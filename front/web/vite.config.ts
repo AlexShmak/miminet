@@ -1,4 +1,5 @@
 import { defineConfig, type PluginOption } from "vite";
+import react from "@vitejs/plugin-react";
 import { readFileSync, mkdirSync, writeFileSync, existsSync } from "fs";
 import { dirname, resolve } from "path";
 
@@ -58,5 +59,11 @@ export default defineConfig({
             },
         },
     },
-    plugins: [concatClassicScripts()],
+    plugins: [react(), concatClassicScripts()],
+    // React + ReactDOM publish CommonJS variants; bundling for an IIFE
+    // build needs `process.env.NODE_ENV` defined as a string literal so
+    // the production code paths are picked up.
+    define: {
+        "process.env.NODE_ENV": JSON.stringify("production"),
+    },
 });

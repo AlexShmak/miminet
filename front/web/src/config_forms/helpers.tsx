@@ -1,11 +1,27 @@
 import { state } from "../lib/state";
+import { createRoot, type Root } from "react-dom/client";
 import { config_main_form_id } from "./common";
+import { HostNameField } from "../components/HostNameField";
+
+// React root for the HostNameField pilot. Re-created whenever the host
+// config panel is rebuilt; the previous root (if any) is unmounted so
+// React's bookkeeping doesn't leak between renders.
+let hostNameRoot: Root | null = null;
 
 export const ConfigHostName = function (hostname: string) {
-    const text = document.getElementById("config_host_name_script")!.innerHTML;
-
-    $(config_main_form_id).prepend(text);
-    $("#config_host_name").val(hostname);
+    if (hostNameRoot) {
+        hostNameRoot.unmount();
+        hostNameRoot = null;
+    }
+    const container = document.createElement("div");
+    container.id = "config_host_name_root";
+    const form = document.querySelector(config_main_form_id);
+    if (!form) {
+        return;
+    }
+    form.prepend(container);
+    hostNameRoot = createRoot(container);
+    hostNameRoot.render(<HostNameField initialValue={hostname} />);
 };
 
 export const ConfigRouterName = function (hostname: string) {
