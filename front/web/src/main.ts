@@ -33,6 +33,10 @@ import * as netfrontSimulation from "./netfront/simulation.js";
 import * as netfrontUpdateConfig from "./netfront/update_config.js";
 import * as netfrontRuntime from "./netfront/runtime.js";
 
+// Drag-and-drop wiring for device palette → cytoscape canvas. Runs its
+// own jQuery DOM-ready callback on import.
+import "./netfront/netfront.js";
+
 // config_forms — common.js exports the shared selectors and is imported
 // first so its top-level jQuery `.load()` calls run before the rest.
 import * as configFormsCommon from "./config_forms/common.js";
