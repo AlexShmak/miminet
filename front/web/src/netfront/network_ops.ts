@@ -3,6 +3,7 @@ import { EdgeUid, InterfaceUid, l2SwitchPortUid, l1HubPortUid } from "./show_con
 import { LINK_DOWN_JOB_ID } from "./state";
 import { DiagramIcons } from "../lib/icons";
 import { ajaxWithAuth } from "../lib/jwt_auth";
+import { areInterfaceFieldsFilled } from "../config_forms/vlan";
 
 export const PostNodesEdges = function () {
     ajaxWithAuth({

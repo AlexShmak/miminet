@@ -16,6 +16,7 @@ import { HostUid, RouterUid, ServerUid } from "./state";
 import { l1HubUid, l2SwitchUid } from "./show_config";
 import { PostNodes } from "./network_ops";
 import { DrawGraph } from "./draw";
+import { PacketPlayer } from "./packet_player";
 
 export function initNetfrontDragDrop() {
     ($(".drag") as any).draggable({

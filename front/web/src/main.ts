@@ -32,6 +32,7 @@ import * as netfrontDraw from "./netfront/draw.js";
 import * as netfrontSimulation from "./netfront/simulation.js";
 import * as netfrontUpdateConfig from "./netfront/update_config.js";
 import * as netfrontRuntime from "./netfront/runtime.js";
+import * as netfrontPacketPlayer from "./netfront/packet_player.js";
 
 // Drag-and-drop wiring for device palette → cytoscape canvas. Runs its
 // own jQuery DOM-ready callback on import.
@@ -45,6 +46,9 @@ import * as configFormsShared from "./config_forms/shared.js";
 import * as configFormsHelpers from "./config_forms/helpers.js";
 import * as configFormsJobs from "./config_forms/jobs.js";
 import * as configFormsEditJobs from "./config_forms/edit_jobs.js";
+import * as configFormsStp from "./config_forms/stp.js";
+import * as configFormsVlan from "./config_forms/vlan.js";
+import * as configFormsVxlan from "./config_forms/vxlan.js";
 
 attachGlobals(libIcons);
 attachGlobals(libJwtAuth);
@@ -55,12 +59,16 @@ attachGlobals(netfrontDraw);
 attachGlobals(netfrontSimulation);
 attachGlobals(netfrontUpdateConfig);
 attachGlobals(netfrontRuntime);
+attachGlobals(netfrontPacketPlayer);
 attachGlobals(configFormsCommon);
 attachGlobals(configFormsDevice);
 attachGlobals(configFormsShared);
 attachGlobals(configFormsHelpers);
 attachGlobals(configFormsJobs);
 attachGlobals(configFormsEditJobs);
+attachGlobals(configFormsStp);
+attachGlobals(configFormsVlan);
+attachGlobals(configFormsVxlan);
 
 declare global {
     interface Window {

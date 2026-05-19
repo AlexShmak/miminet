@@ -322,7 +322,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="/assets/js/theme.min.js"></script>
 <script src="{{ url_for('static', filename='config.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/miminet.entry.js') }}"></script>
-<script src="{{ url_for('static', filename='/miminet_animation.js') }}"></script>
 
 <script>
     window.isAuthenticated = {{ current_user.is_authenticated|tojson }};
@@ -496,8 +495,5 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 {% block network %}
 {% endblock %}
 
-<script src="{{ url_for('static', filename='config_vlan.js') }}"></script>
-<script src="{{ url_for('static', filename='config_vxlan.js') }}"></script>
-<script src="{{ url_for('static', filename='config_stp.js') }}"></script>
 
 </html>

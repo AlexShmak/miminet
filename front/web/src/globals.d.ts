@@ -50,16 +50,6 @@ declare const Pjax: any;
 // can be added when each subsystem stabilises.
 declare const cytoscape: any;
 
-// config_vlan.js / config_vxlan.js / config_stp.js — classic scripts
-// still loaded after the bundle.
-declare function areInterfaceFieldsFilled(device: any): boolean;
-declare function ConfigVxlan(currentDevice: any): void;
-declare function ConfigVLAN(currentDevice: any): void;
-declare function ConfigRSTP(currentDevice: any): void;
-
-// miminet_animation.js (classic) drives the packet animation.
-declare const PacketPlayer: any;
-
 // Cross-module bare function references — see header comment.
 declare function updateGridForConfigPanel(...args: any[]): any;
 declare function DeleteAndSaveJob(...args: any[]): any;

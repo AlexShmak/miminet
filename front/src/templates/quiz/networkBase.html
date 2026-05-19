@@ -162,7 +162,6 @@
 <script src="/assets/js/theme.min.js"></script>
 <script src="{{ url_for('static', filename='config.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/miminet.entry.js') }}"></script>
-<script src="{{ url_for('static', filename='/miminet_animation.js') }}"></script>
 
 <script>
     $(document).ready(function () {
@@ -190,8 +189,5 @@
 {% block network %}
 {% endblock %}
 
-<script src="{{ url_for('static', filename='config_vlan.js') }}"></script>
-<script src="{{ url_for('static', filename='config_vxlan.js') }}"></script>
-<script src="{{ url_for('static', filename='config_stp.js') }}"></script>
 
 </html>

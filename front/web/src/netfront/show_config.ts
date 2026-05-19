@@ -34,6 +34,9 @@ import {
     ConfigEdgeEndpoints,
 } from "../config_forms/device";
 import { uid } from "./state";
+import { ConfigRSTP } from "../config_forms/stp";
+import { ConfigVLAN } from "../config_forms/vlan";
+import { ConfigVxlan } from "../config_forms/vxlan";
 import {
     ConfigHostJob,
     ConfigRouterJob,

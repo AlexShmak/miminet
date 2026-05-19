@@ -2,6 +2,7 @@ import { state } from "../lib/state";
 import { CheckSimulation, InsertWaitingTime } from "./simulation";
 import { DrawGraphStatic, DrawSharedGraph } from "./draw";
 import { ajaxWithAuth } from "../lib/jwt_auth";
+import { PacketPlayer } from "./packet_player";
 
 declare const ym: any;
 
