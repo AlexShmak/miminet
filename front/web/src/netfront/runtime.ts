@@ -1,6 +1,7 @@
 import { state } from "../lib/state";
 import { CheckSimulation, InsertWaitingTime } from "./simulation";
 import { DrawGraphStatic, DrawSharedGraph } from "./draw";
+import { ajaxWithAuth } from "../lib/jwt_auth";
 
 declare const ym: any;
 

@@ -10,6 +10,7 @@
 import { state } from "../lib/state";
 import { SetPacketFilter, SetNetworkPlayerState } from "./runtime";
 import { DrawGraph } from "./draw";
+import { ajaxWithAuth } from "../lib/jwt_auth";
 
 export const CheckSimulation = function (simulation_id: number) {
     ajaxWithAuth({

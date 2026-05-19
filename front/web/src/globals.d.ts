@@ -57,12 +57,6 @@ declare function ConfigVxlan(currentDevice: any): void;
 declare function ConfigVLAN(currentDevice: any): void;
 declare function ConfigRSTP(currentDevice: any): void;
 
-// jwt_auth.js (classic) wraps $.ajax with token refresh; it also
-// accepts a few extra options not in jQuery's AjaxSettings (e.g.
-// `encode: true` to URL-encode the data). Typed loosely until we
-// migrate that file too.
-declare function ajaxWithAuth(options: any): JQuery.jqXHR;
-
 // miminet_animation.js (classic) drives the packet animation.
 declare const PacketPlayer: any;
 

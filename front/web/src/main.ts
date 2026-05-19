@@ -18,6 +18,9 @@ import { attachGlobals } from "./lib/window-globals";
 // when prepareStylesheet() runs.
 import * as libIcons from "./lib/icons.js";
 
+// jwt_auth provides ajaxWithAuth / fetchWithAuth used by every ajax call.
+import * as libJwtAuth from "./lib/jwt_auth.js";
+
 // state.js initializes the window-level state variables that the bridge
 // in lib/state.ts and unmigrated classic scripts depend on. Must run
 // first so those values are set before anyone reads them.
@@ -40,6 +43,7 @@ import * as configFormsJobs from "./config_forms/jobs.js";
 import * as configFormsEditJobs from "./config_forms/edit_jobs.js";
 
 attachGlobals(libIcons);
+attachGlobals(libJwtAuth);
 attachGlobals(netfrontState);
 attachGlobals(netfrontShowConfig);
 attachGlobals(netfrontNetworkOps);

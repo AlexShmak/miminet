@@ -2,6 +2,7 @@ import { SaveNetworkObject } from "./runtime";
 import { EdgeUid, InterfaceUid, l2SwitchPortUid, l1HubPortUid } from "./show_config";
 import { LINK_DOWN_JOB_ID } from "./state";
 import { DiagramIcons } from "../lib/icons";
+import { ajaxWithAuth } from "../lib/jwt_auth";
 
 export const PostNodesEdges = function () {
     ajaxWithAuth({

@@ -1,5 +1,6 @@
 import { SetNetworkPlayerState, ExitEditMode, editingJobId, editingDeviceType } from "./runtime";
 import { DrawGraph } from "./draw";
+import { ajaxWithAuth } from "../lib/jwt_auth";
 import {
     ClearConfigForm,
     HostWarningMsg,
