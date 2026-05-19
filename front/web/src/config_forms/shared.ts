@@ -1,8 +1,9 @@
+import { state } from "../lib/state";
 // Migrated from front/src/static/config_forms/shared.js
 //
 // Each function is exposed as an ES-module export. main.ts re-attaches
 // them to `window` via `attachGlobals` so existing inline HTML handlers
-// keep working. Bare references like `$`, `network_guid`,
+// keep working. Bare references like `$`, `state.network_guid`,
 // `config_content_id` still resolve via the global scope — they are
 // owned by the remaining classic scripts and inline <script> tags.
 
@@ -19,7 +20,7 @@ export const SharedConfigHostForm = function (host_id: string) {
 
     // Set host_id
     $("#host_id").val(host_id);
-    $("#net_guid").val(network_guid);
+    $("#net_guid").val(state.network_guid);
     $("#config_host_main_form_submit_button").prop("disabled", true);
 };
 
@@ -36,7 +37,7 @@ export const SharedConfigRouterForm = function (router_id: string) {
 
     // Set host_id
     $("#router_id").val(router_id);
-    $("#net_guid").val(network_guid);
+    $("#net_guid").val(state.network_guid);
 
     $("#config_router_main_form_submit_button").prop("disabled", true);
 };
@@ -54,7 +55,7 @@ export const SharedConfigServerForm = function (router_id: string) {
 
     // Set host_id
     $("#router_id").val(router_id);
-    $("#net_guid").val(network_guid);
+    $("#net_guid").val(state.network_guid);
 
     $("#config_server_main_form_submit_button").prop("disabled", true);
 };

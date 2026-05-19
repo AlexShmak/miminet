@@ -1,3 +1,4 @@
+import { state } from "../lib/state";
 // Packet animation player.
 // Migrated from front/src/static/miminet_animation.js.
 //
@@ -78,7 +79,7 @@ export const PacketPlayer = (function () {
             return;
         }
 
-        // Remove all packets
+        // Remove all state.packets
         const pkts = network_cy.elements().filter('[type = "packet"]');
 
         pkts.forEach(function (p_item: any) {
@@ -120,7 +121,7 @@ export const PacketPlayer = (function () {
     const AnimateLinkDown = function (step: number) {
         if (!network_cy) return;
 
-        jobs.forEach(function (j: any) {
+        state.jobs.forEach(function (j: any) {
             if (j.job_id == LINK_DOWN_JOB_ID && j.level == step) {
                 const edgeId = FindEdgeIdByJob(j);
                 if (!edgeId) return;
@@ -138,7 +139,7 @@ export const PacketPlayer = (function () {
     };
 
     const PlayNextStep = function () {
-        // Clear animated packets.
+        // Clear animated state.packets.
         clearAnimationPackets();
 
         // Set player to play
@@ -152,7 +153,7 @@ export const PacketPlayer = (function () {
             return;
         }
 
-        // Animate link-down edges for this step
+        // Animate link-down state.edges for this step
         AnimateLinkDown(ats);
 
         PlayStep();
@@ -173,7 +174,7 @@ export const PacketPlayer = (function () {
         }
 
         if (!traffic.length) {
-            console.log("0 packets, nothing to animate");
+            console.log("0 state.packets, nothing to animate");
             return;
         }
 
@@ -188,7 +189,7 @@ export const PacketPlayer = (function () {
         const pkts = traffic[getAnimationTrafficStep()];
 
         if (pkts.length == 0) {
-            console.log("Step " + ats + " has 0 packets. Skip it.");
+            console.log("Step " + ats + " has 0 state.packets. Skip it.");
             return 0;
         }
 

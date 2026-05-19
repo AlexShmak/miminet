@@ -168,25 +168,26 @@
     <div id="config_server"></div>
     <div id="config_vlan"></div>
     <div id="config_vxlan"></div>
+
+    <script type="application/json" id="miminet-initial-state">
+    {
+        "network_guid": {{ network.guid | tojson }},
+        "network_title": {{ network.title | tojson }},
+        "network_description": {{ network.description | tojson }},
+        "network_zoom": {{ network_config.zoom }},
+        "network_pan_x": {{ network_config.pan_x }},
+        "network_pan_y": {{ network_config.pan_y }},
+        "nodes": {{ nodes | safe }},
+        "edges": {{ edges | tojson }},
+        "jobs": {{ jobs | tojson }},
+        "packets": {{ packets | tojson }},
+        "pcaps": {{ pcaps | tojson }}
+    }
+    </script>
 {% endblock %}
 
 {% block network %}
 <script>
-
-    const network_guid = "{{ network.guid }}";
-    var network_title = "{{ network.title }}";
-    var network_description = "{{ network.description }}";
-    var network_zoom = {{ network_config.zoom}};
-    var network_pan_x = {{ network_config.pan_x}};
-    var network_pan_y = {{ network_config.pan_y}};
-
-    var nodes = {{ nodes | safe }};
-    var edges = {{ edges | safe }};
-    var jobs = {{ jobs | safe }};
-    var packets = {{ packets | safe }};
-    var pcaps = {{ pcaps | safe }};
-    var ns = null;
-
     SetNetworkPlayerState({% if simulating %} {% if simulating.ready %} 0 {% else %} {{simulating.id}} {% endif%} {% else %} -1 {% endif%})
     DrawGraph();
 

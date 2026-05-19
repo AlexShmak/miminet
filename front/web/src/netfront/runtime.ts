@@ -6,10 +6,10 @@ import { PacketPlayer } from "./packet_player";
 
 declare const ym: any;
 
-export const RunSimulation = function (network_guid: string) {
+export const RunSimulation = function (_network_guid: string) {
     ajaxWithAuth({
         type: "POST",
-        url: ExternalUrlFor("/run_simulation?guid=" + network_guid),
+        url: ExternalUrlFor("/run_simulation?guid=" + state.network_guid),
         data: "",
         success: function (data: any, textStatus: any, xhr: any) {
             if (xhr.status === 201) {
@@ -22,7 +22,7 @@ export const RunSimulation = function (network_guid: string) {
             }
         },
         error: function (_err: any) {
-            console.log("Cannot run simulation guid = " + network_guid);
+            console.log("Cannot run simulation guid = " + state.network_guid);
             SetNetworkPlayerState(-1);
         },
         contentType: "application/json",
@@ -32,7 +32,7 @@ export const RunSimulation = function (network_guid: string) {
 
 export const FilterPackets = function () {
     const tcpRegex = /TCP \((ACK|SYN|FIN)/;
-    packets = packets
+    state.packets = state.packets
         .map((step: any) =>
             step.filter(
                 (pkt: any) =>
@@ -107,19 +107,19 @@ export const SetPacketFilter = function (shared: number = 0) {
 
     console.log("Packet filter call");
     // SetPacketFilter first call on emulated network
-    if (packets && !state.packetsNotFiltered) {
-        state.packetsNotFiltered = JSON.parse(JSON.stringify(packets)); // Array deep copy
+    if (state.packets && !state.packetsNotFiltered) {
+        state.packetsNotFiltered = JSON.parse(JSON.stringify(state.packets)); // Array deep copy
     }
-    // Numerous filter call, we grab our packets copy to filter it
+    // Numerous filter call, we grab our state.packets copy to filter it
     else if (state.packetsNotFiltered) {
-        packets = JSON.parse(JSON.stringify(state.packetsNotFiltered));
+        state.packets = JSON.parse(JSON.stringify(state.packetsNotFiltered));
     }
 
     state.packetFilterState.hideARP = $("#ARPFilterCheckbox").is(":checked");
     state.packetFilterState.hideSTP = $("#STPFilterCheckbox").is(":checked");
     state.packetFilterState.hideSYN = $("#SYNFilterCheckbox").is(":checked");
 
-    if (packets) {
+    if (state.packets) {
         FilterPackets();
         if (shared) {
             SetSharedNetworkPlayerState();
@@ -131,19 +131,19 @@ export const SetPacketFilter = function (shared: number = 0) {
 
 // 2 states:
 // Do we need emulation
-// We have a packets and ready to play packets
+// We have a state.packets and ready to play state.packets
 export const SetNetworkPlayerState = function (simulation_id: number) {
     // Reset?
     if (simulation_id === -1) {
         state.packetsNotFiltered = null;
-        packets = null;
-        pcaps = [];
+        state.packets = null;
+        state.pcaps = [];
         SetNetworkPlayerState(0);
         return;
     }
 
-    // If we have packets, then we're ready to run
-    if (packets) {
+    // If we have state.packets, then we're ready to run
+    if (state.packets) {
         $("#NetworkPlayer").empty();
         $("#NetworkPlayer").append(
             '<button type="button" class="btn btn-danger me-2" id="NetworkStopButton"><i class="bx bx-stop fs-xl"></i></button>'
@@ -153,7 +153,7 @@ export const SetNetworkPlayerState = function (simulation_id: number) {
         );
 
         // Init player
-        PacketPlayer.getInstance().InitPlayer(packets);
+        PacketPlayer.getInstance().InitPlayer(state.packets);
 
         // Configure the slider
         if (!$("#PacketSliderInput")[0] || !($("#PacketSliderInput")[0] as any).noUiSlider) {
@@ -164,7 +164,7 @@ export const SetNetworkPlayerState = function (simulation_id: number) {
             start: [1],
             range: {
                 min: 1,
-                max: packets.length,
+                max: state.packets.length,
             },
             format: {
                 to: function (val: any) {
@@ -180,14 +180,14 @@ export const SetNetworkPlayerState = function (simulation_id: number) {
         // Show Slider on
         $("#PacketSliderInput").show();
 
-        const pkt_count = packets.reduce(
+        const pkt_count = state.packets.reduce(
             (currentCount: number, row: any) => currentCount + row.length,
             0
         );
         $("#NetworkPlayerLabel").text(
-            packets.length +
+            state.packets.length +
                 " " +
-                NumWord(packets.length, ["шаг", "шага", "шагов"]) +
+                NumWord(state.packets.length, ["шаг", "шага", "шагов"]) +
                 " / " +
                 pkt_count +
                 " " +
@@ -203,7 +203,7 @@ export const SetNetworkPlayerState = function (simulation_id: number) {
         ($("#PacketSliderInput")[0] as any).noUiSlider.on("update", function (e: any) {
             if (!e) return;
             const x = Math.round(e[0]);
-            if (packets.length === 0) {
+            if (state.packets.length === 0) {
                 $("#NetworkPlayerLabel").text("0 пакетов");
                 return;
             }
@@ -211,11 +211,11 @@ export const SetNetworkPlayerState = function (simulation_id: number) {
                 "Шаг: " +
                     x +
                     "/" +
-                    packets.length +
+                    state.packets.length +
                     " (" +
-                    packets[x - 1].length +
+                    state.packets[x - 1].length +
                     " " +
-                    NumWord(packets[x - 1].length, ["пакет", "пакета", "пакетов"]) +
+                    NumWord(state.packets[x - 1].length, ["пакет", "пакета", "пакетов"]) +
                     ")"
             );
         });
@@ -232,7 +232,7 @@ export const SetNetworkPlayerState = function (simulation_id: number) {
 
                 // If not in pause. Draw a new layout and go.
                 if (!PacketPlayer.getInstance().getPlayerPause()) {
-                    DrawGraphStatic(nodes, edges);
+                    DrawGraphStatic();
                 }
 
                 PacketPlayer.getInstance().setAnimationTrafficStepCallback(function () {
@@ -261,7 +261,7 @@ export const SetNetworkPlayerState = function (simulation_id: number) {
             // Reset slider.
             ($("#PacketSliderInput")[0] as any).noUiSlider.set(0);
 
-            DrawGraphStatic(nodes, edges);
+            DrawGraphStatic();
 
             $("#NetworkPlayPauseButton").removeClass("btn-success");
             $("#NetworkPlayPauseButton").removeClass("btn-warning");
@@ -274,7 +274,7 @@ export const SetNetworkPlayerState = function (simulation_id: number) {
         return;
     }
 
-    // No packets.
+    // No state.packets.
     // The network is simulating?
     if (simulation_id) {
         $("#NetworkPlayer").empty();
@@ -287,7 +287,7 @@ export const SetNetworkPlayerState = function (simulation_id: number) {
         return;
     }
 
-    // No packets and no simulation.
+    // No state.packets and no simulation.
     // Add emulation button.
     $("#NetworkPlayer").empty();
     $("#PacketSliderInput").hide();
@@ -298,12 +298,12 @@ export const SetNetworkPlayerState = function (simulation_id: number) {
 
     $("#NetworkEmulateButton").click(function () {
         // Check for job. If no job - show modal and exit.
-        if (!jobs.length) {
+        if (!state.jobs.length) {
             ($("#noJobsModal") as any).modal("toggle");
             return;
         }
 
-        if (nodes.length > 80) {
+        if (state.nodes.length > 80) {
             ($("#tooManyHostModal") as any).modal("toggle");
             return;
         }
@@ -312,7 +312,7 @@ export const SetNetworkPlayerState = function (simulation_id: number) {
             ym(92293993, "reachGoal", "NetworkEmulate");
         }
 
-        RunSimulation(network_guid);
+        RunSimulation(state.network_guid);
 
         $("#NetworkPlayer").empty();
         $("#NetworkPlayer").append(
@@ -326,11 +326,11 @@ export const SetNetworkPlayerState = function (simulation_id: number) {
 };
 
 // 2 states:
-// No packets - disable button.
-// We have a packets and ready to play packets
+// No state.packets - disable button.
+// We have a state.packets and ready to play state.packets
 export const SetSharedNetworkPlayerState = function () {
-    // If we have packets, then we're ready to run
-    if (packets) {
+    // If we have state.packets, then we're ready to run
+    if (state.packets) {
         $("#NetworkPlayer").empty();
         $("#NetworkPlayer").append(
             '<button type="button" class="btn btn-danger me-2" id="NetworkStopButton"><i class="bx bx-stop fs-xl"></i></button>'
@@ -340,14 +340,14 @@ export const SetSharedNetworkPlayerState = function () {
         );
 
         // Init player
-        PacketPlayer.getInstance().InitPlayer(packets);
+        PacketPlayer.getInstance().InitPlayer(state.packets);
 
         // Configure the slider
         ($("#PacketSliderInput")[0] as any).noUiSlider.updateOptions({
             start: [1],
             range: {
                 min: 1,
-                max: packets.length,
+                max: state.packets.length,
             },
             format: {
                 to: function (val: any) {
@@ -363,14 +363,14 @@ export const SetSharedNetworkPlayerState = function () {
         // Show Slider on
         $("#PacketSliderInput").show();
 
-        const pkt_count = packets.reduce(
+        const pkt_count = state.packets.reduce(
             (currentCount: number, row: any) => currentCount + row.length,
             0
         );
         $("#NetworkPlayerLabel").text(
-            packets.length +
+            state.packets.length +
                 " " +
-                NumWord(packets.length, ["шаг", "шага", "шагов"]) +
+                NumWord(state.packets.length, ["шаг", "шага", "шагов"]) +
                 " / " +
                 pkt_count +
                 " " +
@@ -386,7 +386,7 @@ export const SetSharedNetworkPlayerState = function () {
         ($("#PacketSliderInput")[0] as any).noUiSlider.on("update", function (e: any) {
             if (!e) return;
             const x = Math.round(e[0]);
-            if (packets.length === 0) {
+            if (state.packets.length === 0) {
                 $("#NetworkPlayerLabel").text("0 пакетов");
                 return;
             }
@@ -394,11 +394,11 @@ export const SetSharedNetworkPlayerState = function () {
                 "Шаг: " +
                     x +
                     "/" +
-                    packets.length +
+                    state.packets.length +
                     " (" +
-                    packets[x - 1].length +
+                    state.packets[x - 1].length +
                     " " +
-                    NumWord(packets[x - 1].length, ["пакет", "пакета", "пакетов"]) +
+                    NumWord(state.packets[x - 1].length, ["пакет", "пакета", "пакетов"]) +
                     ")"
             );
         });
@@ -415,7 +415,7 @@ export const SetSharedNetworkPlayerState = function () {
 
                 // If not in pause. Draw a new layout and go.
                 if (!PacketPlayer.getInstance().getPlayerPause()) {
-                    DrawGraphStatic(nodes, edges);
+                    DrawGraphStatic();
                 }
 
                 PacketPlayer.getInstance().setAnimationTrafficStepCallback(function () {
@@ -443,7 +443,7 @@ export const SetSharedNetworkPlayerState = function () {
             // Reset slider.
             ($("#PacketSliderInput")[0] as any).noUiSlider.set(0);
 
-            DrawSharedGraph(nodes, edges);
+            DrawSharedGraph();
 
             $("#NetworkPlayPauseButton").removeClass("btn-success");
             $("#NetworkPlayPauseButton").removeClass("btn-warning");
@@ -456,7 +456,7 @@ export const SetSharedNetworkPlayerState = function () {
         return;
     }
 
-    // No packets
+    // No state.packets
     // Add info button
     $("#NetworkPlayer").empty();
     $("#PacketSliderInput").hide();
@@ -477,7 +477,7 @@ export const TakeGraphPictureAndUpdate = function () {
 
     ajaxWithAuth({
         type: "POST",
-        url: ExternalUrlFor("/network/upload_network_picture?guid=" + network_guid),
+        url: ExternalUrlFor("/network/upload_network_picture?guid=" + state.network_guid),
         data: png_blob,
         processData: false,
         error: function (xhr: any) {
@@ -523,8 +523,8 @@ export const UpdateNetworkConfig = function () {
     }
 
     const payload = {
-        network_title: network_title,
-        network_description: network_description,
+        network_title: state.network_title,
+        network_description: state.network_description,
         zoom: state.global_cy.zoom(),
         pan_x: state.global_cy.pan().x,
         pan_y: state.global_cy.pan().y,
@@ -532,7 +532,7 @@ export const UpdateNetworkConfig = function () {
 
     ajaxWithAuth({
         type: "POST",
-        url: ExternalUrlFor("/network/update_network_config?guid=" + network_guid),
+        url: ExternalUrlFor("/network/update_network_config?guid=" + state.network_guid),
         data: JSON.stringify(payload),
         contentType: "application/json; charset=utf-8",
         success: function (_data: any, _textStatus: any, _xhr: any) {},
@@ -547,7 +547,7 @@ export const UpdateNetworkConfig = function () {
 export const CopyNetwork = function () {
     ajaxWithAuth({
         type: "POST",
-        url: ExternalUrlFor("/network/copy_network?guid=" + network_guid),
+        url: ExternalUrlFor("/network/copy_network?guid=" + state.network_guid),
         data: "",
         success: function (data: any, textStatus: any, xhr: any) {
             if (xhr.status === 200) {
@@ -584,8 +584,8 @@ export const NumWord = function (value: number, words: string[]) {
 };
 
 export const SaveNetworkObject = function () {
-    const n = JSON.parse(JSON.stringify(nodes));
-    const e = JSON.parse(JSON.stringify(edges));
+    const n = JSON.parse(JSON.stringify(state.nodes));
+    const e = JSON.parse(JSON.stringify(state.edges));
 
     state.networkCache.push({
         nodes: n,
@@ -602,8 +602,8 @@ export const RestoreNetworkObject = function () {
         return;
     }
 
-    nodes = x.nodes;
-    edges = x.edges;
+    state.nodes = x.nodes;
+    state.edges = x.edges;
 
     return 0;
 };
@@ -854,7 +854,7 @@ export const drawGrid = function () {
     ctx.beginPath();
 
     // Calculate grid origin with pan offset
-    // Grid should be offset by pan to stay aligned with nodes
+    // Grid should be offset by pan to stay aligned with state.nodes
     const gridOriginX = panX % gridSize;
     const gridOriginY = panY % gridSize;
 

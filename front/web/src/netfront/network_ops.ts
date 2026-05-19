@@ -1,3 +1,4 @@
+import { state } from "../lib/state";
 import { SaveNetworkObject } from "./runtime";
 import { EdgeUid, InterfaceUid, l2SwitchPortUid, l1HubPortUid } from "./show_config";
 import { LINK_DOWN_JOB_ID } from "./state";
@@ -8,11 +9,11 @@ import { areInterfaceFieldsFilled } from "../config_forms/vlan";
 export const PostNodesEdges = function () {
     ajaxWithAuth({
         type: "POST",
-        url: ExternalUrlFor("/post_nodes_edges?guid=" + network_guid),
-        data: JSON.stringify([nodes, edges, jobs]),
+        url: ExternalUrlFor("/post_nodes_edges?guid=" + state.network_guid),
+        data: JSON.stringify([state.nodes, state.edges, state.jobs]),
         success: function (_data: any) {},
         error: function (_err: any) {
-            console.log("Cannot post edges to server");
+            console.log("Cannot post state.edges to server");
         },
         contentType: "application/json",
         dataType: "json",
@@ -20,10 +21,10 @@ export const PostNodesEdges = function () {
 };
 
 export const AddEdge = function (source_id: string, target_id: string) {
-    const source_node = nodes.find((node: any) => node.data.id === source_id);
-    const target_node = nodes.find((node: any) => node.data.id === target_id);
+    const source_node = state.nodes.find((node: any) => node.data.id === source_id);
+    const target_node = state.nodes.find((node: any) => node.data.id === target_id);
 
-    // Do we find nodes?
+    // Do we find state.nodes?
     if (!source_node || !target_node) {
         return;
     }
@@ -34,7 +35,7 @@ export const AddEdge = function (source_id: string, target_id: string) {
     // Add edge
     const edge_id = EdgeUid();
 
-    edges.push({
+    state.edges.push({
         data: {
             id: edge_id,
             source: source_node.data.id,
@@ -131,7 +132,7 @@ export const AddEdge = function (source_id: string, target_id: string) {
 export const DeleteJob = function (node_id: string) {
     const jobs_to_delete: any[] = [];
 
-    $.each(jobs, function (idx: number, job: any) {
+    $.each(state.jobs, function (idx: number, job: any) {
         if (!job) {
             return;
         }
@@ -142,13 +143,13 @@ export const DeleteJob = function (node_id: string) {
     });
     jobs_to_delete.reverse();
     $.each(jobs_to_delete, function (idx: number, val: any) {
-        jobs.splice(val, 1);
+        state.jobs.splice(val, 1);
     });
 };
 
 export const DeleteNode = function (node_id: string) {
-    // Find node in nodes
-    const n = nodes.find((node: any) => node.data.id === node_id);
+    // Find node in state.nodes
+    const n = state.nodes.find((node: any) => node.data.id === node_id);
 
     if (!n) {
         return;
@@ -156,8 +157,8 @@ export const DeleteNode = function (node_id: string) {
 
     const edges_to_delete: any[] = [];
 
-    // Find all edges that connected to the deleted node
-    $.each(edges, function (idx: number, edge: any) {
+    // Find all state.edges that connected to the deleted node
+    $.each(state.edges, function (idx: number, edge: any) {
         if (!edge) {
             return;
         }
@@ -165,7 +166,7 @@ export const DeleteNode = function (node_id: string) {
         // Find the edge
         if (edge.data.source === node_id) {
             // Find the node on the other side
-            const t = nodes.find((target: any) => target.data.id === edge.data.target);
+            const t = state.nodes.find((target: any) => target.data.id === edge.data.target);
 
             if (!t) {
                 console.log("We have an edge without target node");
@@ -184,7 +185,7 @@ export const DeleteNode = function (node_id: string) {
 
         if (edge.data.target === node_id) {
             // Find the node on the other side
-            const t = nodes.find((target: any) => target.data.id === edge.data.source);
+            const t = state.nodes.find((target: any) => target.data.id === edge.data.source);
 
             if (!t) {
                 console.log("We have an edge without target node");
@@ -203,16 +204,16 @@ export const DeleteNode = function (node_id: string) {
     });
 
     $.each(edges_to_delete, function (idx: number, val: any) {
-        edges.splice(val, 1);
+        state.edges.splice(val, 1);
     });
 
     // Delete the node
-    const node_index = nodes.findIndex((prop: any) => prop.data.id === node_id);
-    nodes.splice(node_index, 1);
+    const node_index = state.nodes.findIndex((prop: any) => prop.data.id === node_id);
+    state.nodes.splice(node_index, 1);
 };
 
 export const DeleteEdge = function (edge_id: string) {
-    const ed = edges.find((edge: any) => edge.data.id === edge_id);
+    const ed = state.edges.find((edge: any) => edge.data.id === edge_id);
 
     if (!ed) {
         return;
@@ -222,7 +223,7 @@ export const DeleteEdge = function (edge_id: string) {
     const iterator = connected_nodes.values();
 
     for (const node_id of iterator) {
-        const t = nodes.find((target: any) => target.data.id === node_id);
+        const t = state.nodes.find((target: any) => target.data.id === node_id);
 
         if (!t) {
             console.log("We have an edge without target node");
@@ -238,19 +239,19 @@ export const DeleteEdge = function (edge_id: string) {
     }
 
     // Delete the edeg
-    const edge_index = edges.findIndex((prop: any) => prop.data.id === edge_id);
-    edges.splice(edge_index, 1);
+    const edge_index = state.edges.findIndex((prop: any) => prop.data.id === edge_id);
+    state.edges.splice(edge_index, 1);
     return;
 };
 
 export const PostNodes = function () {
     ajaxWithAuth({
         type: "POST",
-        url: ExternalUrlFor("/post_network_nodes?guid=" + network_guid),
-        data: JSON.stringify(nodes),
+        url: ExternalUrlFor("/post_network_nodes?guid=" + state.network_guid),
+        data: JSON.stringify(state.nodes),
         success: function (_data: any) {},
         error: function (_err: any) {
-            console.log("Cannot post nodes to server");
+            console.log("Cannot post state.nodes to server");
         },
         contentType: "application/json",
         dataType: "json",
@@ -260,11 +261,11 @@ export const PostNodes = function () {
 export const MoveNodes = function () {
     ajaxWithAuth({
         type: "POST",
-        url: ExternalUrlFor("/move_network_nodes?guid=" + network_guid),
-        data: JSON.stringify(nodes),
+        url: ExternalUrlFor("/move_network_nodes?guid=" + state.network_guid),
+        data: JSON.stringify(state.nodes),
         success: function (_data: any) {},
         error: function (_err: any) {
-            console.log("Cannot post nodes to server");
+            console.log("Cannot post state.nodes to server");
         },
         contentType: "application/json",
         dataType: "json",
@@ -273,7 +274,7 @@ export const MoveNodes = function () {
 
 export const prepareStylesheet = function () {
     const getColor = function (ele: any) {
-        if (ele.group() === "edges") {
+        if (ele.group() === "state.edges") {
             const dup = ele.data("duplicate_percentage");
             if (dup > 0) {
                 return "#26AE31";
@@ -285,7 +286,7 @@ export const prepareStylesheet = function () {
         return ele.data("label") || "";
     };
     const getLineStyle = function (ele: any) {
-        if (ele.group() === "edges") {
+        if (ele.group() === "state.edges") {
             const loss = ele.data("loss_percentage");
             if (loss > 0) {
                 return "dashed";
@@ -294,7 +295,7 @@ export const prepareStylesheet = function () {
         return ele.data("line") || "solid";
     };
     const getLineDashPattern = function (ele: any) {
-        if (ele.group() === "edges") {
+        if (ele.group() === "state.edges") {
             const loss = ele.data("loss_percentage");
             if (loss > 0) {
                 const gap = 2 + Math.round((loss / 100) * 18);
@@ -311,10 +312,10 @@ export const prepareStylesheet = function () {
     };
 
     const getPeerLabelByEdge = function (edgeId: string, selfId: string) {
-        const e = edges.find((ed: any) => ed.data && ed.data.id === edgeId);
+        const e = state.edges.find((ed: any) => ed.data && ed.data.id === edgeId);
         if (!e) return null;
         const otherId = e.data.source === selfId ? e.data.target : e.data.source;
-        const n = nodes.find((nn: any) => nn.data && nn.data.id === otherId);
+        const n = state.nodes.find((nn: any) => nn.data && nn.data.id === otherId);
         return n && n.data && n.data.label ? n.data.label : otherId;
     };
 
@@ -331,7 +332,7 @@ export const prepareStylesheet = function () {
 
     const getNodeLabel = function (ele: any) {
         let label = ele.data("label") || "";
-        const n = nodes.find((node: any) => node.data.id === ele.data("id"));
+        const n = state.nodes.find((node: any) => node.data.id === ele.data("id"));
 
         if (!n) {
             return label;
@@ -352,8 +353,8 @@ export const prepareStylesheet = function () {
             label = label + "\n" + "gw:" + n.config.default_gw;
         }
 
-        $.each(jobs, function (i: number) {
-            const j = jobs[i];
+        $.each(state.jobs, function (i: number) {
+            const j = state.jobs[i];
 
             if (j.host_id === n.data.id) {
                 label = label + "\n" + "(" + j.print_cmd + ")";
@@ -532,9 +533,9 @@ export const SnapNodesToGrid = function (cy_instance: any) {
             // Move cy node
             ele.position({ x: newX, y: newY });
 
-            // Update global nodes array
-            if (typeof nodes !== "undefined") {
-                const n = nodes.find((node: any) => node.data.id === ele.id());
+            // Update global state.nodes array
+            if (typeof state.nodes !== "undefined") {
+                const n = state.nodes.find((node: any) => node.data.id === ele.id());
                 if (n) {
                     n.position.x = newX;
                     n.position.y = newY;
@@ -550,7 +551,7 @@ export const SnapNodesToGrid = function (cy_instance: any) {
 };
 
 export const FindEdgeIdByJob = function (job: any) {
-    const node = nodes.find((n: any) => n.data.id === job.host_id);
+    const node = state.nodes.find((n: any) => n.data.id === job.host_id);
     if (!node || !Array.isArray(node.interface)) return null;
     const iface = node.interface.find((i: any) => i.id === job.arg_1);
     return iface?.connect || null;
@@ -565,7 +566,7 @@ export const MarkLinkDownEdges = function (cy_instance: any) {
         .removeClass("link-down-active")
         .removeStyle();
 
-    jobs.forEach(function (j: any) {
+    state.jobs.forEach(function (j: any) {
         if (j.job_id == LINK_DOWN_JOB_ID) {
             const edgeId = FindEdgeIdByJob(j);
             if (edgeId) {

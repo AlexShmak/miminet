@@ -1,3 +1,4 @@
+import { state } from "../lib/state";
 import { SetNetworkPlayerState, ExitEditMode, editingJobId, editingDeviceType } from "./runtime";
 import { DrawGraph } from "./draw";
 import { ajaxWithAuth } from "../lib/jwt_auth";
@@ -32,17 +33,17 @@ export const UpdateHostConfiguration = function (payload: any, host_id: string) 
                     ExitEditMode("host");
                 }
                 if (!data.warning) {
-                    // Update nodes
-                    nodes = data.nodes;
-                    // Update jobs
-                    jobs = data.jobs;
+                    // Update state.nodes
+                    state.nodes = data.nodes;
+                    // Update state.jobs
+                    state.jobs = data.jobs;
 
                     // Update graph
                     DrawGraph();
                 }
 
                 // Ok, let's try to update host config form
-                const n = nodes.find((node: any) => node.data.id === host_id);
+                const n = state.nodes.find((node: any) => node.data.id === host_id);
 
                 if (!n) {
                     ClearConfigForm("Нет такого хоста");
@@ -85,13 +86,13 @@ export const UpdateHostConfiguration = function (payload: any, host_id: string) 
 };
 
 // Delete job from host
-export const DeleteJobFromHost = function (host_id: string, job_id: string, network_guid: string) {
+export const DeleteJobFromHost = function (host_id: string, job_id: string, _network_guid: string) {
     // Reset network player
     SetNetworkPlayerState(-1);
 
     const payload = {
         id: job_id,
-        guid: network_guid,
+        guid: state.network_guid,
     };
 
     ajaxWithAuth({
@@ -101,14 +102,14 @@ export const DeleteJobFromHost = function (host_id: string, job_id: string, netw
         encode: true,
         success: function (data: any, textStatus: any, xhr: any) {
             if (xhr.status === 200) {
-                // Update jobs
-                jobs = data.jobs;
+                // Update state.jobs
+                state.jobs = data.jobs;
 
                 // Update graph
                 DrawGraph();
 
                 // Ok, let's try to update host config form
-                const n = nodes.find((node: any) => node.data.id === host_id);
+                const n = state.nodes.find((node: any) => node.data.id === host_id);
 
                 if (!n) {
                     ClearConfigForm("Нет такого хоста");
@@ -137,14 +138,14 @@ export const DeleteJobFromHost = function (host_id: string, job_id: string, netw
 export const DeleteJobFromRouter = function (
     router_id: string,
     job_id: string,
-    network_guid: string
+    _network_guid: string
 ) {
     // Reset network player
     SetNetworkPlayerState(-1);
 
     const payload = {
         id: job_id,
-        guid: network_guid,
+        guid: state.network_guid,
     };
 
     ($.ajax as any)({
@@ -154,14 +155,14 @@ export const DeleteJobFromRouter = function (
         encode: true,
         success: function (data: any, textStatus: any, xhr: any) {
             if (xhr.status === 200) {
-                // Update jobs
-                jobs = data.jobs;
+                // Update state.jobs
+                state.jobs = data.jobs;
 
                 // Update graph
                 DrawGraph();
 
                 // Ok, let's try to update host config form
-                const n = nodes.find((node: any) => node.data.id === router_id);
+                const n = state.nodes.find((node: any) => node.data.id === router_id);
 
                 if (!n) {
                     ClearConfigForm("Нет такого хоста");
@@ -189,14 +190,14 @@ export const DeleteJobFromRouter = function (
 export const DeleteJobFromSwitch = function (
     switch_id: string,
     job_id: string,
-    network_guid: string
+    _network_guid: string
 ) {
     // Reset network player
     SetNetworkPlayerState(-1);
 
     const payload = {
         id: job_id,
-        guid: network_guid,
+        guid: state.network_guid,
     };
 
     ($.ajax as any)({
@@ -206,14 +207,14 @@ export const DeleteJobFromSwitch = function (
         encode: true,
         success: function (data: any, textStatus: any, xhr: any) {
             if (xhr.status === 200) {
-                // Update jobs
-                jobs = data.jobs;
+                // Update state.jobs
+                state.jobs = data.jobs;
 
                 // Update graph
                 DrawGraph();
 
                 // Ok, let's try to update host config form
-                const n = nodes.find((node: any) => node.data.id === switch_id);
+                const n = state.nodes.find((node: any) => node.data.id === switch_id);
 
                 if (!n) {
                     ClearConfigForm("Нет такого хоста");
@@ -240,14 +241,14 @@ export const DeleteJobFromSwitch = function (
 export const DeleteJobFromServer = function (
     server_id: string,
     job_id: string,
-    network_guid: string
+    _network_guid: string
 ) {
     // Reset network player
     SetNetworkPlayerState(-1);
 
     const payload = {
         id: job_id,
-        guid: network_guid,
+        guid: state.network_guid,
     };
 
     ($.ajax as any)({
@@ -257,14 +258,14 @@ export const DeleteJobFromServer = function (
         encode: true,
         success: function (data: any, textStatus: any, xhr: any) {
             if (xhr.status === 200) {
-                // Update jobs
-                jobs = data.jobs;
+                // Update state.jobs
+                state.jobs = data.jobs;
 
                 // Update graph
                 DrawGraph();
 
                 // Ok, let's try to update host config form
-                const n = nodes.find((node: any) => node.data.id === server_id);
+                const n = state.nodes.find((node: any) => node.data.id === server_id);
 
                 if (!n) {
                     ClearConfigForm("Нет такого хоста");
@@ -305,21 +306,21 @@ export const UpdateRouterConfiguration = function (payload: any, router_id: stri
                     ExitEditMode("router");
                 }
 
-                // Update nodes
+                // Update state.nodes
                 if (data.nodes) {
-                    nodes = data.nodes;
+                    state.nodes = data.nodes;
                 }
 
-                // Update jobs
+                // Update state.jobs
                 if (data.jobs) {
-                    jobs = data.jobs;
+                    state.jobs = data.jobs;
                 }
 
                 // Update graph
                 DrawGraph();
 
                 // Ok, let's try to update router config form
-                const n = nodes.find((node: any) => node.data.id === router_id);
+                const n = state.nodes.find((node: any) => node.data.id === router_id);
 
                 if (!n) {
                     ClearConfigForm("Нет такого раутера");
@@ -379,11 +380,11 @@ export const UpdateServerConfiguration = function (payload: any, router_id: stri
 
                 if (!data.warning) {
                     if (data.nodes) {
-                        nodes = data.nodes;
+                        state.nodes = data.nodes;
                     }
 
                     if (data.jobs) {
-                        jobs = data.jobs;
+                        state.jobs = data.jobs;
                     }
 
                     // Update graph
@@ -391,7 +392,7 @@ export const UpdateServerConfiguration = function (payload: any, router_id: stri
                 }
 
                 // Ok, let's try to update router config form
-                const n = nodes.find((node: any) => node.data.id === router_id);
+                const n = state.nodes.find((node: any) => node.data.id === router_id);
 
                 if (!n) {
                     ClearConfigForm("Нет такого сервера");
@@ -441,17 +442,17 @@ export const UpdateHubConfiguration = function (payload: any, hub_id: string) {
         data: payload,
         success: function (data: any, textStatus: any, xhr: any) {
             if (xhr.status === 200) {
-                // Update nodes
-                nodes = data.nodes;
+                // Update state.nodes
+                state.nodes = data.nodes;
 
-                // We don't clear packets and RunButtonState.
+                // We don't clear state.packets and RunButtonState.
                 // Hub can change only names
 
                 // Update graph
                 DrawGraph();
 
                 // Ok, let's try to update host config form
-                const n = nodes.find((node: any) => node.data.id === hub_id);
+                const n = state.nodes.find((node: any) => node.data.id === hub_id);
 
                 if (!n) {
                     ClearConfigForm("Нет такого узла");
@@ -488,21 +489,21 @@ export const UpdateSwitchConfiguration = function (payload: any, switch_id: stri
                     ExitEditMode("switch");
                 }
                 if (!data.warning) {
-                    // Update nodes
-                    nodes = data.nodes;
+                    // Update state.nodes
+                    state.nodes = data.nodes;
 
-                    // Update jobs
-                    jobs = data.jobs;
+                    // Update state.jobs
+                    state.jobs = data.jobs;
 
                     // Update graph
                     DrawGraph();
                 }
 
-                // We don't clear packets and RunButtonState.
+                // We don't clear state.packets and RunButtonState.
                 // Hub can change only names
 
                 // Ok, let's try to update host config form
-                const n = nodes.find((node: any) => node.data.id === switch_id);
+                const n = state.nodes.find((node: any) => node.data.id === switch_id);
 
                 if (!n) {
                     ClearConfigForm("Нет такого узла");

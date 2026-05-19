@@ -43,6 +43,22 @@ export interface MiminetState {
     gridCanvasLayer?: any;
     gridEnabled: boolean;
     currentGridZoom: number;
+
+    // Per-page initial state, populated from #miminet-initial-state JSON
+    // by lib/initial_state.ts. The arrays are mutated in place by the
+    // bundle (nodes.push, jobs.splice, edges.findIndex, ...).
+    nodes: any[];
+    edges: any[];
+    jobs: any[];
+    packets: any;
+    pcaps: string[];
+    network_guid: string;
+    csrf_token: string;
+    network_title: string;
+    network_description: string;
+    network_zoom: number;
+    network_pan_x: number;
+    network_pan_y: number;
 }
 
 const w = window as Window & Record<string, unknown>;
@@ -130,6 +146,21 @@ export const state: MiminetState = {
     set currentGridZoom(v) {
         w.currentGridZoom = v;
     },
+
+    // Initial-state fields. Plain storage, no window bridge: the values
+    // come from #miminet-initial-state JSON parsed in lib/initial_state.ts.
+    nodes: [],
+    edges: [],
+    jobs: [],
+    packets: null,
+    pcaps: [],
+    network_guid: "",
+    csrf_token: "",
+    network_title: "",
+    network_description: "",
+    network_zoom: 1,
+    network_pan_x: 0,
+    network_pan_y: 0,
 };
 
 export const LINK_DOWN_JOB_ID = 6;

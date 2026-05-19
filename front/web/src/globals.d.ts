@@ -12,28 +12,11 @@
  * can be deleted.
  */
 
-// Templates emit `var nodes = ...`, `var edges = ...`, `var jobs = ...`
-// at top level and the code mutates these in place (e.g. RestoreNetworkObject).
-declare let nodes: any;
-declare let edges: any;
-declare let jobs: any;
 declare const cy: any;
 declare const eh: any;
 declare const simulation: any;
 
 declare const ExternalUrlFor: any;
-declare const network_guid: string;
-declare const csrf_token: string;
-declare let pcaps: string[];
-// `var packets = {{ packets | safe }}` in templates; mutable.
-declare let packets: any;
-
-// network.html / index.html Jinja-templated viewport hints.
-declare const network_zoom: number;
-declare const network_pan_x: number;
-declare const network_pan_y: number;
-declare const network_title: string;
-declare const network_description: string;
 
 declare const config_content_id: string;
 declare const config_content_save_tag: string;

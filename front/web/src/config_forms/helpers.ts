@@ -1,3 +1,4 @@
+import { state } from "../lib/state";
 import { config_main_form_id } from "./common";
 
 export const ConfigHostName = function (hostname: string) {
@@ -55,18 +56,18 @@ export const ConfigItemInterface = function (
     $(tag + ids[2] + name).val(ip);
     $(tag + ids[3] + name).val(netmask);
 
-    if (Array.isArray(pcaps) && pcaps.includes(name)) {
+    if (Array.isArray(state.pcaps) && state.pcaps.includes(name)) {
         $(tag + "_iface_name_label_" + name).html(
             'Линк к (<a href="/' +
                 item +
                 "/mimishark?guid=" +
-                network_guid +
+                state.network_guid +
                 "&iface=" +
                 name +
                 '" target="_blank">pcap</a>)'
         );
     } else {
-        console.warn("pcaps не определен или не является массивом:", pcaps);
+        console.warn("state.pcaps не определен или не является массивом:", state.pcaps);
     }
 };
 

@@ -1,8 +1,9 @@
+import { state } from "../lib/state";
 import { EnterEditMode } from "../netfront/runtime";
 import { UpdateRouterForm, UpdateServerForm, UpdateSwitchForm, FillDeviceSelectIntf } from "./jobs";
 
 export const EditJobInHost = function (host_id: string, job_id: string, _network_guid: string) {
-    const job = jobs.find((j: any) => j.id === job_id);
+    const job = state.jobs.find((j: any) => j.id === job_id);
 
     if (!job) {
         console.error("Job not found:", job_id);
@@ -67,7 +68,7 @@ export const EditJobInHost = function (host_id: string, job_id: string, _network
 
 // Edit job in router
 export const EditJobInRouter = function (router_id: string, job_id: string, _network_guid: string) {
-    const job = jobs.find((j: any) => j.id === job_id);
+    const job = state.jobs.find((j: any) => j.id === job_id);
 
     if (!job) {
         console.error("Job not found:", job_id);
@@ -227,7 +228,7 @@ export const EditJobInRouter = function (router_id: string, job_id: string, _net
 
 // Edit job in server
 export const EditJobInServer = function (server_id: string, job_id: string, _network_guid: string) {
-    const job = jobs.find((j: any) => j.id === job_id);
+    const job = state.jobs.find((j: any) => j.id === job_id);
 
     if (!job) {
         console.error("Job not found:", job_id);
@@ -296,7 +297,7 @@ export const EditJobInServer = function (server_id: string, job_id: string, _net
     }
 };
 export const EditJobInSwitch = function (switch_id: string, job_id: string, _network_guid: string) {
-    const job = jobs.find((j: any) => j.id === job_id);
+    const job = state.jobs.find((j: any) => j.id === job_id);
 
     if (!job) {
         console.error("Job not found:", job_id);

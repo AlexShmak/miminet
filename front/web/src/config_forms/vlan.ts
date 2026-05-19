@@ -1,3 +1,4 @@
+import { state } from "../lib/state";
 // VLAN modal config wiring for L2 switches.
 // Migrated from front/src/static/config_vlan.js.
 //
@@ -44,13 +45,13 @@ function generateTableContent(currentDevice: any, tableSelector: string) {
     $(tableSelector + " tbody").empty();
 
     const edgesMap = new Map<string, any>();
-    for (let i = 0; i < edges.length; i++) {
-        edgesMap.set(edges[i].data.id, edges[i]);
+    for (let i = 0; i < state.edges.length; i++) {
+        edgesMap.set(state.edges[i].data.id, state.edges[i]);
     }
 
     const nodesMap = new Map<string, any>();
-    for (let i = 0; i < nodes.length; i++) {
-        nodesMap.set(nodes[i].data.id, nodes[i].data.label);
+    for (let i = 0; i < state.nodes.length; i++) {
+        nodesMap.set(state.nodes[i].data.id, state.nodes[i].data.label);
     }
 
     for (let i = 0; i < currentDevice.interface.length; i++) {
@@ -206,12 +207,12 @@ function setupEventHandlers(currentDevice: any, modalId: string, tableId: string
                 saveCurrentFormData(currentDevice, "#" + tableId);
 
                 // TODO explain why we need this fix
-                // (for some reason, nodes aren't updating fast enough)
-                const index = nodes.findIndex(function (n: any) {
+                // (for some reason, state.nodes aren't updating fast enough)
+                const index = state.nodes.findIndex(function (n: any) {
                     return n.data.id == currentDevice.data.id;
                 });
 
-                nodes[index].interface = currentDevice.interface;
+                state.nodes[index].interface = currentDevice.interface;
             } else {
                 resetInterfaceFields(currentDevice);
             }

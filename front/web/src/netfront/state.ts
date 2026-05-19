@@ -1,3 +1,5 @@
+import { state } from "../lib/state";
+
 // Migrated from front/src/static/netfront/state.js
 //
 // State vars are explicitly attached to `window` so unmigrated classic
@@ -37,7 +39,7 @@ export const HostUid = function () {
     for (let host_number = 1; host_number < 100; host_number++) {
         const host = host_name + host_number;
 
-        const t = nodes.find((target: any) => target.data.id === host);
+        const t = state.nodes.find((target: any) => target.data.id === host);
 
         if (!t) {
             return host;
@@ -53,7 +55,7 @@ export const RouterUid = function () {
     for (let host_number = 1; host_number < 100; host_number++) {
         const host = host_name + host_number;
 
-        const t = nodes.find((target: any) => target.data.id === host);
+        const t = state.nodes.find((target: any) => target.data.id === host);
 
         if (!t) {
             return host;
@@ -69,7 +71,7 @@ export const ServerUid = function () {
     for (let host_number = 1; host_number < 100; host_number++) {
         const host = host_name + host_number;
 
-        const t = nodes.find((target: any) => target.data.id === host);
+        const t = state.nodes.find((target: any) => target.data.id === host);
 
         if (!t) {
             return host;

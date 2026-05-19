@@ -14,6 +14,11 @@
 
 import { attachGlobals } from "./lib/window-globals";
 
+// Must run before any module reads from `state` — parses the
+// `<script type="application/json" id="miminet-initial-state">` Jinja
+// emits and seeds state.nodes/edges/jobs/packets/pcaps/network_guid/...
+import "./lib/initial_state.js";
+
 // icons must load early — its DiagramIcons map is read by network_ops.ts
 // when prepareStylesheet() runs.
 import * as libIcons from "./lib/icons.js";

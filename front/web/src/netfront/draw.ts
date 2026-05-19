@@ -28,6 +28,7 @@ import {
     ShowEdgeConfig,
 } from "./show_config";
 import { ClearConfigForm } from "../config_forms/common";
+import { PacketPlayer } from "./packet_player";
 
 export const DrawGraph = function () {
     let selecteed_node_id: any = 0;
@@ -40,8 +41,8 @@ export const DrawGraph = function () {
         const collection = cy.elements();
         cy.remove(collection);
         cy.autounselectify(true);
-        cy.add(nodes);
-        cy.add(edges);
+        cy.add(state.nodes);
+        cy.add(state.edges);
         MarkLinkDownEdges(cy);
         cy.nodes().grabify();
         state.global_eh.enable();
@@ -55,8 +56,8 @@ export const DrawGraph = function () {
         style: prepareStylesheet(),
         elements: [],
         layout: "preset",
-        zoom: network_zoom,
-        pan: { x: network_pan_x, y: network_pan_y },
+        zoom: state.network_zoom,
+        pan: { x: state.network_pan_x, y: state.network_pan_y },
         fit: true,
     });
 
@@ -70,7 +71,7 @@ export const DrawGraph = function () {
         },
 
         edgeParams: function (_sourceNode: any, _targetNode: any) {
-            // for edges between the specified source and target
+            // for state.edges between the specified source and target
             // return element object to be passed to cy.add() for edge
             return {};
         },
@@ -79,7 +80,7 @@ export const DrawGraph = function () {
         snap: false, // when enabled, the edge can be drawn by just moving close to a target node (can be confusing on compound graphs)
         snapThreshold: 50, // the target node must be less than or equal to this many pixels away from the cursor/finger
         snapFrequency: 15, // the number of times per second (Hz) that snap checks done (lower is less expensive)
-        noEdgeEventsInDraw: true, // set events:no to edges during draws, prevents mouseouts on compounds
+        noEdgeEventsInDraw: true, // set events:no to state.edges during draws, prevents mouseouts on compounds
         disableBrowserGestures: true, // during an edge drawing gesture, disable browser gestures such as two-finger trackpad swipe and pinch-to-zoom
     };
 
@@ -88,13 +89,13 @@ export const DrawGraph = function () {
     cy.minZoom(0.5);
     cy.maxZoom(2);
 
-    cy.add(nodes);
-    cy.add(edges);
+    cy.add(state.nodes);
+    cy.add(state.edges);
 
-    // Mark edges that have a link-down job configured
+    // Mark state.edges that have a link-down job configured
     MarkLinkDownEdges(cy);
 
-    // Auto-snap existing network nodes on load
+    // Auto-snap existing network state.nodes on load
     SnapNodesToGrid(cy);
 
     // Changing zoom
@@ -122,7 +123,7 @@ export const DrawGraph = function () {
 
         state.networkUpdateTimeoutId = setTimeout(UpdateNetworkConfig, 2000);
 
-        // Update grid when panning to keep it aligned with nodes
+        // Update grid when panning to keep it aligned with state.nodes
         if (state.gridCanvasLayer) {
             drawGrid();
         }
@@ -131,7 +132,7 @@ export const DrawGraph = function () {
     // Looking for a position changing
     cy.on("dragfree", "node", function (this: any, _evt: any) {
         //let node_id = evt.target.id();
-        const n = nodes.find((node: any) => node.data.id === this.id());
+        const n = state.nodes.find((node: any) => node.data.id === this.id());
 
         if (!n) {
             return;
@@ -174,7 +175,7 @@ export const DrawGraph = function () {
         }
 
         // Is this edge ?
-        if (evtTarget.group() === "edges") {
+        if (evtTarget.group() === "state.edges") {
             selected_edge_id = evtTarget.data().id;
             ShowEdgeConfig(selected_edge_id);
             selecteed_node_id = 0;
@@ -183,7 +184,7 @@ export const DrawGraph = function () {
 
         // Maybe host ?
         const target_id = evt.target.id();
-        const n = nodes.find((node: any) => node.data.id === target_id);
+        const n = state.nodes.find((node: any) => node.data.id === target_id);
 
         if (!n) {
             return;
@@ -205,7 +206,7 @@ export const DrawGraph = function () {
         }
     });
 
-    // Add edge to the edges[] and then save it to the server.
+    // Add edge to the state.edges[] and then save it to the server.
     cy.on("ehcomplete", (event: any, sourceNode: any, targetNode: any, _addedEdge: any) => {
         AddEdge(sourceNode._private.data.id, targetNode._private.data.id);
         PostNodesEdges();
@@ -233,8 +234,8 @@ export const DrawGraph = function () {
 
             PostNodesEdges(); // Update network on server
             cy.elements().remove();
-            cy.add(nodes);
-            cy.add(edges);
+            cy.add(state.nodes);
+            cy.add(state.edges);
 
             TakeGraphPictureAndUpdate();
 
@@ -245,8 +246,8 @@ export const DrawGraph = function () {
             // Save the network state.
             SaveNetworkObject();
 
-            // If the source or target is a switch, delete the jobs.
-            const ed = edges.find((edge: any) => edge.data.id === selected_edge_id);
+            // If the source or target is a switch, delete the state.jobs.
+            const ed = state.edges.find((edge: any) => edge.data.id === selected_edge_id);
             if (ed) {
                 if (ed.data.source.startsWith("l2sw")) {
                     DeleteJob(ed.data.source);
@@ -262,8 +263,8 @@ export const DrawGraph = function () {
 
             PostNodesEdges(); // Update network on server
             cy.elements().remove();
-            cy.add(nodes);
-            cy.add(edges);
+            cy.add(state.nodes);
+            cy.add(state.edges);
 
             TakeGraphPictureAndUpdate();
 
@@ -280,8 +281,8 @@ export const DrawGraph = function () {
 
             PostNodesEdges(); // Update network on server
             cy.elements().remove();
-            cy.add(nodes);
-            cy.add(edges);
+            cy.add(state.nodes);
+            cy.add(state.edges);
 
             TakeGraphPictureAndUpdate();
 
@@ -294,7 +295,7 @@ export const DrawGraph = function () {
     initGrid(cy);
 };
 
-export const DrawGraphStatic = function (nodes: any, edges: any, shared: number = 0) {
+export const DrawGraphStatic = function (shared: number = 0) {
     const network_scheme_id = shared ? "network_scheme_shared" : "network_scheme";
 
     let cy: any;
@@ -309,22 +310,22 @@ export const DrawGraphStatic = function (nodes: any, edges: any, shared: number 
             style: prepareStylesheet(),
             elements: [],
             layout: "preset",
-            zoom: network_zoom,
-            pan: { x: network_pan_x, y: network_pan_y },
+            zoom: state.network_zoom,
+            pan: { x: state.network_pan_x, y: state.network_pan_y },
             fit: true,
         });
 
         state.global_cy = cy;
     }
 
-    // Turn off edges creation.
+    // Turn off state.edges creation.
     if (state.global_eh) {
         state.global_eh.disable();
     }
 
     cy.autounselectify(false);
-    cy.add(nodes);
-    cy.add(edges);
+    cy.add(state.nodes);
+    cy.add(state.edges);
     MarkLinkDownEdges(cy);
     cy.nodes().ungrabify();
 
@@ -334,7 +335,7 @@ export const DrawGraphStatic = function (nodes: any, edges: any, shared: number 
     return;
 };
 
-export const DrawSharedGraph = function (nodes: any, edges: any) {
+export const DrawSharedGraph = function () {
     let selected_edge_id: any = 0;
 
     // Do we already have one?
@@ -350,8 +351,8 @@ export const DrawSharedGraph = function (nodes: any, edges: any) {
             style: prepareStylesheet(),
             elements: [],
             layout: "preset",
-            zoom: network_zoom,
-            pan: { x: network_pan_x, y: network_pan_y },
+            zoom: state.network_zoom,
+            pan: { x: state.network_pan_x, y: state.network_pan_y },
             fit: true,
         });
 
@@ -363,8 +364,8 @@ export const DrawSharedGraph = function (nodes: any, edges: any) {
     cy.minZoom(0.5);
     cy.maxZoom(2);
 
-    cy.add(nodes);
-    cy.add(edges);
+    cy.add(state.nodes);
+    cy.add(state.edges);
     MarkLinkDownEdges(cy);
 
     // Click on object
@@ -377,14 +378,14 @@ export const DrawSharedGraph = function (nodes: any, edges: any) {
         }
 
         // Is this edge ?
-        if (evtTarget.group() === "edges") {
+        if (evtTarget.group() === "state.edges") {
             selected_edge_id = evtTarget.data().id;
             ShowEdgeConfig(selected_edge_id, 1);
             return;
         }
 
         const target_id = evt.target.id();
-        const n = nodes.find((node: any) => node.data.id === target_id);
+        const n = state.nodes.find((node: any) => node.data.id === target_id);
 
         if (!n) {
             return;
@@ -410,8 +411,6 @@ export const DrawSharedGraph = function (nodes: any, edges: any) {
 };
 
 export const DrawIndexGraphStatic = function (
-    nodes: any,
-    edges: any,
     container_id: string,
     graph_network_zoom: number,
     graph_network_pan_x: number,
@@ -431,12 +430,23 @@ export const DrawIndexGraphStatic = function (
 
     index_cy.autounselectify(false);
 
-    index_cy.add(nodes);
-    index_cy.add(edges);
+    index_cy.add(state.nodes);
+    index_cy.add(state.edges);
     index_cy.panningEnabled(false);
 
     index_cy.nodes().ungrabify();
     return index_cy;
 };
 
-// Check whether simulation is over and we can run packets
+// Boot helper for the index.html demo. Reads the data from state
+// (populated by lib/initial_state.ts from the JSON script tag) and
+// drives the playback loop. Exposed on window via attachGlobals so the
+// inline kickoff `<script>` in templates/index.html can call it.
+export const BootIndexDemo = function () {
+    const cy = DrawIndexGraphStatic("index_network_example", 2, -170, -90);
+    PacketPlayer.getInstance().InitPlayer(state.packets);
+    PacketPlayer.getInstance().StartPlayer(cy);
+    return cy;
+};
+
+// Check whether simulation is over and we can run state.packets

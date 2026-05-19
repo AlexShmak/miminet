@@ -1,3 +1,4 @@
+import { state } from "../lib/state";
 // VXLAN modal config wiring for routers.
 // Migrated from front/src/static/config_vxlan.js.
 
@@ -204,13 +205,13 @@ function getInterfaceAndConnectedNodes(currentDevice: any): Array<[any, any]> {
     const result: Array<[any, any]> = [];
 
     const edgesMap = new Map<string, any>();
-    for (let i = 0; i < edges.length; i++) {
-        edgesMap.set(edges[i].data.id, edges[i]);
+    for (let i = 0; i < state.edges.length; i++) {
+        edgesMap.set(state.edges[i].data.id, state.edges[i]);
     }
 
     const nodesMap = new Map<string, any>();
-    for (let i = 0; i < nodes.length; i++) {
-        nodesMap.set(nodes[i].data.id, nodes[i].data.label);
+    for (let i = 0; i < state.nodes.length; i++) {
+        nodesMap.set(state.nodes[i].data.id, state.nodes[i].data.label);
     }
 
     for (let i = 0; i < currentDevice.interface.length; i++) {

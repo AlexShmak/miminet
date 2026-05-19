@@ -1,3 +1,4 @@
+import { state } from "../lib/state";
 // STP / RSTP modal config wiring for L2 switches.
 // Migrated from front/src/static/config_stp.js.
 
@@ -44,7 +45,7 @@ function eventHandlers(currentDevice: any, modalId: string) {
 
             const switch_id = currentDevice.data.id;
             $("#" + modalId + " #modal_switch_id").val(switch_id);
-            $("#" + modalId + " #modal_net_guid").val(network_guid);
+            $("#" + modalId + " #modal_net_guid").val(state.network_guid);
 
             const data = $("#" + modalId)
                 .find("#form_config_rstp_stp")

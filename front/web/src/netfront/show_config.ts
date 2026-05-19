@@ -1,3 +1,4 @@
+import { state } from "../lib/state";
 import { ExitEditMode, editingJobId, editingDeviceType } from "./runtime";
 import {
     ConfigHostForm,
@@ -63,7 +64,7 @@ export const ActionWithInterface = function (n: any, i: number, fun: (...args: a
         return;
     }
 
-    const edge = edges.find((e: any) => e.data.id === connect_id);
+    const edge = state.edges.find((e: any) => e.data.id === connect_id);
 
     if (!edge) {
         return;
@@ -78,7 +79,7 @@ export const ActionWithInterface = function (n: any, i: number, fun: (...args: a
 
     const connected_to = n.data.id === target_host ? source_host : target_host;
 
-    const connected_to_host = nodes.find((node: any) => node.data.id === connected_to);
+    const connected_to_host = state.nodes.find((node: any) => node.data.id === connected_to);
     const connected_to_host_label = connected_to_host ? connected_to_host.data.label : "Unknown";
 
     const ip_addr = n.interface[i].ip || "";
@@ -106,11 +107,11 @@ export const ShowHostConfig = function (n: any, shared: number = 0) {
     // Add hostname
     ConfigHostName(hostname);
 
-    // Add jobs
+    // Add state.jobs
     let host_jobs = [];
 
-    if (jobs) {
-        host_jobs = jobs.filter((j: any) => j.host_id === n.data.id);
+    if (state.jobs) {
+        host_jobs = state.jobs.filter((j: any) => j.host_id === n.data.id);
     }
 
     ConfigHostJob(host_jobs, shared);
@@ -154,11 +155,11 @@ export const ShowRouterConfig = function (n: any, shared: number = 0) {
     // Add hostname
     ConfigRouterName(hostname);
 
-    // Add jobs
+    // Add state.jobs
     let router_jobs = [];
 
-    if (jobs) {
-        router_jobs = jobs.filter((j: any) => j.host_id === n.data.id);
+    if (state.jobs) {
+        router_jobs = state.jobs.filter((j: any) => j.host_id === n.data.id);
     }
 
     ConfigRouterJob(router_jobs, shared);
@@ -205,11 +206,11 @@ export const ShowServerConfig = function (n: any, shared: number = 0) {
     // Add hostname
     ConfigServerName(hostname);
 
-    // Add jobs
+    // Add state.jobs
     let host_jobs = [];
 
-    if (jobs) {
-        host_jobs = jobs.filter((j: any) => j.host_id === n.data.id);
+    if (state.jobs) {
+        host_jobs = state.jobs.filter((j: any) => j.host_id === n.data.id);
     }
 
     ConfigServerJob(host_jobs, shared);
@@ -277,8 +278,8 @@ export const ShowSwitchConfig = function (n: any, shared: number = 0) {
     ConfigSwitchName(hostname);
     let switch_jobs = [];
 
-    if (jobs) {
-        switch_jobs = jobs.filter((j: any) => j.host_id === n.data.id);
+    if (state.jobs) {
+        switch_jobs = state.jobs.filter((j: any) => j.host_id === n.data.id);
     }
 
     ConfigSwitchJob(switch_jobs, shared);
@@ -309,7 +310,7 @@ export const ShowSwitchConfig = function (n: any, shared: number = 0) {
 };
 
 export const ShowEdgeConfig = function (edge_id: string, shared: number = 0) {
-    const ed = edges.find((edge: any) => edge.data.id === edge_id);
+    const ed = state.edges.find((edge: any) => edge.data.id === edge_id);
 
     if (!ed) {
         return;
@@ -347,7 +348,7 @@ export const l1HubUid = function () {
     for (let hub_number = 1; hub_number < 100; hub_number++) {
         const hub = hub_name + hub_number;
 
-        const t = nodes.find((target: any) => target.data.id === hub);
+        const t = state.nodes.find((target: any) => target.data.id === hub);
 
         if (!t) {
             return hub;
@@ -363,7 +364,7 @@ export const l2SwitchUid = function () {
     for (let sw_number = 1; sw_number < 100; sw_number++) {
         const sw = sw_name + sw_number;
 
-        const t = nodes.find((target: any) => target.data.id === sw);
+        const t = state.nodes.find((target: any) => target.data.id === sw);
 
         if (!t) {
             return sw;
@@ -374,7 +375,7 @@ export const l2SwitchUid = function () {
 };
 
 export const l2SwitchPortUid = function (switch_id: string) {
-    const t = nodes.find((target: any) => target.data.id === switch_id);
+    const t = state.nodes.find((target: any) => target.data.id === switch_id);
 
     if (!t) {
         return -1;
@@ -392,7 +393,7 @@ export const l2SwitchPortUid = function (switch_id: string) {
 };
 
 export const l1HubPortUid = function (hub_id: string) {
-    const t = nodes.find((target: any) => target.data.id === hub_id);
+    const t = state.nodes.find((target: any) => target.data.id === hub_id);
 
     if (!t) {
         return -1;

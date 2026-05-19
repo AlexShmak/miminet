@@ -1,3 +1,4 @@
+import { state } from "../lib/state";
 import { UpdateJobCounter } from "./common";
 import {
     DeleteJobFromHost,
@@ -93,7 +94,7 @@ export const ConfigHostJob = function (host_jobs: any[], shared: number = 0) {
 
     $(elem).insertBefore(host_id);
 
-    // Print jobs if we have
+    // Print state.jobs if we have
     if (!host_jobs) {
         return;
     }
@@ -134,14 +135,14 @@ export const ConfigHostJob = function (host_jobs: any[], shared: number = 0) {
         $("#config_host_job_delete_" + jid).click(function (event: any) {
             event.preventDefault();
             if (!shared) {
-                DeleteJobFromHost(host_id.value, jid, network_guid);
+                DeleteJobFromHost(host_id.value, jid, state.network_guid);
             }
         });
 
         $("#config_host_job_edit_" + jid).click(function (event: any) {
             event.preventDefault();
             if (!shared) {
-                EditJobInHost(host_id.value, jid, network_guid);
+                EditJobInHost(host_id.value, jid, state.network_guid);
             }
         });
     });
@@ -224,7 +225,7 @@ export const ConfigSwitchJob = function (switch_jobs: any[], shared: number = 0)
 
     $(elem).insertBefore(switch_id);
 
-    // Print jobs if we have
+    // Print state.jobs if we have
     if (!switch_jobs) {
         return;
     }
@@ -265,14 +266,14 @@ export const ConfigSwitchJob = function (switch_jobs: any[], shared: number = 0)
         $("#config_switch_job_delete_" + jid).click(function (event: any) {
             event.preventDefault();
             if (!shared) {
-                DeleteJobFromSwitch(switch_id.value, jid, network_guid);
+                DeleteJobFromSwitch(switch_id.value, jid, state.network_guid);
             }
         });
 
         $("#config_switch_job_edit_" + jid).click(function (event: any) {
             event.preventDefault();
             if (!shared) {
-                EditJobInSwitch(switch_id.value, jid, network_guid);
+                EditJobInSwitch(switch_id.value, jid, state.network_guid);
             }
         });
     });
@@ -392,7 +393,7 @@ export const ConfigRouterJob = function (router_jobs: any[], shared: number = 0)
 
     $(elem).insertBefore(router_id);
 
-    // Print jobs if we have
+    // Print state.jobs if we have
     if (!router_jobs) {
         return;
     }
@@ -433,14 +434,14 @@ export const ConfigRouterJob = function (router_jobs: any[], shared: number = 0)
         $("#config_router_job_delete_" + jid).click(function (event: any) {
             event.preventDefault();
             if (!shared) {
-                DeleteJobFromRouter(router_id.value, jid, network_guid);
+                DeleteJobFromRouter(router_id.value, jid, state.network_guid);
             }
         });
 
         $("#config_router_job_edit_" + jid).click(function (event: any) {
             event.preventDefault();
             if (!shared) {
-                EditJobInRouter(router_id.value, jid, network_guid);
+                EditJobInRouter(router_id.value, jid, state.network_guid);
             }
         });
     });
@@ -471,7 +472,7 @@ export const ConfigServerJob = function (server_jobs: any[], shared: number = 0)
 
     $(elem).insertBefore(server_id);
 
-    // Print jobs if we have
+    // Print state.jobs if we have
     if (!server_jobs) {
         return;
     }
@@ -513,14 +514,14 @@ export const ConfigServerJob = function (server_jobs: any[], shared: number = 0)
             event.preventDefault();
 
             if (!shared) {
-                DeleteJobFromServer(server_id.value, jid, network_guid);
+                DeleteJobFromServer(server_id.value, jid, state.network_guid);
             }
         });
 
         $("#config_server_job_edit_" + jid).click(function (event: any) {
             event.preventDefault();
             if (!shared) {
-                EditJobInServer(server_id.value, jid, network_guid);
+                EditJobInServer(server_id.value, jid, state.network_guid);
             }
         });
     });
@@ -632,7 +633,7 @@ export const FillDeviceSelectIntf = function (
         return;
     }
 
-    const device_node = nodes.find((node: any) => node.data.id === device_id);
+    const device_node = state.nodes.find((node: any) => node.data.id === device_id);
     const device_type = device.slice(1, -3); //example : #router_id  -> router
 
     if (!device_node) {
@@ -673,7 +674,7 @@ export const FillDeviceSelectIntf = function (
             return;
         }
 
-        const edge = edges.find((e: any) => e.data.id === connect_id);
+        const edge = state.edges.find((e: any) => e.data.id === connect_id);
 
         if (!edge) {
             console.log("Не нашел ребро по подключению интерфейса");
@@ -690,7 +691,7 @@ export const FillDeviceSelectIntf = function (
 
         const device_connection = device_node.data.id === edge_target ? edge_source : edge_target;
 
-        const device_connection_host_node = nodes.find(
+        const device_connection_host_node = state.nodes.find(
             (node: any) => node.data.id === device_connection
         );
         const device_connection_host_label = device_connection_host_node

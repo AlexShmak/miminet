@@ -1,5 +1,6 @@
+import { state } from "../lib/state";
 // Drag-and-drop wiring: device palette icons (.drag) get dropped onto
-// the cytoscape canvas (#network_scheme) to create new nodes.
+// the cytoscape canvas (#network_scheme) to create new state.nodes.
 //
 // Migrated from front/src/static/netfront.js. The original ran at the
 // bottom of the page, after both the palette and the canvas were
@@ -46,7 +47,7 @@ export function initNetfrontDragDrop() {
 
             if (type === "host") {
                 const node_id = HostUid();
-                nodes.push({
+                state.nodes.push({
                     data: { id: node_id, label: node_id },
                     position: { x: pos.x, y: pos.y },
                     classes: ["host"],
@@ -58,7 +59,7 @@ export function initNetfrontDragDrop() {
                 });
             } else if (type === "l2_switch") {
                 const node_id = l2SwitchUid();
-                nodes.push({
+                state.nodes.push({
                     data: { id: node_id, label: node_id },
                     position: { x: pos.x, y: pos.y },
                     classes: ["l2_switch"],
@@ -71,7 +72,7 @@ export function initNetfrontDragDrop() {
                 });
             } else if (type === "l1_hub") {
                 const node_id = l1HubUid();
-                nodes.push({
+                state.nodes.push({
                     data: { id: node_id, label: node_id },
                     position: { x: pos.x, y: pos.y },
                     classes: ["l1_hub"],
@@ -83,7 +84,7 @@ export function initNetfrontDragDrop() {
                 });
             } else if (type === "l3_router") {
                 const node_id = RouterUid();
-                nodes.push({
+                state.nodes.push({
                     data: { id: node_id, label: node_id },
                     position: { x: pos.x, y: pos.y },
                     classes: ["l3_router"],
@@ -95,7 +96,7 @@ export function initNetfrontDragDrop() {
                 });
             } else if (type === "server") {
                 const node_id = ServerUid();
-                nodes.push({
+                state.nodes.push({
                     data: { id: node_id, label: node_id },
                     position: { x: pos.x, y: pos.y },
                     classes: ["server"],
@@ -109,7 +110,7 @@ export function initNetfrontDragDrop() {
                 return;
             }
 
-            // post new nodes to the server
+            // post new state.nodes to the server
             PostNodes();
             DrawGraph();
             TakeGraphPictureAndUpdate();

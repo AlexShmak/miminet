@@ -1,3 +1,4 @@
+import { state } from "../lib/state";
 export const ConfigHostForm = function (host_id: string) {
     const form = document.getElementById("config_host_main_form_script")!.innerHTML;
     const button = document.getElementById("config_host_save_script")!.innerHTML;
@@ -18,7 +19,7 @@ export const ConfigHostForm = function (host_id: string) {
 
     // Set host_id
     $("#host_id").val(host_id);
-    $("#net_guid").val(network_guid);
+    $("#net_guid").val(state.network_guid);
 
     function handleHostClick(event: any) {
         event.preventDefault();
@@ -53,7 +54,7 @@ export const ConfigRouterForm = function (router_id: string) {
 
     // Set host_id
     $("#router_id").val(router_id);
-    $("#net_guid").val(network_guid);
+    $("#net_guid").val(state.network_guid);
 
     function handleRouterClick(event: any) {
         event.preventDefault();
@@ -103,7 +104,7 @@ export const ConfigServerForm = function (server_id: string) {
 
     // Set host_id
     $("#server_id").val(server_id);
-    $("#net_guid").val(network_guid);
+    $("#net_guid").val(state.network_guid);
 
     function handleServerClick(event: any) {
         event.preventDefault();
@@ -151,7 +152,7 @@ export const ConfigHubForm = function (hub_id: string) {
 
     // Set host_id
     $("#hub_id").val(hub_id);
-    $("#net_guid").val(network_guid);
+    $("#net_guid").val(state.network_guid);
 
     function handleHubClick(event: any) {
         event.preventDefault();
@@ -194,12 +195,12 @@ export const ConfigSwitchForm = function (switch_id: string) {
     addIpFieldHandlers();
 
     // Add href for mimishark
-    // var url = "/MimiShark?guid="+network_guid
+    // var url = "/MimiShark?guid="+state.network_guid
     // $(needhref).attr('href',url)
 
     // Set host_id
     $("#switch_id").val(switch_id);
-    $("#net_guid").val(network_guid);
+    $("#net_guid").val(state.network_guid);
 
     function handleSwitchClick(event: any) {
         $("#config_switch_main_form [name='config_rstp_stp']").val(
@@ -248,7 +249,7 @@ export const ConfigEdgeForm = function (edge_id: string) {
 
     // Set host_id
     $("#edge_id").val(edge_id);
-    $("#net_guid").val(network_guid);
+    $("#net_guid").val(state.network_guid);
 
     function handleEdgeClick(event: any) {
         event.preventDefault();
@@ -258,7 +259,7 @@ export const ConfigEdgeForm = function (edge_id: string) {
         }
 
         const data = $("#config_edge_main_form").serialize();
-        const edge = edges.find((e: any) => e.data.id === edge_id);
+        const edge = state.edges.find((e: any) => e.data.id === edge_id);
         console.log(edge);
         const lossValue = $("#edge_loss").val();
         const duplicateValue = $("#edge_duplicate").val();

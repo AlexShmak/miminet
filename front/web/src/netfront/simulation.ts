@@ -3,7 +3,7 @@
 // State access goes through `state` (which bridges to window globals).
 // Bare references to other classic-script functions (ajaxWithAuth,
 // ExternalUrlFor, SetPacketFilter, SetNetworkPlayerState, DrawGraph,
-// network_guid, etc.) still resolve via the shared classic-script
+// state.network_guid, etc.) still resolve via the shared classic-script
 // scope — the bundled IIFE is loaded as a classic <script>, so it
 // inherits that scope.
 
@@ -16,7 +16,10 @@ export const CheckSimulation = function (simulation_id: number) {
     ajaxWithAuth({
         type: "GET",
         url: ExternalUrlFor(
-            "/check_simulation?simulation_id=" + simulation_id + "&network_guid=" + network_guid
+            "/check_simulation?simulation_id=" +
+                simulation_id +
+                "&state.network_guid=" +
+                state.network_guid
         ),
         data: "",
         success: function (data: any, textStatus: any, xhr: any) {
@@ -25,7 +28,7 @@ export const CheckSimulation = function (simulation_id: number) {
                 setTimeout(CheckSimulation, 2000, simulation_id);
             }
 
-            // Simulation is ended up and we can grab the packets
+            // Simulation is ended up and we can grab the state.packets
             if (xhr.status === 200) {
                 window.packets = JSON.parse(data.packets);
                 window.pcaps = data.pcaps;
