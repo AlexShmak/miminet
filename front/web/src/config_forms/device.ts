@@ -6,9 +6,6 @@ import {
     config_content_id,
     config_content_save_id,
     config_content_save_tag,
-    config_edge_main_form_id,
-    config_hub_main_form_id,
-    config_switch_main_form_id,
 } from "./common";
 import {
     UpdateRouterConfiguration,
@@ -308,35 +305,6 @@ export const ConfigEdgeForm = function (edge_id: string) {
     if (typeof updateGridForConfigPanel === "function") {
         updateGridForConfigPanel();
     }
-};
-
-export const ConfigHubName = function (hostname: string) {
-    const text = document.getElementById("config_hub_name_script")!.innerHTML;
-
-    $(config_hub_main_form_id).prepend(text);
-    $("#config_hub_name").val(hostname);
-};
-
-export const ConfigEdgeNetworkIssues = function (edge_loss: any, edge_duplicate: any) {
-    const text = document.getElementById("config_edge_set_network_issues_script")!.innerHTML;
-    $(config_edge_main_form_id).prepend(text);
-    $("#edge_loss").val(edge_loss);
-    $("#edge_duplicate").val(edge_duplicate);
-};
-
-export const ConfigEdgeEndpoints = function (edge_source: any, edge_target: any) {
-    const text = document.getElementById("config_edge_edpoint_script")!.innerHTML;
-
-    $(config_edge_main_form_id).prepend(text);
-    $("#edge_source").val(edge_source);
-    $("#edge_target").val(edge_target);
-};
-
-export const ConfigSwitchName = function (hostname: string) {
-    const text = document.getElementById("config_switch_name_script")!.innerHTML;
-
-    $(config_switch_main_form_id).prepend(text);
-    $("#switch_name").val(hostname);
 };
 
 export const ConfigSwtichSTP = function (stp: number) {

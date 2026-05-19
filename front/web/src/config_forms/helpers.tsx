@@ -1,41 +1,171 @@
 import { state } from "../lib/state";
 import { createRoot, type Root } from "react-dom/client";
-import { config_main_form_id } from "./common";
-import { HostNameField } from "../components/HostNameField";
+import {
+    config_main_form_id,
+    config_hub_main_form_id,
+    config_switch_main_form_id,
+    config_edge_main_form_id,
+} from "./common";
+import { DeviceNameField } from "../components/DeviceNameField";
+import { EdgeEndpoints } from "../components/EdgeEndpoints";
+import { EdgeNetworkIssues } from "../components/EdgeNetworkIssues";
 
-// React root for the HostNameField pilot. Re-created whenever the host
-// config panel is rebuilt; the previous root (if any) is unmounted so
+// One persistent React root per device-name field. Re-created whenever
+// the panel rebuilds; the previous root (if any) is unmounted first so
 // React's bookkeeping doesn't leak between renders.
-let hostNameRoot: Root | null = null;
+const nameRoots: Record<string, Root | null> = {
+    host: null,
+    router: null,
+    server: null,
+    hub: null,
+    switch: null,
+};
 
-export const ConfigHostName = function (hostname: string) {
-    if (hostNameRoot) {
-        hostNameRoot.unmount();
-        hostNameRoot = null;
+function mountDeviceNameField(
+    device: keyof typeof nameRoots,
+    formSelector: string,
+    inputId: string,
+    inputName: string,
+    label: string,
+    initialValue: string,
+    wrapperId?: string
+) {
+    const existing = nameRoots[device];
+    if (existing) {
+        existing.unmount();
+        nameRoots[device] = null;
     }
-    const container = document.createElement("div");
-    container.id = "config_host_name_root";
-    const form = document.querySelector(config_main_form_id);
+    const form = document.querySelector(formSelector);
     if (!form) {
         return;
     }
-    form.prepend(container);
-    hostNameRoot = createRoot(container);
-    hostNameRoot.render(<HostNameField initialValue={hostname} />);
+    // Drop any wrapper from a prior render so re-opening the panel
+    // doesn't stack two of them.
+    if (wrapperId) {
+        document.getElementById(wrapperId)?.remove();
+    }
+
+    // Non-React wrapper — legacy code (ConfigRSTP/ConfigVLAN) appends
+    // modal-trigger buttons here on top of the React-rendered children.
+    const wrapper = document.createElement("div");
+    if (wrapperId) {
+        wrapper.id = wrapperId;
+    }
+    wrapper.className = "form-group pb-2";
+    form.prepend(wrapper);
+
+    const reactSlot = document.createElement("div");
+    wrapper.appendChild(reactSlot);
+    const root = createRoot(reactSlot);
+    nameRoots[device] = root;
+    root.render(
+        <DeviceNameField
+            inputId={inputId}
+            inputName={inputName}
+            label={label}
+            initialValue={initialValue}
+        />
+    );
+}
+
+export const ConfigHostName = function (hostname: string) {
+    mountDeviceNameField(
+        "host",
+        config_main_form_id,
+        "config_host_name",
+        "config_host_name",
+        "Имя хоста",
+        hostname
+    );
 };
 
 export const ConfigRouterName = function (hostname: string) {
-    const text = document.getElementById("config_router_name_script")!.innerHTML;
-
-    $(config_main_form_id).prepend(text);
-    $("#config_router_name").val(hostname);
+    mountDeviceNameField(
+        "router",
+        config_main_form_id,
+        "config_router_name",
+        "config_router_name",
+        "Имя роутера",
+        hostname
+    );
 };
 
 export const ConfigServerName = function (hostname: string) {
-    const text = document.getElementById("config_server_name_script")!.innerHTML;
+    mountDeviceNameField(
+        "server",
+        config_main_form_id,
+        "config_server_name",
+        "config_server_name",
+        "Имя сервера",
+        hostname
+    );
+};
 
-    $(config_main_form_id).prepend(text);
-    $("#config_server_name").val(hostname);
+export const ConfigHubName = function (hostname: string) {
+    mountDeviceNameField(
+        "hub",
+        config_hub_main_form_id,
+        "config_hub_name",
+        "config_hub_name",
+        "Имя хаба",
+        hostname
+    );
+};
+
+export const ConfigSwitchName = function (hostname: string) {
+    mountDeviceNameField(
+        "switch",
+        config_switch_main_form_id,
+        // The switch markup historically gave the input id="switch_name"
+        // (inconsistent with the other devices). Tests still target this
+        // id; preserve it.
+        "switch_name",
+        "config_switch_name",
+        "Имя Свитча",
+        hostname,
+        // ConfigRSTP/ConfigVLAN append their buttons to this wrapper id.
+        "config_switch_name"
+    );
+};
+
+// Edge config — separate React roots for each section so they can be
+// re-rendered independently when the edge selection changes.
+let edgeEndpointsRoot: Root | null = null;
+let edgeIssuesRoot: Root | null = null;
+
+export const ConfigEdgeEndpoints = function (edge_source: string, edge_target: string) {
+    if (edgeEndpointsRoot) {
+        edgeEndpointsRoot.unmount();
+        edgeEndpointsRoot = null;
+    }
+    const form = document.querySelector(config_edge_main_form_id);
+    if (!form) {
+        return;
+    }
+    const container = document.createElement("div");
+    container.id = "config_edge_endpoints_root";
+    form.prepend(container);
+    edgeEndpointsRoot = createRoot(container);
+    edgeEndpointsRoot.render(<EdgeEndpoints source={edge_source} target={edge_target} />);
+};
+
+export const ConfigEdgeNetworkIssues = function (
+    edge_loss: number | string,
+    edge_duplicate: number | string
+) {
+    if (edgeIssuesRoot) {
+        edgeIssuesRoot.unmount();
+        edgeIssuesRoot = null;
+    }
+    const form = document.querySelector(config_edge_main_form_id);
+    if (!form) {
+        return;
+    }
+    const container = document.createElement("div");
+    container.id = "config_edge_network_issues_root";
+    form.prepend(container);
+    edgeIssuesRoot = createRoot(container);
+    edgeIssuesRoot.render(<EdgeNetworkIssues loss={edge_loss} duplicate={edge_duplicate} />);
 };
 
 export const ConfigItemInterface = function (
