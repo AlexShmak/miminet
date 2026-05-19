@@ -21,6 +21,8 @@ interface InitialStatePayload {
     network_zoom?: number;
     network_pan_x?: number;
     network_pan_y?: number;
+    mode?: "editor" | "shared" | "index";
+    simulation_id?: number;
 }
 
 function readInitialState(): InitialStatePayload | null {
@@ -52,6 +54,8 @@ if (payload) {
     if (payload.network_zoom !== undefined) state.network_zoom = payload.network_zoom;
     if (payload.network_pan_x !== undefined) state.network_pan_x = payload.network_pan_x;
     if (payload.network_pan_y !== undefined) state.network_pan_y = payload.network_pan_y;
+    if (payload.mode !== undefined) state.mode = payload.mode;
+    if (payload.simulation_id !== undefined) state.simulation_id = payload.simulation_id;
 }
 
 // Compatibility shim: re-expose state.X under bare-global names on
@@ -62,7 +66,7 @@ if (payload) {
 //
 // Phase 9 will remove these — at which point the selenium fixture must
 // switch to `return window.state.nodes` (or similar).
-const w = window as Window & Record<string, unknown>;
+const w = window as unknown as Window & Record<string, unknown>;
 const shimmed = [
     "nodes",
     "edges",

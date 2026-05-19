@@ -1,79 +1,58 @@
 /**
  * Miminet front-end ES-module entry point.
  *
- * As each classic-script file under static/{netfront,config_forms}/ is
- * migrated to an ES module under web/src/, it gets imported here and
- * its exports are re-attached to `window` via `attachGlobals`, so
- * inline HTML `onclick="X(...)"` handlers and any remaining classic
- * scripts can still resolve the names.
+ * All modules are imported (and their side effects run) once when the
+ * bundle loads. Modules talk to each other via explicit ESM imports —
+ * nothing is sprinkled onto `window` except the small bare-name shim
+ * in lib/initial_state.ts that the selenium fixture still depends on.
  *
- * The unmigrated classic-script files are still concatenated into
- * miminet.classic.js by the build plugin in vite.config.ts. As more
- * modules move here, that list shrinks.
+ * Page-specific bootstrapping (which network mode to render, etc.) is
+ * driven by `state.mode` and lives in lib/boot.ts.
  */
-
-import { attachGlobals } from "./lib/window-globals";
 
 // Must run before any module reads from `state` — parses the
 // `<script type="application/json" id="miminet-initial-state">` Jinja
 // emits and seeds state.nodes/edges/jobs/packets/pcaps/network_guid/...
 import "./lib/initial_state.js";
 
-// icons must load early — its DiagramIcons map is read by network_ops.ts
-// when prepareStylesheet() runs.
-import * as libIcons from "./lib/icons.js";
-
-// jwt_auth provides ajaxWithAuth / fetchWithAuth used by every ajax call.
-import * as libJwtAuth from "./lib/jwt_auth.js";
-
-// state.js initializes the window-level state variables that the bridge
-// in lib/state.ts and unmigrated classic scripts depend on. Must run
-// first so those values are set before anyone reads them.
-import * as netfrontState from "./netfront/state.js";
-
-import * as netfrontShowConfig from "./netfront/show_config.js";
-import * as netfrontNetworkOps from "./netfront/network_ops.js";
-import * as netfrontDraw from "./netfront/draw.js";
-import * as netfrontSimulation from "./netfront/simulation.js";
-import * as netfrontUpdateConfig from "./netfront/update_config.js";
-import * as netfrontRuntime from "./netfront/runtime.js";
-import * as netfrontPacketPlayer from "./netfront/packet_player.js";
+// Imported for side effects. Modules register their own DOM-ready
+// handlers and event listeners; explicit ESM imports tie consumers
+// to producers.
+import "./lib/icons.js";
+import "./lib/jwt_auth.js";
+import "./netfront/state.js";
+import "./netfront/show_config.js";
+import "./netfront/network_ops.js";
+import "./netfront/draw.js";
+import "./netfront/simulation.js";
+import "./netfront/update_config.js";
+import "./netfront/runtime.js";
+import "./netfront/packet_player.js";
 
 // Drag-and-drop wiring for device palette → cytoscape canvas. Runs its
 // own jQuery DOM-ready callback on import.
 import "./netfront/netfront.js";
 
-// config_forms — common.js exports the shared selectors and is imported
-// first so its top-level jQuery `.load()` calls run before the rest.
-import * as configFormsCommon from "./config_forms/common.js";
-import * as configFormsDevice from "./config_forms/device.js";
-import * as configFormsShared from "./config_forms/shared.js";
-import * as configFormsHelpers from "./config_forms/helpers.js";
-import * as configFormsJobs from "./config_forms/jobs.js";
-import * as configFormsEditJobs from "./config_forms/edit_jobs.js";
-import * as configFormsStp from "./config_forms/stp.js";
-import * as configFormsVlan from "./config_forms/vlan.js";
-import * as configFormsVxlan from "./config_forms/vxlan.js";
+// config_forms — common.ts runs top-level jQuery `.load()` calls on
+// import to fetch the device config form fragments.
+import "./config_forms/common.js";
+import "./config_forms/device.js";
+import "./config_forms/shared.js";
+import "./config_forms/helpers.js";
+import "./config_forms/jobs.js";
+import "./config_forms/edit_jobs.js";
+import "./config_forms/stp.js";
+import "./config_forms/vlan.js";
+import "./config_forms/vxlan.js";
 
-attachGlobals(libIcons);
-attachGlobals(libJwtAuth);
-attachGlobals(netfrontState);
-attachGlobals(netfrontShowConfig);
-attachGlobals(netfrontNetworkOps);
-attachGlobals(netfrontDraw);
-attachGlobals(netfrontSimulation);
-attachGlobals(netfrontUpdateConfig);
-attachGlobals(netfrontRuntime);
-attachGlobals(netfrontPacketPlayer);
-attachGlobals(configFormsCommon);
-attachGlobals(configFormsDevice);
-attachGlobals(configFormsShared);
-attachGlobals(configFormsHelpers);
-attachGlobals(configFormsJobs);
-attachGlobals(configFormsEditJobs);
-attachGlobals(configFormsStp);
-attachGlobals(configFormsVlan);
-attachGlobals(configFormsVxlan);
+// Public API surface exposed on `window.miminet` for inline HTML
+// scripts (quiz practice page, Yandex Metrica trackers, etc.).
+import "./lib/api.js";
+
+// Last: dispatches page-specific bootstrap based on state.mode and
+// wires document-level event delegation for [data-action="..."]
+// buttons. Runs on DOMContentLoaded.
+import "./lib/boot.js";
 
 declare global {
     interface Window {

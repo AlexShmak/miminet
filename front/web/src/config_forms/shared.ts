@@ -1,11 +1,8 @@
 import { state } from "../lib/state";
+import { config_content_id, config_content_save_id, config_content_save_tag } from "./common";
+
 // Migrated from front/src/static/config_forms/shared.js
-//
-// Each function is exposed as an ES-module export. main.ts re-attaches
-// them to `window` via `attachGlobals` so existing inline HTML handlers
-// keep working. Bare references like `$`, `state.network_guid`,
-// `config_content_id` still resolve via the global scope — they are
-// owned by the remaining classic scripts and inline <script> tags.
+// Shared (read-only) versions of the device config forms.
 
 export const SharedConfigHostForm = function (host_id: string) {
     const form = document.getElementById("config_host_main_form_script")!.innerHTML;

@@ -1,5 +1,5 @@
 import { state } from "../lib/state";
-import { UpdateJobCounter } from "./common";
+import { UpdateJobCounter, config_content_id, config_content_save_tag } from "./common";
 import {
     DeleteJobFromHost,
     DeleteJobFromRouter,

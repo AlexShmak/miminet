@@ -1,4 +1,23 @@
 import { state } from "../lib/state";
+import { addIpFieldHandlers } from "./helpers";
+import { DeleteAndSaveJob, updateGridForConfigPanel } from "../netfront/runtime";
+import {
+    UpdateHostConfigurationForm,
+    config_content_id,
+    config_content_save_id,
+    config_content_save_tag,
+    config_edge_main_form_id,
+    config_hub_main_form_id,
+    config_switch_main_form_id,
+} from "./common";
+import {
+    UpdateRouterConfiguration,
+    UpdateServerConfiguration,
+    UpdateHubConfiguration,
+    UpdateSwitchConfiguration,
+} from "../netfront/update_config";
+import { UpdateEdgeConfiguration } from "../netfront/simulation";
+
 export const ConfigHostForm = function (host_id: string) {
     const form = document.getElementById("config_host_main_form_script")!.innerHTML;
     const button = document.getElementById("config_host_save_script")!.innerHTML;

@@ -34,22 +34,24 @@
     {% if question.question_type == "practice" %}
         <script>
             const fixedJson = practiceQuestion["start_configuration"].replace(/\n/g, '\\n');
-            let start_configuration = JSON.parse(fixedJson)
-            const network_guid = practiceQuestion["network_guid"];
-            let network_title = "Practice Task Net";
-            let network_description = ""
-            let network_zoom = start_configuration["config"]["zoom"];
-            let network_pan_x = start_configuration["config"]["pan_x"];
-            let network_pan_y = start_configuration["config"]["pan_y"];
+            const start_configuration = JSON.parse(fixedJson);
 
-            let nodes = start_configuration["nodes"];
-            let edges = start_configuration["edges"];
-            let jobs = start_configuration["jobs"];
-            let packets = start_configuration["packets"];
-            let pcaps = start_configuration["pcap"];
-            let ns = null;
+            // Seed the bundle's state directly — quiz practice pages don't go
+            // through the standard `<script type="application/json" id="miminet-initial-state">`
+            // path because the data lives inside `practiceQuestion`.
+            miminet.state.nodes = start_configuration["nodes"];
+            miminet.state.edges = start_configuration["edges"];
+            miminet.state.jobs = start_configuration["jobs"];
+            miminet.state.packets = start_configuration["packets"];
+            miminet.state.pcaps = start_configuration["pcap"];
+            miminet.state.network_guid = practiceQuestion["network_guid"];
+            miminet.state.network_title = "Practice Task Net";
+            miminet.state.network_description = "";
+            miminet.state.network_zoom = start_configuration["config"]["zoom"];
+            miminet.state.network_pan_x = start_configuration["config"]["pan_x"];
+            miminet.state.network_pan_y = start_configuration["config"]["pan_y"];
 
-            DrawGraph();
+            miminet.DrawGraph();
         </script>
     {% endif %}
 {% endblock %}

@@ -44,7 +44,7 @@
                         data-toggle="tooltip"
                         data-bs-placement="bottom"
                         title="Сохранить копию"
-                        onclick="CopyNetwork()"
+                        data-action="copy-network"
                         style="margin-left: 16px; cursor: pointer;">
                      </a>
                      <a class="ws-share-button"
@@ -59,7 +59,7 @@
                     <a class="btn btn-success btn-icon me-4" data-toggle="tooltip" data-bs-placement="bottom" id="share-network" title="Сеть доступна по URL" onclick="urlCopyButton()">
                         <i class='bx bx-share-alt fs-4 mx-1' ></i>
                     </a>
-                    <a class="btn btn-outline-primary btn-icon me-4" data-target="#ModalCopy" id="copy-network" data-toggle="tooltip" data-bs-placement="bottom" title="Сохранить копию" onclick="CopyNetwork()">
+                    <a class="btn btn-outline-primary btn-icon me-4" data-target="#ModalCopy" id="copy-network" data-toggle="tooltip" data-bs-placement="bottom" title="Сохранить копию" data-action="copy-network">
                         <i class='bx bx-copy fs-4 mx-1'></i>
                     </a>
                     <a class="btn btn-outline-primary btn-icon" href="#netConfigModal" id="net-settings" data-bs-toggle="modal" data-target="#netConfigModal" data-toggle="tooltip" data-bs-placement="bottom" title="Настройки сети"><i class='bx bx-cog fs-4 mx-1'></i></a>
@@ -127,6 +127,7 @@
 
     <script type="application/json" id="miminet-initial-state">
     {
+        "mode": "shared",
         "network_guid": {{ network.guid | tojson }},
         "network_title": {{ network.title | tojson }},
         "network_zoom": {{ network_config.zoom }},
@@ -139,42 +140,4 @@
         "pcaps": {{ pcaps | tojson }}
     }
     </script>
-{% endblock %}
-
-{% block network %}
-<script>
-    SetSharedNetworkPlayerState();
-    DrawSharedGraph();
-
-    var close_impulse_btn = document.getElementById('ImpulseCloseButton');
-    var impulse_div = document.getElementById('ImpulseDiv');
-
-    if (impulse_div) {
-        var impulse_ts = localStorage.getItem('impulse_2026');
-
-        if (impulse_ts) {
-            const now = Date.now();
-            const diff = now - Number(impulse_ts);
-            const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
-            if (diff > threeDaysMs) {
-                impulse_div.classList.remove('d-none');
-            }
-        } else {
-            impulse_div.classList.remove('d-none');
-        }
-    }
-
-    if (close_impulse_btn) {
-        close_impulse_btn.addEventListener("click", function() {
-
-	    if (typeof window.ym != 'undefined') {
-	        ym(92293993,'reachGoal','ImpulseClose');
-	    }
-
-            localStorage.setItem('impulse_2026', Date.now().toString());
-        }, false);
-    }
-
-</script>
-
 {% endblock %}

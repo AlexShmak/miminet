@@ -59,9 +59,15 @@ export interface MiminetState {
     network_zoom: number;
     network_pan_x: number;
     network_pan_y: number;
+
+    // Boot dispatch: which page rendered us. Tells lib/boot.ts whether
+    // to wire the network editor, shared view, or index-demo player.
+    mode: "" | "editor" | "shared" | "index";
+    // Editor only: the in-flight simulation id (or -1 when none).
+    simulation_id: number;
 }
 
-const w = window as Window & Record<string, unknown>;
+const w = window as unknown as Window & Record<string, unknown>;
 
 export const state: MiminetState = {
     get simulationId() {
@@ -161,6 +167,8 @@ export const state: MiminetState = {
     network_zoom: 1,
     network_pan_x: 0,
     network_pan_y: 0,
+    mode: "",
+    simulation_id: -1,
 };
 
 export const LINK_DOWN_JOB_ID = 6;
