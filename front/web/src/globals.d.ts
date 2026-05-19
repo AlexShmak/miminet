@@ -50,9 +50,6 @@ declare const Pjax: any;
 // can be added when each subsystem stabilises.
 declare const cytoscape: any;
 
-// icons.js exports a name → URL/data-URI map of node icons.
-declare const DiagramIcons: Record<string, string>;
-
 // config_vlan.js / config_vxlan.js / config_stp.js — classic scripts
 // still loaded after the bundle.
 declare function areInterfaceFieldsFilled(device: any): boolean;
