@@ -8,6 +8,26 @@ import {
 } from "../netfront/update_config";
 import { EditJobInHost, EditJobInRouter, EditJobInSwitch, EditJobInServer } from "./edit_jobs";
 
+const removeBySelector = (selector: string) => {
+    document.querySelectorAll(selector).forEach((el) => el.remove());
+};
+
+const insertHtmlBefore = (html: string, target: Element | null) => {
+    if (!target || !target.parentNode) return;
+    const tmpl = document.createElement("template");
+    tmpl.innerHTML = html;
+    target.parentNode.insertBefore(tmpl.content, target);
+};
+
+const disableInputsIn = (root: Element | Document, exceptSelector: string = "") => {
+    root.querySelectorAll<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement
+    >("input, select, textarea, button").forEach((el) => {
+        if (exceptSelector && el.matches(exceptSelector)) return;
+        el.disabled = true;
+    });
+};
+
 export const UpdateHostForm = function (name: string) {
     const elem = document.getElementById(name)!.innerHTML;
     const host_job_list = document.getElementById("config_host_job_list");
@@ -16,8 +36,8 @@ export const UpdateHostForm = function (name: string) {
         return;
     }
 
-    $('div[name="config_host_select_input"]').remove();
-    $(elem).insertBefore(host_job_list);
+    removeBySelector('div[name="config_host_select_input"]');
+    insertHtmlBefore(elem, host_job_list);
 };
 
 export const ConfigHostJobOnChange = function (evnt: any) {
@@ -61,12 +81,31 @@ export const ConfigHostJobOnChange = function (evnt: any) {
             break;
 
         case "0":
-            $('div[name="config_host_select_input"]').remove();
+            removeBySelector('div[name="config_host_select_input"]');
             break;
 
         default:
             console.log("Unknown target.value");
     }
+};
+
+const buildJobElemHtml = (
+    templateId: string,
+    deleteIdPrefix: string,
+    editIdPrefix: string,
+    jid: any,
+    printCmd: string
+): string | null => {
+    const src = document.getElementById(templateId);
+    if (!src) return null;
+    let html = src.innerHTML;
+    html = html.replace(new RegExp(deleteIdPrefix, "g"), deleteIdPrefix + "_" + jid);
+    html = html.replace(new RegExp(editIdPrefix, "g"), editIdPrefix + "_" + jid);
+    html = html.replace(
+        /justify-content-between align-items-center">/,
+        'justify-content-between align-items-center"><small>' + printCmd + "</small>"
+    );
+    return html;
 };
 
 export const ConfigHostJob = function (host_jobs: any[], shared: number = 0) {
@@ -77,14 +116,12 @@ export const ConfigHostJob = function (host_jobs: any[], shared: number = 0) {
         return;
     }
 
-    $(elem).insertBefore(host_id);
+    insertHtmlBefore(elem, host_id);
 
-    // Set onchange
     document
         .getElementById("config_host_job_select_field")!
         .addEventListener("change", ConfigHostJobOnChange);
 
-    // Update job counter with device ID
     UpdateJobCounter("config_host_job_counter", host_id.value);
 
     elem = document.getElementById("config_host_job_list_script")!.innerHTML;
@@ -92,81 +129,72 @@ export const ConfigHostJob = function (host_jobs: any[], shared: number = 0) {
         return;
     }
 
-    $(elem).insertBefore(host_id);
+    insertHtmlBefore(elem, host_id);
 
-    // Print state.jobs if we have
     if (!host_jobs) {
         return;
     }
 
-    $.each(host_jobs, function (i: number) {
+    host_jobs.forEach((_item: any, i: number) => {
         const jid = host_jobs[i].id;
+        const list = document.getElementById("config_host_job_list");
+        if (!list) return;
 
         if (i == 0) {
-            $("#config_host_job_list").append('<label class="text-sm">Команды</label>');
+            list.insertAdjacentHTML("beforeend", '<label class="text-sm">Команды</label>');
         }
 
-        elem = document.getElementById("config_host_job_list_elem_script");
-
-        if (!elem) {
-            return;
-        }
-
-        const job_elem = jQuery.extend({}, elem);
-        job_elem.innerHTML = job_elem.innerHTML.replace(
-            /config_host_job_delete/g,
-            "config_host_job_delete_" + jid
+        const html = buildJobElemHtml(
+            "config_host_job_list_elem_script",
+            "config_host_job_delete",
+            "config_host_job_edit",
+            jid,
+            host_jobs[i].print_cmd
         );
-        job_elem.innerHTML = job_elem.innerHTML.replace(
-            /config_host_job_edit/g,
-            "config_host_job_edit_" + jid
-        );
-        job_elem.innerHTML = job_elem.innerHTML.replace(
-            /justify-content-between align-items-center">/,
-            'justify-content-between align-items-center"><small>' +
-                host_jobs[i].print_cmd +
-                "</small>"
-        );
+        if (!html) return;
+        list.insertAdjacentHTML("beforeend", html);
 
-        const text = job_elem.innerHTML;
-        //$(text).insertBefore(host_id);
-        $("#config_host_job_list").append(text);
+        document
+            .getElementById("config_host_job_delete_" + jid)
+            ?.addEventListener("click", (event: Event) => {
+                event.preventDefault();
+                if (!shared) {
+                    DeleteJobFromHost(host_id.value, jid, state.network_guid);
+                }
+            });
 
-        $("#config_host_job_delete_" + jid).click(function (event: any) {
-            event.preventDefault();
-            if (!shared) {
-                DeleteJobFromHost(host_id.value, jid, state.network_guid);
-            }
-        });
-
-        $("#config_host_job_edit_" + jid).click(function (event: any) {
-            event.preventDefault();
-            if (!shared) {
-                EditJobInHost(host_id.value, jid, state.network_guid);
-            }
-        });
+        document
+            .getElementById("config_host_job_edit_" + jid)
+            ?.addEventListener("click", (event: Event) => {
+                event.preventDefault();
+                if (!shared) {
+                    EditJobInHost(host_id.value, jid, state.network_guid);
+                }
+            });
     });
+};
+
+const setGatewayValue = (id: string, value: string) => {
+    const el = document.getElementById(id) as HTMLInputElement | null;
+    if (el) el.value = value;
 };
 
 export const ConfigHostGateway = function (gw: string) {
     const text = document.getElementById("config_host_default_gw_script")!.innerHTML;
-
-    $(text).insertBefore("#config_host_end_form");
-    $("#config_host_default_gw").val(gw);
+    insertHtmlBefore(text, document.getElementById("config_host_end_form"));
+    setGatewayValue("config_host_default_gw", gw);
 };
 
 export const ConfigRouterGateway = function (gw: string) {
     const text = document.getElementById("config_router_default_gw_script")!.innerHTML;
-
-    $(text).insertBefore("#config_router_end_form");
-    $("#config_router_default_gw").val(gw);
+    insertHtmlBefore(text, document.getElementById("config_router_end_form"));
+    setGatewayValue("config_router_default_gw", gw);
 };
 
 export const ConfigServerGateway = function (gw: string) {
     const text = document.getElementById("config_server_default_gw_script")!.innerHTML;
-
-    $(text).insertBefore("#config_server_end_form");
-    $("#config_server_default_gw").val(gw);
+    insertHtmlBefore(text, document.getElementById("config_server_end_form"));
+    setGatewayValue("config_server_default_gw", gw);
 };
 
 export const UpdateSwitchForm = function (name: string) {
@@ -177,15 +205,14 @@ export const UpdateSwitchForm = function (name: string) {
         return;
     }
 
-    $('div[name="config_switch_select_input"]').remove();
-    $(elem).insertBefore(switch_job_list);
+    removeBySelector('div[name="config_switch_select_input"]');
+    insertHtmlBefore(elem, switch_job_list);
 };
 
 export const ConfigSwitchJobOnChange = function (evnt: any) {
     switch (evnt.target.value) {
         case "0":
-            $('div[name="config_switch_select_input"]').remove();
-
+            removeBySelector('div[name="config_switch_select_input"]');
             break;
         case "6":
             UpdateSwitchForm("config_switch_link_down_script");
@@ -208,14 +235,12 @@ export const ConfigSwitchJob = function (switch_jobs: any[], shared: number = 0)
         return;
     }
 
-    $(elem).insertBefore(switch_id);
+    insertHtmlBefore(elem, switch_id);
 
-    // Set onchange
     document
         .getElementById("config_switch_job_select_field")!
         .addEventListener("change", ConfigSwitchJobOnChange);
 
-    // Update job counter with device ID
     UpdateJobCounter("config_switch_job_counter", switch_id.value);
 
     elem = document.getElementById("config_switch_job_list_script")!.innerHTML;
@@ -223,71 +248,58 @@ export const ConfigSwitchJob = function (switch_jobs: any[], shared: number = 0)
         return;
     }
 
-    $(elem).insertBefore(switch_id);
+    insertHtmlBefore(elem, switch_id);
 
-    // Print state.jobs if we have
     if (!switch_jobs) {
         return;
     }
 
-    $.each(switch_jobs, function (i: number) {
+    switch_jobs.forEach((_item: any, i: number) => {
         const jid = switch_jobs[i].id;
+        const list = document.getElementById("config_switch_job_list");
+        if (!list) return;
 
         if (i == 0) {
-            $("#config_switch_job_list").append('<label class="text-sm">Команды</label>');
+            list.insertAdjacentHTML("beforeend", '<label class="text-sm">Команды</label>');
         }
 
-        elem = document.getElementById("config_switch_job_list_elem_script");
-
-        if (!elem) {
-            return;
-        }
-
-        const job_elem = jQuery.extend({}, elem);
-        job_elem.innerHTML = job_elem.innerHTML.replace(
-            /config_switch_job_delete/g,
-            "config_switch_job_delete_" + jid
+        const html = buildJobElemHtml(
+            "config_switch_job_list_elem_script",
+            "config_switch_job_delete",
+            "config_switch_job_edit",
+            jid,
+            switch_jobs[i].print_cmd
         );
-        job_elem.innerHTML = job_elem.innerHTML.replace(
-            /config_switch_job_edit/g,
-            "config_switch_job_edit_" + jid
-        );
-        job_elem.innerHTML = job_elem.innerHTML.replace(
-            /justify-content-between align-items-center">/,
-            'justify-content-between align-items-center"><small>' +
-                switch_jobs[i].print_cmd +
-                "</small>"
-        );
+        if (!html) return;
+        list.insertAdjacentHTML("beforeend", html);
 
-        const text = job_elem.innerHTML;
-        //$(text).insertBefore(host_id);
-        $("#config_switch_job_list").append(text);
+        document
+            .getElementById("config_switch_job_delete_" + jid)
+            ?.addEventListener("click", (event: Event) => {
+                event.preventDefault();
+                if (!shared) {
+                    DeleteJobFromSwitch(switch_id.value, jid, state.network_guid);
+                }
+            });
 
-        $("#config_switch_job_delete_" + jid).click(function (event: any) {
-            event.preventDefault();
-            if (!shared) {
-                DeleteJobFromSwitch(switch_id.value, jid, state.network_guid);
-            }
-        });
-
-        $("#config_switch_job_edit_" + jid).click(function (event: any) {
-            event.preventDefault();
-            if (!shared) {
-                EditJobInSwitch(switch_id.value, jid, state.network_guid);
-            }
-        });
+        document
+            .getElementById("config_switch_job_edit_" + jid)
+            ?.addEventListener("click", (event: Event) => {
+                event.preventDefault();
+                if (!shared) {
+                    EditJobInSwitch(switch_id.value, jid, state.network_guid);
+                }
+            });
     });
 };
 
 export const ConfigRouterJobOnChange = function (evnt: any) {
     switch (evnt.target.value) {
         case "0":
-            $('div[name="config_router_select_input"]').remove();
-
+            removeBySelector('div[name="config_router_select_input"]');
             break;
         case "1":
             UpdateRouterForm("config_router_ping_c_1_script");
-
             break;
         case "100":
             UpdateRouterForm("config_router_add_ip_mask_script");
@@ -297,7 +309,6 @@ export const ConfigRouterJobOnChange = function (evnt: any) {
                 "Выберите линк",
                 false
             );
-
             break;
         case "101":
             UpdateRouterForm("config_router_add_nat_masquerade_script");
@@ -307,11 +318,9 @@ export const ConfigRouterJobOnChange = function (evnt: any) {
                 "Выберите линк",
                 false
             );
-
             break;
         case "102":
             UpdateRouterForm("config_router_add_route_script");
-
             break;
         case "104":
             UpdateRouterForm("config_router_add_subinterface_script");
@@ -321,7 +330,6 @@ export const ConfigRouterJobOnChange = function (evnt: any) {
                 "Выберите линк",
                 false
             );
-
             break;
         case "105":
             UpdateRouterForm("config_router_add_ipip_tunnel_script");
@@ -329,12 +337,10 @@ export const ConfigRouterJobOnChange = function (evnt: any) {
                 "#config_router_add_ipip_tunnel_iface_select_ip_field",
                 "#router_id"
             );
-
             break;
         case "106":
             UpdateRouterForm("config_router_add_gre_interface_script");
             FillDeviceSelectIntf("#config_router_add_gre_interface_select_ip_field", "#router_id");
-
             break;
         case "107":
             UpdateRouterForm("config_router_add_arp_proxy_script");
@@ -376,14 +382,12 @@ export const ConfigRouterJob = function (router_jobs: any[], shared: number = 0)
         return;
     }
 
-    $(elem).insertBefore(router_id);
+    insertHtmlBefore(elem, router_id);
 
-    // Set onchange
     document
         .getElementById("config_router_job_select_field")!
         .addEventListener("change", ConfigRouterJobOnChange);
 
-    // Update job counter with device ID
     UpdateJobCounter("config_router_job_counter", router_id.value);
 
     elem = document.getElementById("config_router_job_list_script")!.innerHTML;
@@ -391,59 +395,48 @@ export const ConfigRouterJob = function (router_jobs: any[], shared: number = 0)
         return;
     }
 
-    $(elem).insertBefore(router_id);
+    insertHtmlBefore(elem, router_id);
 
-    // Print state.jobs if we have
     if (!router_jobs) {
         return;
     }
 
-    $.each(router_jobs, function (i: number) {
+    router_jobs.forEach((_item: any, i: number) => {
         const jid = router_jobs[i].id;
+        const list = document.getElementById("config_router_job_list");
+        if (!list) return;
 
         if (i == 0) {
-            $("#config_router_job_list").append('<label class="text-sm">Команды</label>');
+            list.insertAdjacentHTML("beforeend", '<label class="text-sm">Команды</label>');
         }
 
-        elem = document.getElementById("config_router_job_list_elem_script");
-
-        if (!elem) {
-            return;
-        }
-
-        const job_elem = jQuery.extend({}, elem);
-        job_elem.innerHTML = job_elem.innerHTML.replace(
-            /config_router_job_delete/g,
-            "config_router_job_delete_" + jid
+        const html = buildJobElemHtml(
+            "config_router_job_list_elem_script",
+            "config_router_job_delete",
+            "config_router_job_edit",
+            jid,
+            router_jobs[i].print_cmd
         );
-        job_elem.innerHTML = job_elem.innerHTML.replace(
-            /config_router_job_edit/g,
-            "config_router_job_edit_" + jid
-        );
-        job_elem.innerHTML = job_elem.innerHTML.replace(
-            /justify-content-between align-items-center">/,
-            'justify-content-between align-items-center"><small>' +
-                router_jobs[i].print_cmd +
-                "</small>"
-        );
+        if (!html) return;
+        list.insertAdjacentHTML("beforeend", html);
 
-        const text = job_elem.innerHTML;
-        //$(text).insertBefore(host_id);
-        $("#config_router_job_list").append(text);
+        document
+            .getElementById("config_router_job_delete_" + jid)
+            ?.addEventListener("click", (event: Event) => {
+                event.preventDefault();
+                if (!shared) {
+                    DeleteJobFromRouter(router_id.value, jid, state.network_guid);
+                }
+            });
 
-        $("#config_router_job_delete_" + jid).click(function (event: any) {
-            event.preventDefault();
-            if (!shared) {
-                DeleteJobFromRouter(router_id.value, jid, state.network_guid);
-            }
-        });
-
-        $("#config_router_job_edit_" + jid).click(function (event: any) {
-            event.preventDefault();
-            if (!shared) {
-                EditJobInRouter(router_id.value, jid, state.network_guid);
-            }
-        });
+        document
+            .getElementById("config_router_job_edit_" + jid)
+            ?.addEventListener("click", (event: Event) => {
+                event.preventDefault();
+                if (!shared) {
+                    EditJobInRouter(router_id.value, jid, state.network_guid);
+                }
+            });
     });
 };
 
@@ -455,14 +448,12 @@ export const ConfigServerJob = function (server_jobs: any[], shared: number = 0)
         return;
     }
 
-    $(elem).insertBefore(server_id);
+    insertHtmlBefore(elem, server_id);
 
-    // Set onchange
     document
         .getElementById("config_server_job_select_field")!
         .addEventListener("change", ConfigServerJobOnChange);
 
-    // Update job counter with device ID
     UpdateJobCounter("config_server_job_counter", server_id.value);
 
     elem = document.getElementById("config_server_job_list_script")!.innerHTML;
@@ -470,60 +461,48 @@ export const ConfigServerJob = function (server_jobs: any[], shared: number = 0)
         return;
     }
 
-    $(elem).insertBefore(server_id);
+    insertHtmlBefore(elem, server_id);
 
-    // Print state.jobs if we have
     if (!server_jobs) {
         return;
     }
 
-    $.each(server_jobs, function (i: number) {
+    server_jobs.forEach((_item: any, i: number) => {
         const jid = server_jobs[i].id;
+        const list = document.getElementById("config_server_job_list");
+        if (!list) return;
 
         if (i == 0) {
-            $("#config_server_job_list").append('<label class="text-sm">Команды</label>');
+            list.insertAdjacentHTML("beforeend", '<label class="text-sm">Команды</label>');
         }
 
-        elem = document.getElementById("config_server_job_list_elem_script");
-
-        if (!elem) {
-            return;
-        }
-
-        const job_elem = jQuery.extend({}, elem);
-        job_elem.innerHTML = job_elem.innerHTML.replace(
-            /config_server_job_delete/g,
-            "config_server_job_delete_" + jid
+        const html = buildJobElemHtml(
+            "config_server_job_list_elem_script",
+            "config_server_job_delete",
+            "config_server_job_edit",
+            jid,
+            server_jobs[i].print_cmd
         );
-        job_elem.innerHTML = job_elem.innerHTML.replace(
-            /config_server_job_edit/g,
-            "config_server_job_edit_" + jid
-        );
-        job_elem.innerHTML = job_elem.innerHTML.replace(
-            /justify-content-between align-items-center">/,
-            'justify-content-between align-items-center"><small>' +
-                server_jobs[i].print_cmd +
-                "</small>"
-        );
+        if (!html) return;
+        list.insertAdjacentHTML("beforeend", html);
 
-        const text = job_elem.innerHTML;
-        //$(text).insertBefore(host_id);
-        $("#config_server_job_list").append(text);
+        document
+            .getElementById("config_server_job_delete_" + jid)
+            ?.addEventListener("click", (event: Event) => {
+                event.preventDefault();
+                if (!shared) {
+                    DeleteJobFromServer(server_id.value, jid, state.network_guid);
+                }
+            });
 
-        $("#config_server_job_delete_" + jid).click(function (event: any) {
-            event.preventDefault();
-
-            if (!shared) {
-                DeleteJobFromServer(server_id.value, jid, state.network_guid);
-            }
-        });
-
-        $("#config_server_job_edit_" + jid).click(function (event: any) {
-            event.preventDefault();
-            if (!shared) {
-                EditJobInServer(server_id.value, jid, state.network_guid);
-            }
-        });
+        document
+            .getElementById("config_server_job_edit_" + jid)
+            ?.addEventListener("click", (event: Event) => {
+                event.preventDefault();
+                if (!shared) {
+                    EditJobInServer(server_id.value, jid, state.network_guid);
+                }
+            });
     });
 };
 
@@ -535,14 +514,14 @@ export const UpdateServerForm = function (name: string) {
         return;
     }
 
-    $('div[name="config_server_select_input"]').remove();
-    $(elem).insertBefore(server_job_list);
+    removeBySelector('div[name="config_server_select_input"]');
+    insertHtmlBefore(elem, server_job_list);
 };
 
 export const ConfigServerJobOnChange = function (evnt: any) {
     switch (evnt.target.value) {
         case "0":
-            $('div[name="config_server_select_input"]').remove();
+            removeBySelector('div[name="config_server_select_input"]');
             break;
 
         case "1":
@@ -577,30 +556,36 @@ export const ConfigServerJobOnChange = function (evnt: any) {
 };
 
 export const DisableFormInputs = function () {
-    const s = config_content_id + " :input";
-    $(s).prop("disabled", true);
-    $(config_content_save_tag + " :input").prop("disabled", true);
+    const content = document.querySelector(config_content_id);
+    if (content) disableInputsIn(content);
+    const saveTag = document.querySelector(config_content_save_tag);
+    if (saveTag) disableInputsIn(saveTag);
 };
 
 export const DisableVLANInputs = function (n: any) {
     const modalId = "VlanModal_" + n.data.id;
 
-    $(document).ready(function () {
-        $("#config_button_vlan").prop("disabled", false);
-        $("#" + modalId + " :input")
-            .not(".btn-close")
-            .prop("disabled", true);
-        $("#" + modalId + " .form-check-input, " + modalId + " .form-switch input").prop(
-            "disabled",
-            true
-        );
-    });
+    const apply = () => {
+        const openBtn = document.getElementById("config_button_vlan") as HTMLButtonElement | null;
+        if (openBtn) openBtn.disabled = false;
+        const modalEl = document.getElementById(modalId);
+        if (!modalEl) return;
+        disableInputsIn(modalEl, ".btn-close");
+        modalEl
+            .querySelectorAll<HTMLInputElement>(".form-check-input, .form-switch input")
+            .forEach((el) => {
+                el.disabled = true;
+            });
+    };
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", apply, { once: true });
+    } else {
+        apply();
+    }
 };
 
 export const UpdateRouterForm = function (name: string) {
-    /**
-     * Replace old form with new one
-     */
     const elem = document.getElementById(name)!.innerHTML;
     const router_job_list = document.getElementById("config_router_job_list");
 
@@ -608,8 +593,8 @@ export const UpdateRouterForm = function (name: string) {
         return;
     }
 
-    $('div[name="config_router_select_input"]').remove();
-    $(elem).insertBefore(router_job_list);
+    removeBySelector('div[name="config_router_select_input"]');
+    insertHtmlBefore(elem, router_job_list);
 };
 
 export const FillDeviceSelectIntf = function (
@@ -618,15 +603,8 @@ export const FillDeviceSelectIntf = function (
     field_msg: string = "Интерфейс начальной точки",
     return_ip: boolean = true
 ) {
-    /**
-     * Fill select element with network hosts.
-     * @param  {String} select_id ID(name) of the element to which you need to add data.
-     * @param  {String} field_msg Message that will be displayed in the select list by default.
-     * @param  {Boolean} return_ip True if replace user's input with ip and False if replace it with element's id.
-     */
-
-    // configured router id
-    const device_id = ($(device)[0] as HTMLInputElement).value;
+    const deviceEl = document.querySelector(device) as HTMLInputElement | null;
+    const device_id = deviceEl?.value;
 
     if (!device_id) {
         console.log("Не нашел device_id");
@@ -634,32 +612,35 @@ export const FillDeviceSelectIntf = function (
     }
 
     const device_node = state.nodes.find((node: any) => node.data.id === device_id);
-    const device_type = device.slice(1, -3); //example : #router_id  -> router
+    const device_type = device.slice(1, -3); // "#router_id" -> "router"
 
     if (!device_node) {
         console.log("Не нашел device_node");
         return;
     }
 
+    const selectEl = document.querySelector(select_id) as HTMLSelectElement | null;
+    if (!selectEl) return;
+
     if (!device_node.interface.length) {
-        $(select_id).append('<option selected value="0">Мало интерфейсов</option>');
+        selectEl.insertAdjacentHTML(
+            "beforeend",
+            '<option selected value="0">Мало интерфейсов</option>'
+        );
         return;
-    } else {
-        $(select_id).append(`<option selected value="0">${field_msg}</option>`);
     }
-    $(select_id).on("change", function () {
-        const selectedOption = $(this).find("option:selected"); // Получаем выбранный элемент
-        const selectedLabel = selectedOption.text(); // Получаем текст выбранного элемента
-        (
-            document.getElementById(
-                device_type + "_connection_host_label_hidden"
-            ) as HTMLInputElement
-        ).value = selectedLabel; // Записываем его в скрытое поле
+    selectEl.insertAdjacentHTML("beforeend", `<option selected value="0">${field_msg}</option>`);
+
+    selectEl.addEventListener("change", function () {
+        const selectedOption = selectEl.options[selectEl.selectedIndex];
+        const selectedLabel = selectedOption?.textContent ?? "";
+        const hidden = document.getElementById(
+            device_type + "_connection_host_label_hidden"
+        ) as HTMLInputElement | null;
+        if (hidden) hidden.value = selectedLabel;
     });
 
-    device_node.interface.forEach(function (iface: any) {
-        // iterating over the router interfaces
-
+    device_node.interface.forEach((iface: any) => {
         const iface_id = iface.id;
         const iface_ip = iface.ip;
 
@@ -675,7 +656,6 @@ export const FillDeviceSelectIntf = function (
         }
 
         const edge = state.edges.find((e: any) => e.data.id === connect_id);
-
         if (!edge) {
             console.log("Не нашел ребро по подключению интерфейса");
             return;
@@ -698,7 +678,8 @@ export const FillDeviceSelectIntf = function (
             ? device_connection_host_node.data.label
             : "Unknown";
 
-        $(select_id).append(
+        selectEl.insertAdjacentHTML(
+            "beforeend",
             '<option value="' +
                 (return_ip ? iface_ip : iface_id) +
                 '">' +
@@ -711,29 +692,42 @@ export const FillDeviceSelectIntf = function (
 export const DisableVXLANInputs = function (n: any) {
     const modalId = "VxlanConfigModal" + n.data.id;
 
-    $(document).ready(function () {
-        $("#config_button_vxlan").prop("disabled", false);
-        $("#" + modalId + " :input")
-            .not(".btn-close")
-            .prop("disabled", true);
-        $("#" + modalId + " .form-check-input, #" + modalId + " .form-switch input").prop(
-            "disabled",
-            true
-        );
-        $("<style>")
-            .prop("type", "text/css")
-            .html(
-                `
+    const apply = () => {
+        const openBtn = document.getElementById("config_button_vxlan") as HTMLButtonElement | null;
+        if (openBtn) openBtn.disabled = false;
+
+        const modalEl = document.getElementById(modalId);
+        if (modalEl) {
+            disableInputsIn(modalEl, ".btn-close");
+            modalEl
+                .querySelectorAll<HTMLInputElement>(".form-check-input, .form-switch input")
+                .forEach((el) => {
+                    el.disabled = true;
+                });
+
+            const handler = (modalEl as any).__vxlanHiddenHandler as EventListener | undefined;
+            if (handler) {
+                modalEl.removeEventListener("hidden.bs.modal", handler);
+                delete (modalEl as any).__vxlanHiddenHandler;
+            }
+        }
+
+        const style = document.createElement("style");
+        style.type = "text/css";
+        style.textContent = `
         .network-interface .btn-danger,
         .client-interface .btn-danger {
             display: none !important;
         }
-    `
-            )
-            .appendTo("head");
+    `;
+        document.head.appendChild(style);
+    };
 
-        $("#" + modalId).off("hidden.bs.modal.myNamespace");
-    });
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", apply, { once: true });
+    } else {
+        apply();
+    }
 };
 
 // ========== DEVICE-SPECIFIC COMMAND EDITING ==========

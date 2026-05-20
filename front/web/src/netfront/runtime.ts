@@ -51,9 +51,12 @@ export const UpdateFilterStates = function (settings: any) {
     }
 
     Object.assign(state.packetFilterState, settings);
-    $("#ARPFilterCheckbox").prop("checked", state.packetFilterState.hideARP);
-    $("#STPFilterCheckbox").prop("checked", state.packetFilterState.hideSTP);
-    $("#SYNFilterCheckbox").prop("checked", state.packetFilterState.hideSYN);
+    const arpEl = document.getElementById("ARPFilterCheckbox") as HTMLInputElement | null;
+    if (arpEl) arpEl.checked = !!state.packetFilterState.hideARP;
+    const stpEl = document.getElementById("STPFilterCheckbox") as HTMLInputElement | null;
+    if (stpEl) stpEl.checked = !!state.packetFilterState.hideSTP;
+    const synEl = document.getElementById("SYNFilterCheckbox") as HTMLInputElement | null;
+    if (synEl) synEl.checked = !!state.packetFilterState.hideSYN;
 };
 
 export const SaveAnimationFilters = function () {
@@ -67,7 +70,7 @@ export const SaveAnimationFilters = function () {
         hideSYN: Boolean(state.packetFilterState.hideSYN),
     };
 
-    $.ajax({
+    ajaxWithAuth({
         type: "POST",
         url: "/user/animation_filters",
         data: JSON.stringify(payload),
@@ -110,9 +113,15 @@ export const SetPacketFilter = function (shared: number = 0) {
         state.packets = JSON.parse(JSON.stringify(state.packetsNotFiltered));
     }
 
-    state.packetFilterState.hideARP = $("#ARPFilterCheckbox").is(":checked");
-    state.packetFilterState.hideSTP = $("#STPFilterCheckbox").is(":checked");
-    state.packetFilterState.hideSYN = $("#SYNFilterCheckbox").is(":checked");
+    state.packetFilterState.hideARP = !!(
+        document.getElementById("ARPFilterCheckbox") as HTMLInputElement | null
+    )?.checked;
+    state.packetFilterState.hideSTP = !!(
+        document.getElementById("STPFilterCheckbox") as HTMLInputElement | null
+    )?.checked;
+    state.packetFilterState.hideSYN = !!(
+        document.getElementById("SYNFilterCheckbox") as HTMLInputElement | null
+    )?.checked;
 
     if (state.packets) {
         FilterPackets();
@@ -229,17 +238,21 @@ export const CopyNetwork = function () {
         success: function (data: any, textStatus: any, xhr: any) {
             if (xhr.status === 200) {
                 console.log("Copy network is made.");
-                ($("#ModalCopy") as any).modal("show");
-                $(".modal-option").click(function () {
-                    const selectedOption = $(this).attr("data-option");
-                    if (selectedOption === "edit") {
-                        const newUrl = data.new_url;
-                        window.location.href = newUrl;
-                        console.log("Go to editing");
-                    } else if (selectedOption === "continue") {
-                        console.log("Continue here");
-                    }
-                    ($("#ModalCopy") as any).modal("hide");
+                const modalEl = document.getElementById("ModalCopy");
+                if (!modalEl) return;
+                const modal = window.bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
+                document.querySelectorAll(".modal-option").forEach((btn) => {
+                    btn.addEventListener("click", function (this: HTMLElement) {
+                        const selectedOption = this.getAttribute("data-option");
+                        if (selectedOption === "edit") {
+                            window.location.href = data.new_url;
+                            console.log("Go to editing");
+                        } else if (selectedOption === "continue") {
+                            console.log("Continue here");
+                        }
+                        modal.hide();
+                    });
                 });
             }
         },
@@ -299,9 +312,11 @@ export const EnterEditMode = function (deviceType: string, jobId: string, jobTyp
     }
 
     // Change label text from "Выполнить команду" to "Редактировать команду"
-    const selectLabel = $(`label[for="config_${deviceType}_job_select_field"]`);
-    if (selectLabel.length) {
-        selectLabel.text("Редактировать команду");
+    const selectLabel = document.querySelector(
+        `label[for="config_${deviceType}_job_select_field"]`
+    ) as HTMLLabelElement | null;
+    if (selectLabel) {
+        selectLabel.textContent = "Редактировать команду";
     }
 
     // Hide the select dropdown and show command name
@@ -332,25 +347,31 @@ export const EnterEditMode = function (deviceType: string, jobId: string, jobTyp
     }
 
     // Highlight the editing command
-    $(`#config_${deviceType}_job_list li`).removeClass("editing-command");
-    const listItem = $(`#config_${deviceType}_job_delete_${jobId}`).closest("li");
-    listItem.addClass("editing-command");
+    document
+        .querySelectorAll(`#config_${deviceType}_job_list li`)
+        .forEach((li) => li.classList.remove("editing-command"));
+    const listItem = document
+        .getElementById(`config_${deviceType}_job_delete_${jobId}`)
+        ?.closest("li");
+    if (listItem) listItem.classList.add("editing-command");
 
     // Highlight only the input fields area after it's inserted into DOM
     setTimeout(() => {
         const jobList = document.getElementById(`config_${deviceType}_job_list`);
-        if (jobList) {
-            const inputDiv = $(jobList).prev(`div[name="config_${deviceType}_select_input"]`);
-            if (inputDiv.length) {
-                inputDiv.addClass("editing-form-area");
-            }
+        const inputDiv = jobList?.previousElementSibling;
+        if (
+            inputDiv instanceof HTMLElement &&
+            inputDiv.getAttribute("name") === `config_${deviceType}_select_input`
+        ) {
+            inputDiv.classList.add("editing-form-area");
         }
 
         // Scroll to the "Редактировать команду" label (select field)
-        // This helps when user clicks edit on a command at the bottom of the list
-        const labelEl = $(`label[for="config_${deviceType}_job_select_field"]`);
-        if (labelEl.length) {
-            labelEl[0].scrollIntoView({
+        const labelEl = document.querySelector(
+            `label[for="config_${deviceType}_job_select_field"]`
+        ) as HTMLLabelElement | null;
+        if (labelEl) {
+            labelEl.scrollIntoView({
                 behavior: "smooth",
                 block: "start",
                 inline: "nearest",
@@ -371,9 +392,11 @@ export const ExitEditMode = function (deviceType: string) {
     }
 
     // Reset label text back to "Выполнить команду"
-    const selectLabel = $(`label[for="config_${deviceType}_job_select_field"]`);
-    if (selectLabel.length) {
-        selectLabel.text("Выполнить команду");
+    const selectLabel = document.querySelector(
+        `label[for="config_${deviceType}_job_select_field"]`
+    ) as HTMLLabelElement | null;
+    if (selectLabel) {
+        selectLabel.textContent = "Выполнить команду";
     }
 
     // Remove command text display
@@ -392,11 +415,17 @@ export const ExitEditMode = function (deviceType: string) {
     }
 
     // Remove highlight from command and input areas
-    $(`#config_${deviceType}_job_list li`).removeClass("editing-command");
-    $(`div[name="config_${deviceType}_select_input"]`).removeClass("editing-form-area");
+    document
+        .querySelectorAll(`#config_${deviceType}_job_list li`)
+        .forEach((li) => li.classList.remove("editing-command"));
+    document
+        .querySelectorAll(`div[name="config_${deviceType}_select_input"]`)
+        .forEach((div) => div.classList.remove("editing-form-area"));
 
     // Clear form inputs
-    $('div[name="config_' + deviceType + '_select_input"]').remove();
+    document
+        .querySelectorAll(`div[name="config_${deviceType}_select_input"]`)
+        .forEach((div) => div.remove());
 };
 
 // Function to delete old job and save new configuration

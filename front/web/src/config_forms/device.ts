@@ -15,36 +15,95 @@ import {
 } from "../netfront/update_config";
 import { UpdateEdgeConfiguration } from "../netfront/simulation";
 
+const setInputValue = (id: string, value: string) => {
+    const el = document.getElementById(id) as HTMLInputElement | null;
+    if (el) el.value = value;
+};
+
+const setSaveContent = (display: "" | "block" | "none") => {
+    const saveEl = document.getElementById(config_content_save_id);
+    if (saveEl) saveEl.style.display = display === "" ? "block" : display;
+};
+
+const appendHtml = (selector: string, html: string) => {
+    const target = document.querySelector(selector);
+    if (!target) return;
+    const tmpl = document.createElement("template");
+    tmpl.innerHTML = html;
+    target.append(tmpl.content);
+};
+
+const clearContainer = (selector: string) => {
+    const el = document.querySelector(selector);
+    if (el) el.replaceChildren();
+};
+
+const insertHtmlBeforeSelector = (html: string, targetSelector: string) => {
+    const target = document.querySelector(targetSelector);
+    if (!target || !target.parentNode) return;
+    const tmpl = document.createElement("template");
+    tmpl.innerHTML = html;
+    target.parentNode.insertBefore(tmpl.content, target);
+};
+
+const disableForm = (formSelector: string) => {
+    const form = document.querySelector(formSelector);
+    if (!form) return;
+    form.querySelectorAll<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement
+    >("input, select, textarea, button").forEach((el) => {
+        el.disabled = true;
+    });
+};
+
+const serializeForm = (formSelector: string): string => {
+    const form = document.querySelector(formSelector) as HTMLFormElement | null;
+    if (!form) return "";
+    return new URLSearchParams(new FormData(form) as unknown as Record<string, string>).toString();
+};
+
+const swapSubmitButtonToSpinner = (id: string) => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.textContent = "";
+    btn.insertAdjacentHTML(
+        "beforeend",
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="ps-3">Сохранение...</span>'
+    );
+};
+
+const bindClick = (selectorList: string, handler: (e: Event) => void) => {
+    selectorList.split(",").forEach((sel) => {
+        const target = document.querySelector(sel.trim());
+        if (target) target.addEventListener("click", handler);
+    });
+};
+
 export const ConfigHostForm = function (host_id: string) {
     const form = document.getElementById("config_host_main_form_script")!.innerHTML;
     const button = document.getElementById("config_host_save_script")!.innerHTML;
     const banner = document.getElementById("config_host_edit_banner_script")!.innerHTML;
 
-    // Clear all child
-    $(config_content_id).empty();
-    $(config_content_save_tag).empty();
+    clearContainer(config_content_id);
+    clearContainer(config_content_save_tag);
+    setSaveContent("block");
 
-    document.getElementById(config_content_save_id)!.style.display = "block";
-
-    // Add new form
-    $(config_content_id).append(form);
-    $(config_content_id).append(banner);
-    $(config_content_save_tag).append(button);
+    appendHtml(config_content_id, form);
+    appendHtml(config_content_id, banner);
+    appendHtml(config_content_save_tag, button);
 
     addIpFieldHandlers();
 
-    // Set host_id
-    $("#host_id").val(host_id);
-    $("#net_guid").val(state.network_guid);
+    setInputValue("host_id", host_id);
+    setInputValue("net_guid", state.network_guid);
 
-    function handleHostClick(event: any) {
+    function handleHostClick(event: Event) {
         event.preventDefault();
         UpdateHostConfigurationForm(host_id);
     }
 
-    $("#config_host_main_form_submit_button, #config_host_end_form").on("click", handleHostClick);
+    bindClick("#config_host_main_form_submit_button, #config_host_end_form", handleHostClick);
 
-    // Update grid to exclude config panel area
     if (typeof updateGridForConfigPanel === "function") {
         updateGridForConfigPanel();
     }
@@ -55,46 +114,29 @@ export const ConfigRouterForm = function (router_id: string) {
     const button = document.getElementById("config_router_save_script")!.innerHTML;
     const banner = document.getElementById("config_router_edit_banner_script")!.innerHTML;
 
-    // Clear all child
-    $(config_content_id).empty();
-    $(config_content_save_tag).empty();
+    clearContainer(config_content_id);
+    clearContainer(config_content_save_tag);
+    setSaveContent("block");
 
-    document.getElementById(config_content_save_id)!.style.display = "block";
-
-    // Add new form
-    $(config_content_id).append(form);
-    $(config_content_id).append(banner);
-    $(config_content_save_tag).append(button);
+    appendHtml(config_content_id, form);
+    appendHtml(config_content_id, banner);
+    appendHtml(config_content_save_tag, button);
 
     addIpFieldHandlers();
 
-    // Set host_id
-    $("#router_id").val(router_id);
-    $("#net_guid").val(state.network_guid);
+    setInputValue("router_id", router_id);
+    setInputValue("net_guid", state.network_guid);
 
-    function handleRouterClick(event: any) {
+    function handleRouterClick(event: Event) {
         event.preventDefault();
-        const data = $("#config_main_form").serialize();
-
-        // Disable all input fields
-        $("#config_main_form :input").prop("disabled", true);
-
-        // Set loading spinner
-        $("#config_router_main_form_submit_button").text("");
-        $("#config_router_main_form_submit_button").append(
-            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="ps-3">Сохранение...</span>'
-        );
-
-        // Use unified delete and save function
+        const data = serializeForm("#config_main_form");
+        disableForm("#config_main_form");
+        swapSubmitButtonToSpinner("config_router_main_form_submit_button");
         DeleteAndSaveJob("router", UpdateRouterConfiguration, data, router_id);
     }
 
-    $("#config_router_main_form_submit_button, #config_router_end_form").on(
-        "click",
-        handleRouterClick
-    );
+    bindClick("#config_router_main_form_submit_button, #config_router_end_form", handleRouterClick);
 
-    // Update grid to exclude config panel area
     if (typeof updateGridForConfigPanel === "function") {
         updateGridForConfigPanel();
     }
@@ -105,46 +147,29 @@ export const ConfigServerForm = function (server_id: string) {
     const button = document.getElementById("config_server_save_script")!.innerHTML;
     const banner = document.getElementById("config_server_edit_banner_script")!.innerHTML;
 
-    // Clear all child
-    $(config_content_id).empty();
-    $(config_content_save_tag).empty();
+    clearContainer(config_content_id);
+    clearContainer(config_content_save_tag);
+    setSaveContent("block");
 
-    document.getElementById(config_content_save_id)!.style.display = "block";
-
-    // Add new form
-    $(config_content_id).append(form);
-    $(config_content_id).append(banner);
-    $(config_content_save_tag).append(button);
+    appendHtml(config_content_id, form);
+    appendHtml(config_content_id, banner);
+    appendHtml(config_content_save_tag, button);
 
     addIpFieldHandlers();
 
-    // Set host_id
-    $("#server_id").val(server_id);
-    $("#net_guid").val(state.network_guid);
+    setInputValue("server_id", server_id);
+    setInputValue("net_guid", state.network_guid);
 
-    function handleServerClick(event: any) {
+    function handleServerClick(event: Event) {
         event.preventDefault();
-        const data = $("#config_main_form").serialize();
-
-        // Disable all input fields
-        $("#config_main_form :input").prop("disabled", true);
-
-        // Set loading spinner
-        $("#config_server_main_form_submit_button").text("");
-        $("#config_server_main_form_submit_button").append(
-            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="ps-3">Сохранение...</span>'
-        );
-
-        // Use unified delete and save function
+        const data = serializeForm("#config_main_form");
+        disableForm("#config_main_form");
+        swapSubmitButtonToSpinner("config_server_main_form_submit_button");
         DeleteAndSaveJob("server", UpdateServerConfiguration, data, server_id);
     }
 
-    $("#config_server_main_form_submit_button, #config_server_end_form").on(
-        "click",
-        handleServerClick
-    );
+    bindClick("#config_server_main_form_submit_button, #config_server_end_form", handleServerClick);
 
-    // Update grid to exclude config panel area
     if (typeof updateGridForConfigPanel === "function") {
         updateGridForConfigPanel();
     }
@@ -154,41 +179,28 @@ export const ConfigHubForm = function (hub_id: string) {
     const form = document.getElementById("config_hub_main_form_script")!.innerHTML;
     const button = document.getElementById("config_hub_save_script")!.innerHTML;
 
-    // Clear all child
-    $(config_content_id).empty();
-    $(config_content_save_tag).empty();
+    clearContainer(config_content_id);
+    clearContainer(config_content_save_tag);
+    setSaveContent("block");
 
-    document.getElementById(config_content_save_id)!.style.display = "block";
-
-    // Add new form
-    $(config_content_id).append(form);
-    $(config_content_save_tag).append(button);
+    appendHtml(config_content_id, form);
+    appendHtml(config_content_save_tag, button);
 
     addIpFieldHandlers();
 
-    // Set host_id
-    $("#hub_id").val(hub_id);
-    $("#net_guid").val(state.network_guid);
+    setInputValue("hub_id", hub_id);
+    setInputValue("net_guid", state.network_guid);
 
-    function handleHubClick(event: any) {
+    function handleHubClick(event: Event) {
         event.preventDefault();
-        const data = $("#config_hub_main_form").serialize();
-
-        // Disable all input fields
-        $("#config_hub_main_form :input").prop("disabled", true);
-
-        // Set loading spinner
-        $("#config_hub_main_form_submit_button").text("");
-        $("#config_hub_main_form_submit_button").append(
-            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="ps-3">Сохранение...</span>'
-        );
-
+        const data = serializeForm("#config_hub_main_form");
+        disableForm("#config_hub_main_form");
+        swapSubmitButtonToSpinner("config_hub_main_form_submit_button");
         UpdateHubConfiguration(data, hub_id);
     }
 
-    $("#config_hub_main_form_submit_button, #config_hub_end_form").on("click", handleHubClick);
+    bindClick("#config_hub_main_form_submit_button, #config_hub_end_form", handleHubClick);
 
-    // Update grid to exclude config panel area
     if (typeof updateGridForConfigPanel === "function") {
         updateGridForConfigPanel();
     }
@@ -198,51 +210,34 @@ export const ConfigSwitchForm = function (switch_id: string) {
     const form = document.getElementById("config_switch_main_form_script")!.innerHTML;
     const button = document.getElementById("config_switch_save_script")!.innerHTML;
 
-    // Clear all child
-    $(config_content_id).empty();
-    $(config_content_save_tag).empty();
+    clearContainer(config_content_id);
+    clearContainer(config_content_save_tag);
+    setSaveContent("block");
 
-    document.getElementById(config_content_save_id)!.style.display = "block";
-
-    // Add new form
-    $(config_content_id).append(form);
-    $(config_content_save_tag).append(button);
+    appendHtml(config_content_id, form);
+    appendHtml(config_content_save_tag, button);
 
     addIpFieldHandlers();
 
-    // Add href for mimishark
-    // var url = "/MimiShark?guid="+state.network_guid
-    // $(needhref).attr('href',url)
+    setInputValue("switch_id", switch_id);
+    setInputValue("net_guid", state.network_guid);
 
-    // Set host_id
-    $("#switch_id").val(switch_id);
-    $("#net_guid").val(state.network_guid);
+    function handleSwitchClick(event: Event) {
+        const rstpBtn = document.getElementById("config_button_rstp") as HTMLInputElement | null;
+        const rstpField = document.querySelector(
+            "#config_switch_main_form [name='config_rstp_stp']"
+        ) as HTMLInputElement | null;
+        if (rstpField) rstpField.value = rstpBtn?.value ?? "";
 
-    function handleSwitchClick(event: any) {
-        $("#config_switch_main_form [name='config_rstp_stp']").val(
-            $("#config_button_rstp").val() ?? ""
-        );
         event.preventDefault();
-        const data = $("#config_switch_main_form").serialize();
-
-        // Disable all input fields
-        $("#config_switch_main_form :input").prop("disabled", true);
-
-        // Set loading spinner
-        $("#config_switch_main_form_submit_button").text("");
-        $("#config_switch_main_form_submit_button").append(
-            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="ps-3">Сохранение...</span>'
-        );
-
+        const data = serializeForm("#config_switch_main_form");
+        disableForm("#config_switch_main_form");
+        swapSubmitButtonToSpinner("config_switch_main_form_submit_button");
         DeleteAndSaveJob("switch", UpdateSwitchConfiguration, data, switch_id);
     }
 
-    $("#config_switch_main_form_submit_button, #config_switch_end_form").on(
-        "click",
-        handleSwitchClick
-    );
+    bindClick("#config_switch_main_form_submit_button, #config_switch_end_form", handleSwitchClick);
 
-    // Update grid to exclude config panel area
     if (typeof updateGridForConfigPanel === "function") {
         updateGridForConfigPanel();
     }
@@ -253,55 +248,64 @@ export const ConfigEdgeForm = function (edge_id: string) {
     const form = document.getElementById("config_edge_main_form_script")!.innerHTML;
     const button = document.getElementById("config_edge_save_script")!.innerHTML;
 
-    // Clear all child
-    $(config_content_id).empty();
-    $(config_content_save_tag).empty();
+    clearContainer(config_content_id);
+    clearContainer(config_content_save_tag);
+    setSaveContent("block");
 
-    document.getElementById(config_content_save_id)!.style.display = "block";
+    appendHtml(config_content_id, form);
+    appendHtml(config_content_save_tag, button);
 
-    // Add new form
-    $(config_content_id).append(form);
-    $(config_content_save_tag).append(button);
+    setInputValue("edge_id", edge_id);
+    setInputValue("net_guid", state.network_guid);
 
-    // Set host_id
-    $("#edge_id").val(edge_id);
-    $("#net_guid").val(state.network_guid);
-
-    function handleEdgeClick(event: any) {
+    function handleEdgeClick(event: Event) {
         event.preventDefault();
 
-        if (edgeSaveXHR) {
+        if (edgeSaveXHR && typeof edgeSaveXHR.abort === "function") {
             edgeSaveXHR.abort();
         }
 
-        const data = $("#config_edge_main_form").serialize();
+        const data = serializeForm("#config_edge_main_form");
         const edge = state.edges.find((e: any) => e.data.id === edge_id);
         console.log(edge);
-        const lossValue = $("#edge_loss").val();
-        const duplicateValue = $("#edge_duplicate").val();
+        const lossValue = (document.getElementById("edge_loss") as HTMLInputElement | null)?.value;
+        const duplicateValue = (
+            document.getElementById("edge_duplicate") as HTMLInputElement | null
+        )?.value;
 
         if (edge) {
             edge.data.loss_percentage = lossValue;
             edge.data.duplicate_percentage = duplicateValue;
         }
-        const inputsToDisable = $(
-            "#edge_loss, #edge_duplicate, #config_edge_main_form_submit_button"
-        );
-        inputsToDisable.prop("disabled", true);
+        const disableIds = ["edge_loss", "edge_duplicate", "config_edge_main_form_submit_button"];
+        disableIds.forEach((id) => {
+            const el = document.getElementById(id) as HTMLInputElement | HTMLButtonElement | null;
+            if (el) el.disabled = true;
+        });
 
-        $("#config_edge_main_form_submit_button").html(
-            '<span class="spinner-border spinner-border-sm" role="status"></span> Сохранение...'
-        );
+        const submit = document.getElementById("config_edge_main_form_submit_button");
+        if (submit) {
+            submit.innerHTML =
+                '<span class="spinner-border spinner-border-sm" role="status"></span> Сохранение...';
+        }
 
         edgeSaveXHR = UpdateEdgeConfiguration(data);
-        inputsToDisable.prop("disabled", false);
+        disableIds.forEach((id) => {
+            const el = document.getElementById(id) as HTMLInputElement | HTMLButtonElement | null;
+            if (el) el.disabled = false;
+        });
     }
 
-    $("#config_edge_main_form_submit_button, #config_edge_end_form")
-        .off("click")
-        .on("click", handleEdgeClick);
+    // Replace any prior click handlers by cloning each button: cheaper
+    // than tracking refs across form re-renders.
+    ["config_edge_main_form_submit_button", "config_edge_end_form"].forEach((id) => {
+        const orig = document.getElementById(id);
+        if (!orig) return;
+        const fresh = orig.cloneNode(true) as HTMLElement;
+        orig.parentNode?.replaceChild(fresh, orig);
+        fresh.addEventListener("click", handleEdgeClick);
+    });
 
-    // Update grid to exclude config panel area
     if (typeof updateGridForConfigPanel === "function") {
         updateGridForConfigPanel();
     }
@@ -309,38 +313,40 @@ export const ConfigEdgeForm = function (edge_id: string) {
 
 export const ConfigSwtichSTP = function (stp: number) {
     const elem = document.getElementById("config_switch_checkbox_stp_script");
+    if (!elem) return;
+    insertHtmlBeforeSelector(elem.innerHTML, "#config_switch_end_form");
 
-    $(elem!.innerHTML).insertBefore("#config_switch_end_form");
-
-    if (stp === 1) {
-        $("#config_switch_stp").attr("checked", "checked");
-    }
+    const stpCheckbox = document.getElementById("config_switch_stp") as HTMLInputElement | null;
+    if (stp === 1 && stpCheckbox) stpCheckbox.checked = true;
 
     const warning_text = document.getElementById("config_switch_warning_stp_script")!.innerHTML;
-    $("#config_switch_stp").on("click", function () {
-        if ($(this).is(":checked")) {
-            $(warning_text).insertBefore("#config_switch_end_form");
-        } else {
-            $("#config_warning_stp").remove();
-        }
-    });
+    if (stpCheckbox) {
+        stpCheckbox.addEventListener("click", () => {
+            if (stpCheckbox.checked) {
+                insertHtmlBeforeSelector(warning_text, "#config_switch_end_form");
+            } else {
+                document.getElementById("config_warning_stp")?.remove();
+            }
+        });
+    }
 };
 
 export const ConfigSwtichRSTP = function (rstp: number) {
     const elem = document.getElementById("config_switch_checkbox_rstp_script");
+    if (!elem) return;
+    insertHtmlBeforeSelector(elem.innerHTML, "#config_switch_end_form");
 
-    $(elem!.innerHTML).insertBefore("#config_switch_end_form");
-
-    if (rstp === 1) {
-        $("#config_switch_rstp").attr("checked", "checked");
-    }
+    const rstpCheckbox = document.getElementById("config_switch_rstp") as HTMLInputElement | null;
+    if (rstp === 1 && rstpCheckbox) rstpCheckbox.checked = true;
 
     const warning_text = document.getElementById("config_switch_warning_rstp_script")!.innerHTML;
-    $("#config_switch_rstp").on("click", function () {
-        if ($(this).is(":checked")) {
-            $(warning_text).insertBefore("#config_switch_end_form");
-        } else {
-            $("#config_warning_rstp").remove();
-        }
-    });
+    if (rstpCheckbox) {
+        rstpCheckbox.addEventListener("click", () => {
+            if (rstpCheckbox.checked) {
+                insertHtmlBeforeSelector(warning_text, "#config_switch_end_form");
+            } else {
+                document.getElementById("config_warning_rstp")?.remove();
+            }
+        });
+    }
 };

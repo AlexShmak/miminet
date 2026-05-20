@@ -141,11 +141,13 @@ export function SimulationPlayer({ mode, simulationId, revision }: Props) {
 
     const onEmulateClick = () => {
         if (!state.jobs.length) {
-            ($("#noJobsModal") as any).modal("toggle");
+            const el = document.getElementById("noJobsModal");
+            if (el) window.bootstrap.Modal.getOrCreateInstance(el).toggle();
             return;
         }
         if (state.nodes.length > 80) {
-            ($("#tooManyHostModal") as any).modal("toggle");
+            const el = document.getElementById("tooManyHostModal");
+            if (el) window.bootstrap.Modal.getOrCreateInstance(el).toggle();
             return;
         }
         if (typeof window.ym !== "undefined") {

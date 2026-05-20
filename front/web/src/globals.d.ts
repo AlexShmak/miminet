@@ -31,7 +31,38 @@ declare const cytoscape: any;
 // Yandex Metrica goal-tracking, loaded externally.
 declare function ym(...args: any[]): any;
 
+// Bootstrap 5 exposes its UMD bundle on `window.bootstrap`. The bundle
+// uses Modal.getOrCreateInstance(el).show() / .hide() / .toggle().
+interface BootstrapModalInstance {
+    show: () => void;
+    hide: () => void;
+    toggle: () => void;
+    dispose: () => void;
+}
+interface BootstrapModalCtor {
+    getOrCreateInstance: (el: Element, options?: unknown) => BootstrapModalInstance;
+    getInstance: (el: Element) => BootstrapModalInstance | null;
+    new (el: Element, options?: unknown): BootstrapModalInstance;
+}
+interface BootstrapAlertInstance {
+    close: () => void;
+    dispose: () => void;
+}
+interface BootstrapAlertCtor {
+    getOrCreateInstance: (el: Element, options?: unknown) => BootstrapAlertInstance;
+    new (el: Element, options?: unknown): BootstrapAlertInstance;
+}
+interface BootstrapTooltipCtor {
+    new (el: Element, options?: unknown): unknown;
+    getOrCreateInstance: (el: Element, options?: unknown) => unknown;
+}
+
 interface Window {
+    bootstrap: {
+        Modal: BootstrapModalCtor;
+        Alert: BootstrapAlertCtor;
+        Tooltip: BootstrapTooltipCtor;
+    };
     // Set inline in base.html from Flask's `current_user.is_authenticated`.
     isAuthenticated?: boolean;
     // Set inline in base.html from the request endpoint.

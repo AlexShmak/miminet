@@ -132,7 +132,7 @@ export const AddEdge = function (source_id: string, target_id: string) {
 export const DeleteJob = function (node_id: string) {
     const jobs_to_delete: any[] = [];
 
-    $.each(state.jobs, function (idx: number, job: any) {
+    state.jobs.forEach(function (job: any, idx: number) {
         if (!job) {
             return;
         }
@@ -142,7 +142,7 @@ export const DeleteJob = function (node_id: string) {
         }
     });
     jobs_to_delete.reverse();
-    $.each(jobs_to_delete, function (idx: number, val: any) {
+    jobs_to_delete.forEach((val: any) => {
         state.jobs.splice(val, 1);
     });
 };
@@ -158,7 +158,7 @@ export const DeleteNode = function (node_id: string) {
     const edges_to_delete: any[] = [];
 
     // Find all state.edges that connected to the deleted node
-    $.each(state.edges, function (idx: number, edge: any) {
+    state.edges.forEach(function (edge: any, idx: number) {
         if (!edge) {
             return;
         }
@@ -203,7 +203,7 @@ export const DeleteNode = function (node_id: string) {
         }
     });
 
-    $.each(edges_to_delete, function (idx: number, val: any) {
+    edges_to_delete.forEach((val: any) => {
         state.edges.splice(val, 1);
     });
 
@@ -338,7 +338,7 @@ export const prepareStylesheet = function () {
             return label;
         }
 
-        $.each(n.interface, function (i: number) {
+        n.interface.forEach(function (_item: any, i: number) {
             const ip_addr = n.interface[i].ip;
             const netmask = n.interface[i].netmask;
 
@@ -353,7 +353,7 @@ export const prepareStylesheet = function () {
             label = label + "\n" + "gw:" + n.config.default_gw;
         }
 
-        $.each(state.jobs, function (i: number) {
+        state.jobs.forEach(function (_item: any, i: number) {
             const j = state.jobs[i];
 
             if (j.host_id === n.data.id) {

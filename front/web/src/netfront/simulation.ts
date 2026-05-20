@@ -66,7 +66,8 @@ export const UpdateEdgeConfiguration = (data: any) => {
         data: data,
         complete: function () {
             DrawGraph();
-            $("#config_edge_main_form_submit_button").html("Сохранить");
+            const submitBtn = document.getElementById("config_edge_main_form_submit_button");
+            if (submitBtn) submitBtn.innerHTML = "Сохранить";
         },
         error: function (xhr: any) {
             console.log("Не удалось обновить конфигурацию ребра");
@@ -103,15 +104,18 @@ export const InsertWaitingTimeHelper = function (time_filter: any) {
         data: "",
         success: function (data: any) {
             const queue_size = parseInt(data.size);
-            if (!$("#NetworkPlayer button:first").prop("disabled")) {
-                console.log($("#NetworkPlayer button:first").prop("disabled"));
+            const firstBtn = document.querySelector(
+                "#NetworkPlayer button"
+            ) as HTMLButtonElement | null;
+            if (firstBtn && !firstBtn.disabled) {
+                console.log(firstBtn.disabled);
                 return;
-            } else if (queue_size <= 1) {
-                $("#NetworkPlayerLabel").text("Ожидание 10-15 сек.");
+            }
+            const label = document.getElementById("NetworkPlayerLabel");
+            if (queue_size <= 1) {
+                if (label) label.textContent = "Ожидание 10-15 сек.";
             } else {
-                $("#NetworkPlayerLabel").text(`Место в очереди ${queue_size}`);
-
-                // Update waiting time
+                if (label) label.textContent = `Место в очереди ${queue_size}`;
                 setTimeout(() => InsertWaitingTimeHelper(time_filter), 500);
             }
         },

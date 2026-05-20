@@ -249,12 +249,12 @@ export function NetworkEditor({ revision }: Props) {
                 SetNetworkPlayerState(-1);
             }
         };
-        $(document).on("keyup", keyupHandler);
+        document.addEventListener("keyup", keyupHandler);
 
         initGrid(cy);
 
         return () => {
-            $(document).off("keyup", keyupHandler);
+            document.removeEventListener("keyup", keyupHandler);
             cy.destroy();
             cyRef.current = null;
             if (state.global_cy === cy) {

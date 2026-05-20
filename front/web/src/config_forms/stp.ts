@@ -1,74 +1,89 @@
 import { state } from "../lib/state";
 // STP / RSTP modal config wiring for L2 switches.
-// Migrated from front/src/static/config_stp.js.
 
 import { UpdateSwitchConfiguration } from "../netfront/update_config";
 
 function updateRstpButtonStyle(_currentDevice: any, rstp_stp_config: any) {
-    $("#config_button_rstp").val(rstp_stp_config);
+    const btn = document.getElementById("config_button_rstp") as HTMLButtonElement | null;
+    const btnText = document.getElementById("config_button_rstp_text");
+    if (!btn) return;
+
+    (btn as any).value = rstp_stp_config;
+
     if (rstp_stp_config > 0) {
-        if (rstp_stp_config == 1) {
-            $("#config_button_rstp_text").text("STP");
+        if (btnText) {
+            btnText.textContent =
+                rstp_stp_config == 1 ? "STP" : rstp_stp_config == 2 ? "RSTP" : "STP";
         }
-        if (rstp_stp_config == 2) {
-            $("#config_button_rstp_text").text("RSTP");
-        }
-        $("#config_button_rstp")
-            .addClass("btn-outline-primary")
-            .removeClass("btn-outline-secondary");
+        btn.classList.add("btn-outline-primary");
+        btn.classList.remove("btn-outline-secondary");
     } else {
-        $("#config_button_rstp")
-            .removeClass("btn-outline-primary")
-            .addClass("btn-outline-secondary");
-        $("#config_button_rstp_text").text("STP");
+        btn.classList.remove("btn-outline-primary");
+        btn.classList.add("btn-outline-secondary");
+        if (btnText) btnText.textContent = "STP";
     }
 }
 
 function eventHandlers(currentDevice: any, modalId: string) {
-    $("#" + modalId)
-        .find("#rstpConfigurationCancelIcon, #rstpConfigurationCancel")
-        .on("click", function () {
-            ($("#" + modalId) as any).modal("hide");
-        });
-    const modalRadios = "#" + modalId + " input[type='radio'][name='config_rstp_stp']";
-    $(modalRadios + '[value="' + currentDevice.config.stp + '"]').attr("checked", "checked");
-    $("#" + modalId)
-        .find("#config_stp_priority")
-        .val(currentDevice.config.priority);
+    const modalEl = document.getElementById(modalId);
+    if (!modalEl) return;
+    const modal = window.bootstrap.Modal.getOrCreateInstance(modalEl);
 
-    $("#" + modalId)
-        .find("#rstpConfigurationSubmit")
-        .on("click", function () {
-            const rstp_stp_config = $(modalRadios + ":checked").val();
-            ($("#" + modalId) as any).modal("hide");
+    modalEl
+        .querySelectorAll("#rstpConfigurationCancelIcon, #rstpConfigurationCancel")
+        .forEach((el) => {
+            el.addEventListener("click", () => modal.hide());
+        });
+
+    const modalRadiosSelector = `#${modalId} input[type='radio'][name='config_rstp_stp']`;
+    const presetRadio = modalEl.querySelector(
+        `input[type='radio'][name='config_rstp_stp'][value="${currentDevice.config.stp}"]`
+    ) as HTMLInputElement | null;
+    if (presetRadio) presetRadio.checked = true;
+
+    const priorityField = modalEl.querySelector("#config_stp_priority") as HTMLInputElement | null;
+    if (priorityField) priorityField.value = currentDevice.config.priority;
+
+    const submitBtn = modalEl.querySelector("#rstpConfigurationSubmit");
+    if (submitBtn) {
+        submitBtn.addEventListener("click", () => {
+            const checked = document.querySelector(
+                `${modalRadiosSelector}:checked`
+            ) as HTMLInputElement | null;
+            const rstp_stp_config = checked ? checked.value : "0";
+            modal.hide();
             updateRstpButtonStyle(currentDevice, rstp_stp_config);
 
             const switch_id = currentDevice.data.id;
-            $("#" + modalId + " #modal_switch_id").val(switch_id);
-            $("#" + modalId + " #modal_net_guid").val(state.network_guid);
+            const switchIdField = modalEl.querySelector(
+                "#modal_switch_id"
+            ) as HTMLInputElement | null;
+            if (switchIdField) switchIdField.value = switch_id;
+            const netGuidField = modalEl.querySelector(
+                "#modal_net_guid"
+            ) as HTMLInputElement | null;
+            if (netGuidField) netGuidField.value = state.network_guid;
 
-            const data = $("#" + modalId)
-                .find("#form_config_rstp_stp")
-                .serialize();
+            const form = modalEl.querySelector("#form_config_rstp_stp") as HTMLFormElement | null;
+            if (!form) return;
+            const data = new URLSearchParams(
+                new FormData(form) as unknown as Record<string, string>
+            ).toString();
             UpdateSwitchConfiguration(data, switch_id);
         });
+    }
 
-    const priorityInput = $("#" + modalId + " #input_priority_form")[0];
+    const priorityInput = modalEl.querySelector("#input_priority_form") as HTMLElement | null;
 
-    document.querySelectorAll(modalRadios).forEach((radio) => {
+    document.querySelectorAll(modalRadiosSelector).forEach((radio) => {
         radio.addEventListener("change", function (this: any) {
-            if (this.value === "0") {
-                priorityInput.style.display = "none";
-            } else {
-                priorityInput.style.display = "block";
-            }
+            if (!priorityInput) return;
+            priorityInput.style.display = this.value === "0" ? "none" : "block";
         });
     });
 
-    if (currentDevice.config.stp > 0) {
-        priorityInput.style.display = "block";
-    } else {
-        priorityInput.style.display = "none";
+    if (priorityInput) {
+        priorityInput.style.display = currentDevice.config.stp > 0 ? "block" : "none";
     }
     updateRstpButtonStyle(currentDevice, currentDevice.config.stp);
 }
@@ -77,17 +92,30 @@ export const ConfigRSTP = function (currentDevice: any) {
     const modalId = "RstpModal_" + currentDevice.data.id;
 
     const buttonHTML = document.getElementById("config_button_rstp_script")!.innerHTML;
-    const buttonElem = $(buttonHTML).appendTo("#config_switch_name");
-    buttonElem.val(currentDevice.config.stp);
-    buttonElem.attr("data-bs-target", "#" + modalId);
+    const nameWrap = document.getElementById("config_switch_name");
+    if (nameWrap) {
+        const tmpl = document.createElement("template");
+        tmpl.innerHTML = buttonHTML;
+        nameWrap.append(tmpl.content);
+    }
+    const buttonElem = document.getElementById("config_button_rstp") as HTMLButtonElement | null;
+    if (buttonElem) {
+        (buttonElem as any).value = currentDevice.config.stp;
+        buttonElem.setAttribute("data-bs-target", "#" + modalId);
+    }
 
-    $("#" + modalId).remove();
+    document.getElementById(modalId)?.remove();
     let modalHTML = document.getElementById("config_modal_rstp_script")!.innerHTML;
     modalHTML = modalHTML.replace('id="RstpModal"', 'id="' + modalId + '"');
-    $(modalHTML).appendTo("body");
+    const modalTmpl = document.createElement("template");
+    modalTmpl.innerHTML = modalHTML;
+    document.body.append(modalTmpl.content);
 
-    $(function () {
-        ($('[data-bs-toggle="tooltip"]') as any).tooltip();
-        eventHandlers(currentDevice, modalId);
+    // Initialize Bootstrap tooltips for any [data-bs-toggle="tooltip"]
+    // elements that were just inserted. The legacy code used the jQuery
+    // plugin equivalent; the native API is identical.
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
+        new (window.bootstrap as any).Tooltip(el);
     });
+    eventHandlers(currentDevice, modalId);
 };

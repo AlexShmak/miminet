@@ -149,7 +149,7 @@ export const PacketPlayer = (function () {
 
         if (ats >= traffic.length) {
             console.log("Animation is end");
-            $("#NetworkStopButton").click();
+            (document.getElementById("NetworkStopButton") as HTMLButtonElement | null)?.click();
             return;
         }
 
@@ -182,7 +182,7 @@ export const PacketPlayer = (function () {
 
         if (ats >= traffic.length) {
             console.log("Animation is end");
-            $("#NetworkStopButton").click();
+            (document.getElementById("NetworkStopButton") as HTMLButtonElement | null)?.click();
             return;
         }
 
@@ -212,7 +212,7 @@ export const PacketPlayer = (function () {
         const edgeMap: Record<string, number> = {};
 
         pkts.forEach(function (p_item: any) {
-            const pp_item = jQuery.extend(true, {}, p_item) as any;
+            const pp_item = structuredClone(p_item) as any;
             pp_item["data"]["id"] = uid();
 
             const edge = network_cy.edges('[id = "' + pp_item["config"]["path"] + '"]');

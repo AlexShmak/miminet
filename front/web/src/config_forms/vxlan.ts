@@ -1,6 +1,5 @@
 import { state } from "../lib/state";
 // VXLAN modal config wiring for routers.
-// Migrated from front/src/static/config_vxlan.js.
 
 import { SetNetworkPlayerState } from "../netfront/runtime";
 import { DrawGraph } from "../netfront/draw";
@@ -57,16 +56,14 @@ export function areVxlanInterfaceFieldsFilled(currentDevice: any): boolean {
 }
 
 function updateVxlanButtonStyle(currentDevice: any) {
-    const isVxlanEnabled = areVxlanInterfaceFieldsFilled(currentDevice);
-
-    if (isVxlanEnabled) {
-        $("#config_button_vxlan")
-            .addClass("btn-outline-primary")
-            .removeClass("btn-outline-secondary");
+    const btn = document.getElementById("config_button_vxlan");
+    if (!btn) return;
+    if (areVxlanInterfaceFieldsFilled(currentDevice)) {
+        btn.classList.add("btn-outline-primary");
+        btn.classList.remove("btn-outline-secondary");
     } else {
-        $("#config_button_vxlan")
-            .removeClass("btn-outline-primary")
-            .addClass("btn-outline-secondary");
+        btn.classList.remove("btn-outline-primary");
+        btn.classList.add("btn-outline-secondary");
     }
 }
 
@@ -79,24 +76,22 @@ function resetVxlanInterfaceFields(currentDevice: any) {
 }
 
 function clearClientFields(tableId: string) {
-    $("#" + tableId)
-        .find(".client-vni")
-        .val("");
-    $("#" + tableId)
-        .find(".client-device")
-        .prop("selectedIndex", 0);
+    const table = document.getElementById(tableId);
+    if (!table) return;
+    table.querySelectorAll<HTMLInputElement>(".client-vni").forEach((el) => (el.value = ""));
+    table
+        .querySelectorAll<HTMLSelectElement>(".client-device")
+        .forEach((el) => (el.selectedIndex = 0));
 }
 
 function clearNetworkFields(tableId: string) {
-    $("#" + tableId)
-        .find(".network-vni")
-        .val("");
-    $("#" + tableId)
-        .find(".remote-vtep-ip")
-        .val("");
-    $("#" + tableId)
-        .find(".out-interface")
-        .prop("selectedIndex", 0);
+    const table = document.getElementById(tableId);
+    if (!table) return;
+    table.querySelectorAll<HTMLInputElement>(".network-vni").forEach((el) => (el.value = ""));
+    table.querySelectorAll<HTMLInputElement>(".remote-vtep-ip").forEach((el) => (el.value = ""));
+    table
+        .querySelectorAll<HTMLSelectElement>(".out-interface")
+        .forEach((el) => (el.selectedIndex = 0));
 }
 
 function restoreVxlanFormData(tableId: string) {
@@ -105,7 +100,9 @@ function restoreVxlanFormData(tableId: string) {
 }
 
 function showAlert(message: string, type: string = "info", modalId: string) {
-    const alertContainer = $("#" + modalId + " .vxlanAlertContainer");
+    const modal = document.getElementById(modalId);
+    const alertContainer = modal?.querySelector(".vxlanAlertContainer");
+    if (!alertContainer) return;
     const alertId = `alert-${Date.now()}`;
 
     const alertHTML = `
@@ -115,10 +112,11 @@ function showAlert(message: string, type: string = "info", modalId: string) {
         </div>
     `;
 
-    alertContainer.append(alertHTML);
+    alertContainer.insertAdjacentHTML("beforeend", alertHTML);
 
     setTimeout(() => {
-        ($(`#${alertId}`) as any).alert("close");
+        const alertEl = document.getElementById(alertId);
+        if (alertEl) window.bootstrap.Alert.getOrCreateInstance(alertEl).close();
     }, 5000);
 }
 
@@ -127,7 +125,9 @@ function removeDevice(iface: any, tableId: string) {
     iface.vxlan_connection_type = null;
     iface.vxlan_vni_to_target_ip = null;
 
-    const deviceList = $("#" + tableId).find(".devices-list")[0];
+    const table = document.getElementById(tableId);
+    const deviceList = table?.querySelector(".devices-list");
+    if (!deviceList) return;
     const deviceItems = deviceList.getElementsByClassName("client-interface");
 
     for (const item of Array.from(deviceItems)) {
@@ -139,7 +139,9 @@ function removeDevice(iface: any, tableId: string) {
 }
 
 function removeInterface(iface: any, vni: any, targetIp: any, tableId: string) {
-    const interfaceList = $("#" + tableId).find(".interfaces-list")[0];
+    const table = document.getElementById(tableId);
+    const interfaceList = table?.querySelector(".interfaces-list");
+    if (!interfaceList) return;
     const interfaceItems = interfaceList.getElementsByClassName("network-interface");
     if (Array.isArray(iface.vxlan_vni_to_target_ip)) {
         iface.vxlan_vni_to_target_ip = iface.vxlan_vni_to_target_ip.filter(
@@ -218,12 +220,10 @@ function getInterfaceAndConnectedNodes(currentDevice: any): Array<[any, any]> {
         const interfaceInfo = currentDevice.interface[i];
         const connectedEdge = edgesMap.get(interfaceInfo.connect);
         if (connectedEdge !== undefined) {
-            let targetDeviceId;
-            if (connectedEdge.data.source === currentDevice.data.id) {
-                targetDeviceId = connectedEdge.data.target;
-            } else {
-                targetDeviceId = connectedEdge.data.source;
-            }
+            const targetDeviceId =
+                connectedEdge.data.source === currentDevice.data.id
+                    ? connectedEdge.data.target
+                    : connectedEdge.data.source;
             const connectedNode = nodesMap.get(targetDeviceId);
             result.push([interfaceInfo, connectedNode]);
         }
@@ -233,8 +233,11 @@ function getInterfaceAndConnectedNodes(currentDevice: any): Array<[any, any]> {
 }
 
 function generateDropdownMenues(tableId: string, ifaceToDeviseList: Array<[any, any]>) {
-    const select_client_link = $("#" + tableId).find(".client-device")[0];
-    const select_out_link = $("#" + tableId).find(".out-interface")[0];
+    const table = document.getElementById(tableId);
+    if (!table) return;
+    const select_client_link = table.querySelector(".client-device") as HTMLSelectElement | null;
+    const select_out_link = table.querySelector(".out-interface") as HTMLSelectElement | null;
+    if (!select_client_link || !select_out_link) return;
     while (select_client_link.firstChild) {
         select_client_link.removeChild(select_client_link.firstChild);
     }
@@ -255,7 +258,9 @@ function generateDropdownMenues(tableId: string, ifaceToDeviseList: Array<[any, 
 }
 
 function generateClientsContent(tableId: string, ifaceToDeviseList: Array<[any, any]>) {
-    const devices_list = $("#" + tableId).find(".devices-list")[0];
+    const table = document.getElementById(tableId);
+    const devices_list = table?.querySelector(".devices-list");
+    if (!devices_list) return;
     while (devices_list.firstChild) {
         devices_list.removeChild(devices_list.firstChild);
     }
@@ -272,7 +277,9 @@ function generateClientsContent(tableId: string, ifaceToDeviseList: Array<[any, 
 }
 
 function generateNetworkInterfacesContent(tableId: string, ifaceToDeviseList: Array<[any, any]>) {
-    const interfaces_list = $("#" + tableId).find(".interfaces-list")[0];
+    const table = document.getElementById(tableId);
+    const interfaces_list = table?.querySelector(".interfaces-list");
+    if (!interfaces_list) return;
 
     while (interfaces_list.firstChild) {
         interfaces_list.removeChild(interfaces_list.firstChild);
@@ -302,13 +309,11 @@ function generateNetworkInterfacesContent(tableId: string, ifaceToDeviseList: Ar
 }
 
 function addClientVxlanInterface(currentDevice: any, tableId: string, modalId: string) {
-    const vni = $("#" + tableId)
-        .find(".client-vni")
-        .val();
-    const deviceEntry = $("#" + tableId)
-        .find(".client-device")
-        .find("option:selected")
-        .val();
+    const table = document.getElementById(tableId);
+    if (!table) return;
+    const vni = (table.querySelector(".client-vni") as HTMLInputElement | null)?.value;
+    const select = table.querySelector(".client-device") as HTMLSelectElement | null;
+    const deviceEntry = select?.value;
 
     if (!deviceEntry) {
         showAlert("Пожалуйста, выберите клиентский интерфейс.", "warning", modalId);
@@ -332,9 +337,7 @@ function addClientVxlanInterface(currentDevice: any, tableId: string, modalId: s
     if (deviceEntry === null || deviceEntry === undefined || deviceEntry === "") {
         return;
     }
-    const iface = currentDevice.interface.find(function (item: any) {
-        return item.id === deviceEntry;
-    });
+    const iface = currentDevice.interface.find((item: any) => item.id === deviceEntry);
     if (iface) {
         if (
             iface.vxlan_connection_type === 0 &&
@@ -356,16 +359,12 @@ function addClientVxlanInterface(currentDevice: any, tableId: string, modalId: s
 }
 
 function addNetworkVxlanInterface(currentDevice: any, tableId: string, modalId: string) {
-    const vni = $("#" + tableId)
-        .find(".network-vni")
-        .val();
-    const targetIp = $("#" + tableId)
-        .find(".remote-vtep-ip")
-        .val();
-    const deviceEntry = $("#" + tableId)
-        .find(".out-interface")
-        .find("option:selected")
-        .val();
+    const table = document.getElementById(tableId);
+    if (!table) return;
+    const vni = (table.querySelector(".network-vni") as HTMLInputElement | null)?.value;
+    const targetIp = (table.querySelector(".remote-vtep-ip") as HTMLInputElement | null)?.value;
+    const select = table.querySelector(".out-interface") as HTMLSelectElement | null;
+    const deviceEntry = select?.value;
 
     if (!deviceEntry) {
         showAlert("Пожалуйста, выберите исходящий интерфейс.", "warning", modalId);
@@ -403,9 +402,7 @@ function addNetworkVxlanInterface(currentDevice: any, tableId: string, modalId: 
     if (deviceEntry === null || deviceEntry === undefined || deviceEntry === "") {
         return;
     }
-    const iface = currentDevice.interface.find(function (item: any) {
-        return item.id === deviceEntry;
-    });
+    const iface = currentDevice.interface.find((item: any) => item.id === deviceEntry);
     if (iface) {
         iface.vxlan_vni = null;
         iface.vxlan_connection_type = 1;
@@ -419,12 +416,19 @@ function addNetworkVxlanInterface(currentDevice: any, tableId: string, modalId: 
 }
 
 function setupVxlanEventHandlers(currentDevice: any, modalId: string, tableId: string) {
-    $("#" + modalId)
-        .find("#config_vxlan_switch")
-        .off("click")
-        .on("click", function (this: any) {
-            if ($(this).is(":checked")) {
-                $("#" + tableId).show();
+    const modalEl = document.getElementById(modalId);
+    if (!modalEl) return;
+    const modal = window.bootstrap.Modal.getOrCreateInstance(modalEl);
+
+    const switchEl = modalEl.querySelector("#config_vxlan_switch") as HTMLInputElement | null;
+    if (switchEl) {
+        const fresh = switchEl.cloneNode(true) as HTMLInputElement;
+        switchEl.parentNode?.replaceChild(fresh, switchEl);
+        fresh.addEventListener("click", () => {
+            const table = document.getElementById(tableId);
+            if (!table) return;
+            if (fresh.checked) {
+                table.style.display = "";
                 const ifaceToDeviseList = getInterfaceAndConnectedNodes(currentDevice);
                 generateDropdownMenues(tableId, ifaceToDeviseList);
                 generateNetworkInterfacesContent(tableId, ifaceToDeviseList);
@@ -432,67 +436,76 @@ function setupVxlanEventHandlers(currentDevice: any, modalId: string, tableId: s
             } else {
                 resetVxlanInterfaceFields(currentDevice);
                 restoreVxlanFormData(tableId);
-                $("#" + tableId).hide();
+                table.style.display = "none";
             }
         });
+    }
 
-    $("#" + modalId)
-        .find("#vxlanConfigurationCancelIcon")
-        .on("click", function () {
-            ($("#" + modalId) as any).modal("hide");
-        });
+    const cancelIcon = modalEl.querySelector("#vxlanConfigurationCancelIcon");
+    cancelIcon?.addEventListener("click", () => modal.hide());
 
-    $("#" + modalId).on("hidden.bs.modal.myNamespace", function () {
+    // Stash the hidden.bs.modal listener on the element so shared/read-only
+    // mode can remove it (DisableVXLANInputs) without firing the network
+    // mutation callbacks.
+    const hiddenHandler = () => {
         updateVxlanButtonStyle(currentDevice);
-
         SetNetworkPlayerState(-1);
         DrawGraph();
         PostNodesEdges();
-    });
+    };
+    modalEl.addEventListener("hidden.bs.modal", hiddenHandler);
+    (modalEl as any).__vxlanHiddenHandler = hiddenHandler;
 
-    $("#" + modalId)
-        .find("#vxlanConfigurationSubmit")
-        .on("click", function () {
-            ($("#" + modalId) as any).modal("hide");
-        });
+    const submitBtn = modalEl.querySelector("#vxlanConfigurationSubmit");
+    submitBtn?.addEventListener("click", () => modal.hide());
 
-    $("#config_button_vxlan")
-        .off("click")
-        .on("click", function () {
+    const openBtn = document.getElementById("config_button_vxlan");
+    if (openBtn) {
+        const fresh = openBtn.cloneNode(true) as HTMLElement;
+        openBtn.parentNode?.replaceChild(fresh, openBtn);
+        fresh.addEventListener("click", () => {
+            const checkbox = modalEl.querySelector(
+                "#config_vxlan_switch"
+            ) as HTMLInputElement | null;
+            const table = document.getElementById(tableId);
             if (areVxlanInterfaceFieldsFilled(currentDevice)) {
-                $("#" + modalId)
-                    .find("#config_vxlan_switch")
-                    .prop("checked", true);
-                $("#" + tableId).show();
+                if (checkbox) checkbox.checked = true;
+                if (table) table.style.display = "";
                 const ifaceToDeviseList = getInterfaceAndConnectedNodes(currentDevice);
                 generateDropdownMenues(tableId, ifaceToDeviseList);
                 generateNetworkInterfacesContent(tableId, ifaceToDeviseList);
                 generateClientsContent(tableId, ifaceToDeviseList);
             } else {
-                $("#" + modalId)
-                    .find("#config_vxlan_switch")
-                    .prop("checked", false);
-                $("#" + tableId).hide();
+                if (checkbox) checkbox.checked = false;
+                if (table) table.style.display = "none";
             }
-            ($("#" + modalId) as any).modal("show");
+            modal.show();
         });
-    $("#" + tableId)
-        .find(".add-client-vxlan-interface")
-        .off("click")
-        .on("click", function () {
-            addClientVxlanInterface(currentDevice, tableId, modalId);
-            const ifaceToDeviseList = getInterfaceAndConnectedNodes(currentDevice);
-            generateClientsContent(tableId, ifaceToDeviseList);
-        });
+    }
 
-    $("#" + tableId)
-        .find(".add-network-vxlan-interface")
-        .off("click")
-        .on("click", function () {
-            addNetworkVxlanInterface(currentDevice, tableId, modalId);
-            const ifaceToDeviseList = getInterfaceAndConnectedNodes(currentDevice);
-            generateNetworkInterfacesContent(tableId, ifaceToDeviseList);
-        });
+    const table = document.getElementById(tableId);
+    if (table) {
+        const addClient = table.querySelector(".add-client-vxlan-interface");
+        if (addClient) {
+            const fresh = addClient.cloneNode(true) as HTMLElement;
+            addClient.parentNode?.replaceChild(fresh, addClient);
+            fresh.addEventListener("click", () => {
+                addClientVxlanInterface(currentDevice, tableId, modalId);
+                const ifaceToDeviseList = getInterfaceAndConnectedNodes(currentDevice);
+                generateClientsContent(tableId, ifaceToDeviseList);
+            });
+        }
+        const addNet = table.querySelector(".add-network-vxlan-interface");
+        if (addNet) {
+            const fresh = addNet.cloneNode(true) as HTMLElement;
+            addNet.parentNode?.replaceChild(fresh, addNet);
+            fresh.addEventListener("click", () => {
+                addNetworkVxlanInterface(currentDevice, tableId, modalId);
+                const ifaceToDeviseList = getInterfaceAndConnectedNodes(currentDevice);
+                generateNetworkInterfacesContent(tableId, ifaceToDeviseList);
+            });
+        }
+    }
 
     updateVxlanButtonStyle(currentDevice);
 }
@@ -501,7 +514,7 @@ export const ConfigVxlan = function (currentDevice: any) {
     const modalId = "VxlanConfigModal" + currentDevice.data.id;
     const tableId = "VxlanConfigTable" + currentDevice.data.id;
 
-    $("#" + modalId).remove();
+    document.getElementById(modalId)?.remove();
 
     const buttonElem0 = document.getElementById("config_button_vxlan_script");
     const modalElem0 = document.getElementById("config_modal_vxlan_script");
@@ -518,16 +531,30 @@ export const ConfigVxlan = function (currentDevice: any) {
     modalHTML = modalHTML.replace('id="VxlanModal"', 'id="' + modalId + '"');
     tableHTML = tableHTML.replace('id="config_table_vxlan"', 'id="' + tableId + '"');
 
-    const buttonElem = $(buttonHTML).insertAfter("#config_router_name");
-    buttonElem.attr("data-bs-target", "#" + modalId);
+    const nameAnchor = document.getElementById("config_router_name");
+    if (nameAnchor?.parentNode) {
+        const tmpl = document.createElement("template");
+        tmpl.innerHTML = buttonHTML;
+        nameAnchor.parentNode.insertBefore(tmpl.content, nameAnchor.nextSibling);
+        const btn = document.getElementById("config_button_vxlan");
+        btn?.setAttribute("data-bs-target", "#" + modalId);
+    }
 
-    $(modalHTML).appendTo("body");
-    $(tableHTML)
-        .appendTo("#" + modalId + " .modal-body")
-        .hide();
+    const modalTmpl = document.createElement("template");
+    modalTmpl.innerHTML = modalHTML;
+    document.body.append(modalTmpl.content);
 
-    $(function () {
-        ($('[data-bs-toggle="tooltip"]') as any).tooltip();
-        setupVxlanEventHandlers(currentDevice, modalId, tableId);
+    const modalBody = document.querySelector("#" + modalId + " .modal-body");
+    if (modalBody) {
+        const tableTmpl = document.createElement("template");
+        tableTmpl.innerHTML = tableHTML;
+        modalBody.append(tableTmpl.content);
+        const tableEl = document.getElementById(tableId);
+        if (tableEl) tableEl.style.display = "none";
+    }
+
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
+        new (window.bootstrap as any).Tooltip(el);
     });
+    setupVxlanEventHandlers(currentDevice, modalId, tableId);
 };

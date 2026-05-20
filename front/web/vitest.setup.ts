@@ -6,22 +6,9 @@ import "@testing-library/jest-dom/vitest";
 import { afterEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
 
-// jQuery is still loaded at runtime by the production HTML but isn't
-// part of the bundle. Many config_forms modules call `$('#x').load(...)`
-// at the top level for their side-effect setup. A chainable proxy
-// stub keeps module imports from crashing in tests — individual tests
-// can mock specific selectors when they need real behaviour.
-function chainableJQueryStub(): any {
-    const handler: ProxyHandler<any> = {
-        get: () => chainableJQueryStub(),
-        apply: () => chainableJQueryStub(),
-    };
-    return new Proxy(function () {}, handler);
-}
-(globalThis as any).$ = chainableJQueryStub();
-(globalThis as any).jQuery = chainableJQueryStub();
-
-// Other classic-script globals the bundle reads at module-load time.
+// Classic-script globals the bundle reads at module-load time. jQuery
+// was removed in phase 15 — fetch is now the bundled implementation, so
+// no stub is needed.
 (globalThis as any).ExternalUrlFor = (path: string) => path;
 (globalThis as any).ajaxWithAuth = vi.fn();
 

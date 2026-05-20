@@ -1,14 +1,29 @@
 import { DeleteAndSaveJob, updateGridForConfigPanel } from "../netfront/runtime";
 import { UpdateHostConfiguration } from "../netfront/update_config";
 
-$("#config_host").load(ExternalUrlFor("/config_host.html"));
-$("#config_hub").load(ExternalUrlFor("/config_hub.html"));
-$("#config_switch").load(ExternalUrlFor("/config_switch.html"));
-$("#config_edge").load(ExternalUrlFor("/config_edge.html"));
-$("#config_router").load(ExternalUrlFor("/config_router.html"));
-$("#config_server").load(ExternalUrlFor("/config_server.html"));
-$("#config_vlan").load(ExternalUrlFor("/config_vlan.html"));
-$("#config_vxlan").load(ExternalUrlFor("/config_vxlan.html"));
+// Lazy-load the per-device config-form templates. Equivalent to jQuery's
+// `$(...).load(url)`: GET the URL, drop the response HTML into the
+// container, and ignore failures (matches the prior fire-and-forget
+// behavior).
+const loadFragment = (containerId: string, url: string): void => {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    fetch(url, { credentials: "include" })
+        .then((res) => (res.ok ? res.text() : Promise.reject(res.statusText)))
+        .then((html) => {
+            container.innerHTML = html;
+        })
+        .catch((err) => console.warn(`Failed to load ${url}:`, err));
+};
+
+loadFragment("config_host", ExternalUrlFor("/config_host.html"));
+loadFragment("config_hub", ExternalUrlFor("/config_hub.html"));
+loadFragment("config_switch", ExternalUrlFor("/config_switch.html"));
+loadFragment("config_edge", ExternalUrlFor("/config_edge.html"));
+loadFragment("config_router", ExternalUrlFor("/config_router.html"));
+loadFragment("config_server", ExternalUrlFor("/config_server.html"));
+loadFragment("config_vlan", ExternalUrlFor("/config_vlan.html"));
+loadFragment("config_vxlan", ExternalUrlFor("/config_vxlan.html"));
 
 export const config_content_id = "#config_content";
 export const config_main_form_id = "#config_main_form";
@@ -20,70 +35,87 @@ export const config_edge_main_form_id = "#config_edge_main_form";
 export const config_content_save_tag = "#config_content_save";
 export const config_content_save_id = "config_content_save";
 
+const WARNING_TEMPLATE = (msg: string) =>
+    '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
+    msg +
+    '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+
+const prependHtml = (containerSelector: string, html: string): void => {
+    const container = document.querySelector(containerSelector);
+    if (!container) return;
+    const tmpl = document.createElement("template");
+    tmpl.innerHTML = html;
+    container.prepend(tmpl.content);
+};
+
 export const ClearConfigForm = function (text: string) {
-    let txt = "";
+    let txt = text;
 
     if (!text) {
         txt = "Тут будут настройки устройств. Выделите любое на схеме.";
     }
 
-    // Clear all child
-    $(config_content_id).empty();
-    $(config_content_save_tag).empty();
-    $(config_content_id).append("<span>" + txt + "</span>");
+    const content = document.querySelector(config_content_id);
+    const saveTag = document.querySelector(config_content_save_tag);
+    if (content) {
+        content.replaceChildren();
+        const span = document.createElement("span");
+        span.textContent = txt;
+        content.appendChild(span);
+    }
+    if (saveTag) saveTag.replaceChildren();
     document.getElementById(config_content_save_id)!.style.display = "none";
 
-    // Update grid to reclaim full width
     if (typeof updateGridForConfigPanel === "function") {
         updateGridForConfigPanel();
     }
 };
 
 export const HostWarningMsg = function (msg: string) {
-    const warning_msg =
-        '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
-        msg +
-        '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-
-    $(config_content_id).prepend(warning_msg);
+    prependHtml(config_content_id, WARNING_TEMPLATE(msg));
 };
 export const SwitchWarningMsg = function (msg: string) {
-    const warning_msg =
-        '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
-        msg +
-        '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-
-    $(config_content_id).prepend(warning_msg);
+    prependHtml(config_content_id, WARNING_TEMPLATE(msg));
 };
-
 export const ServerWarningMsg = function (msg: string) {
-    const warning_msg =
-        '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
-        msg +
-        '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-
-    $(config_content_id).prepend(warning_msg);
+    prependHtml(config_content_id, WARNING_TEMPLATE(msg));
 };
 
 export const HostErrorMsg = function (msg: string) {
-    $(config_content_id).find(".alert-info, .alert-danger").remove();
+    const content = document.querySelector(config_content_id);
+    if (content) {
+        content.querySelectorAll(".alert-info, .alert-danger").forEach((el) => el.remove());
+    }
 
-    const error_msg =
-        '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
-        msg +
-        '<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+    prependHtml(config_content_id, WARNING_TEMPLATE(msg));
 
-    $(config_content_id).prepend(error_msg);
+    const reEnableInputs = (selector: string) => {
+        document
+            .querySelectorAll<HTMLInputElement>(
+                selector + " input, " + selector + " select, " + selector + " textarea"
+            )
+            .forEach((input) => {
+                input.disabled = false;
+            });
+    };
+    reEnableInputs("#config_main_form");
+    reEnableInputs("#config_router_main_form");
+    reEnableInputs("#config_server_main_form");
+    // Original selector was missing the `#` (typo in legacy code) — kept
+    // intentionally as a no-op to preserve behavior.
+    reEnableInputs("config_switch_main_form");
 
-    $("#config_main_form :input").prop("disabled", false);
-    $("#config_router_main_form :input").prop("disabled", false);
-    $("#config_server_main_form :input").prop("disabled", false);
-    $("config_switch_main_form :input").prop("disabled", false);
-
-    $("#config_host_main_form_submit_button").text("Сохранить").removeClass("disabled");
-    $("#config_router_main_form_submit_button").text("Сохранить").removeClass("disabled");
-    $("#config_server_main_form_submit_button").text("Сохранить").removeClass("disabled");
-    $("#config_switch_main_form_submit_button").text("Сохранить").removeClass("disabled");
+    [
+        "config_host_main_form_submit_button",
+        "config_router_main_form_submit_button",
+        "config_server_main_form_submit_button",
+        "config_switch_main_form_submit_button",
+    ].forEach((id) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.textContent = "Сохранить";
+        btn.classList.remove("disabled");
+    });
 };
 
 export const UpdateJobCounter = function (counterId: string, _deviceId: string | null = null) {
@@ -96,17 +128,26 @@ export const UpdateJobCounter = function (counterId: string, _deviceId: string |
 };
 
 export const UpdateHostConfigurationForm = function (host_id: string) {
-    const data = $("#config_main_form").serialize();
+    const form = document.getElementById("config_main_form") as HTMLFormElement | null;
+    if (!form) return;
+    const data = new URLSearchParams(
+        new FormData(form) as unknown as Record<string, string>
+    ).toString();
 
-    // Disable all input fields
-    $("#config_main_form :input").prop("disabled", true);
+    form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+        "input, select, textarea"
+    ).forEach((input) => {
+        input.disabled = true;
+    });
 
-    // Set loading spinner
-    $("#config_host_main_form_submit_button").text("");
-    $("#config_host_main_form_submit_button").append(
-        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="ps-3">Сохранение...</span>'
-    );
+    const submit = document.getElementById("config_host_main_form_submit_button");
+    if (submit) {
+        submit.textContent = "";
+        submit.insertAdjacentHTML(
+            "beforeend",
+            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="ps-3">Сохранение...</span>'
+        );
+    }
 
-    // Use unified delete and save function
     DeleteAndSaveJob("host", UpdateHostConfiguration, data, host_id);
 };

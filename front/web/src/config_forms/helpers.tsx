@@ -175,43 +175,56 @@ export const ConfigItemInterface = function (
     connected_to: string,
     item: string
 ) {
-    const conf_item = "config_" + item;
-    const elem = document.getElementById(conf_item + "_interface_script");
-    const eth = jQuery.extend({}, elem);
-
     if (!name) {
         return;
     }
 
+    const conf_item = "config_" + item;
+    const elem = document.getElementById(conf_item + "_interface_script");
+    if (!elem) {
+        return;
+    }
+    let html = elem.innerHTML;
+
     const ids = ["_iface_name_label_", "_iface_name_", "_ip_", "_mask_"];
     ids.forEach(function (id) {
-        eth.innerHTML = eth.innerHTML.replace(
-            RegExp(conf_item + id + "example", "g"),
-            conf_item + id + name
-        );
+        html = html.replace(RegExp(conf_item + id + "example", "g"), conf_item + id + name);
     });
 
-    const tag = "#" + conf_item;
-    const text = eth.innerHTML;
-    $(text).insertBefore(tag + "_end_form");
+    const endForm = document.getElementById(conf_item + "_end_form");
+    if (!endForm || !endForm.parentNode) {
+        return;
+    }
+    const tmpl = document.createElement("template");
+    tmpl.innerHTML = html;
+    endForm.parentNode.insertBefore(tmpl.content, endForm);
 
-    $(
-        '<input type="hidden" name="' + conf_item + '_iface_ids[]" value="' + name + '"/>'
-    ).insertBefore(tag + ids[1] + name);
-    $(tag + ids[1] + name).attr("placeholder", connected_to);
-    $(tag + ids[2] + name).val(ip);
-    $(tag + ids[3] + name).val(netmask);
+    const ifaceNameField = document.getElementById(conf_item + ids[1] + name);
+    if (ifaceNameField && ifaceNameField.parentNode) {
+        const hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = conf_item + "_iface_ids[]";
+        hidden.value = name;
+        ifaceNameField.parentNode.insertBefore(hidden, ifaceNameField);
+        (ifaceNameField as HTMLInputElement).placeholder = connected_to;
+    }
+    const ipField = document.getElementById(conf_item + ids[2] + name) as HTMLInputElement | null;
+    if (ipField) ipField.value = ip;
+    const maskField = document.getElementById(conf_item + ids[3] + name) as HTMLInputElement | null;
+    if (maskField) maskField.value = netmask;
 
     if (Array.isArray(state.pcaps) && state.pcaps.includes(name)) {
-        $(tag + "_iface_name_label_" + name).html(
-            'Линк к (<a href="/' +
+        const label = document.getElementById(conf_item + "_iface_name_label_" + name);
+        if (label) {
+            label.innerHTML =
+                'Линк к (<a href="/' +
                 item +
                 "/mimishark?guid=" +
                 state.network_guid +
                 "&iface=" +
                 name +
-                '" target="_blank">pcap</a>)'
-        );
+                '" target="_blank">pcap</a>)';
+        }
     } else {
         console.warn("state.pcaps не определен или не является массивом:", state.pcaps);
     }
@@ -264,8 +277,12 @@ export const ConfigSwitchInterface = function (
 
 export const ConfigItemIndent = function (item: string) {
     const conf_item = "config_" + item;
-    const text = document.getElementById(conf_item + "_indent_script")!.innerHTML;
-    $(text).insertBefore("#" + conf_item + "_end_form");
+    const scriptEl = document.getElementById(conf_item + "_indent_script");
+    const endForm = document.getElementById(conf_item + "_end_form");
+    if (!scriptEl || !endForm || !endForm.parentNode) return;
+    const tmpl = document.createElement("template");
+    tmpl.innerHTML = scriptEl.innerHTML;
+    endForm.parentNode.insertBefore(tmpl.content, endForm);
 };
 
 export const ConfigHubIndent = function () {

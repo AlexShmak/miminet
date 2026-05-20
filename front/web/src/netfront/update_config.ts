@@ -99,7 +99,6 @@ export const DeleteJobFromHost = function (host_id: string, job_id: string, _net
         type: "POST",
         url: ExternalUrlFor("/host/delete_job"),
         data: payload,
-        encode: true,
         success: function (data: any, textStatus: any, xhr: any) {
             if (xhr.status === 200) {
                 // Update state.jobs
@@ -148,11 +147,10 @@ export const DeleteJobFromRouter = function (
         guid: state.network_guid,
     };
 
-    ($.ajax as any)({
+    ajaxWithAuth({
         type: "POST",
         url: "/host/delete_job",
         data: payload,
-        encode: true,
         success: function (data: any, textStatus: any, xhr: any) {
             if (xhr.status === 200) {
                 // Update state.jobs
@@ -200,11 +198,10 @@ export const DeleteJobFromSwitch = function (
         guid: state.network_guid,
     };
 
-    ($.ajax as any)({
+    ajaxWithAuth({
         type: "POST",
         url: "/host/delete_job",
         data: payload,
-        encode: true,
         success: function (data: any, textStatus: any, xhr: any) {
             if (xhr.status === 200) {
                 // Update state.jobs
@@ -251,11 +248,10 @@ export const DeleteJobFromServer = function (
         guid: state.network_guid,
     };
 
-    ($.ajax as any)({
+    ajaxWithAuth({
         type: "POST",
         url: "/host/delete_job",
         data: payload,
-        encode: true,
         success: function (data: any, textStatus: any, xhr: any) {
             if (xhr.status === 200) {
                 // Update state.jobs

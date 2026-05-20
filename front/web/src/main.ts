@@ -30,11 +30,11 @@ import "./netfront/runtime.js";
 import "./netfront/packet_player.js";
 
 // Drag-and-drop wiring for device palette → cytoscape canvas. Runs its
-// own jQuery DOM-ready callback on import.
+// own DOMContentLoaded callback on import.
 import "./netfront/netfront.js";
 
-// config_forms — common.ts runs top-level jQuery `.load()` calls on
-// import to fetch the device config form fragments.
+// config_forms — common.ts kicks off top-level fetch() calls on import
+// to load the device config form fragments.
 import "./config_forms/common.js";
 import "./config_forms/device.js";
 import "./config_forms/shared.js";

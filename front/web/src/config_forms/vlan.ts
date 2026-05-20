@@ -1,6 +1,5 @@
 import { state } from "../lib/state";
 // VLAN modal config wiring for L2 switches.
-// Migrated from front/src/static/config_vlan.js.
 //
 // `interface` is a reserved word in TypeScript, so the local-variable
 // `interface` from the source has been renamed to `iface`.
@@ -27,22 +26,21 @@ function resetInterfaceFields(device: any) {
 }
 
 function updateVlanButtonStyle(currentDevice: any) {
-    const isVlanEnabled = areInterfaceFieldsFilled(currentDevice);
-
-    if (isVlanEnabled) {
-        $("#config_button_vlan")
-            .addClass("btn-outline-primary")
-            .removeClass("btn-outline-secondary");
+    const btn = document.getElementById("config_button_vlan");
+    if (!btn) return;
+    if (areInterfaceFieldsFilled(currentDevice)) {
+        btn.classList.add("btn-outline-primary");
+        btn.classList.remove("btn-outline-secondary");
     } else {
-        $("#config_button_vlan")
-            .removeClass("btn-outline-primary")
-            .addClass("btn-outline-secondary");
+        btn.classList.remove("btn-outline-primary");
+        btn.classList.add("btn-outline-secondary");
     }
 }
 
 function generateTableContent(currentDevice: any, tableSelector: string) {
-    // Clearing previous lines in tbody
-    $(tableSelector + " tbody").empty();
+    const tbody = document.querySelector(tableSelector + " tbody");
+    if (!tbody) return;
+    tbody.replaceChildren();
 
     const edgesMap = new Map<string, any>();
     for (let i = 0; i < state.edges.length; i++) {
@@ -57,191 +55,189 @@ function generateTableContent(currentDevice: any, tableSelector: string) {
     for (let i = 0; i < currentDevice.interface.length; i++) {
         const iface = currentDevice.interface[i];
         const connectedEdge = edgesMap.get(iface.connect);
+        if (connectedEdge === undefined) continue;
 
-        if (connectedEdge !== undefined) {
-            let targetDeviceId = connectedEdge.data.target;
+        const targetDeviceId =
+            connectedEdge.data.source === currentDevice.data.id
+                ? connectedEdge.data.target
+                : connectedEdge.data.source;
 
-            // Checking whether the current device is the source or not
-            if (connectedEdge.data.source === currentDevice.data.id) {
-                targetDeviceId = connectedEdge.data.target;
-            } else {
-                targetDeviceId = connectedEdge.data.source;
-            }
+        const vlan = iface.vlan !== null && iface.vlan !== undefined ? iface.vlan : 1;
+        const type_connection =
+            iface.type_connection !== null && iface.type_connection !== undefined
+                ? iface.type_connection
+                : 0;
 
-            const vlan = iface.vlan !== null && iface.vlan !== undefined ? iface.vlan : 1;
-            const type_connection =
-                iface.type_connection !== null && iface.type_connection !== undefined
-                    ? iface.type_connection
-                    : 0;
+        const selectedAccess = type_connection === 0 ? "selected" : "";
+        const selectedTrunk = type_connection === 1 ? "selected" : "";
 
-            const selectedAccess = type_connection === 0 ? "selected" : "";
-            const selectedTrunk = type_connection === 1 ? "selected" : "";
+        const row =
+            '<tr data-id="' +
+            iface.id +
+            '">' +
+            "<td>" +
+            nodesMap.get(targetDeviceId) +
+            "</td>" +
+            '<td><input type="text" value="' +
+            vlan +
+            '" class="form-control vlan-input" /></td>' +
+            "<td>" +
+            '<select class="form-select type-connection-select">' +
+            '<option value="Access" ' +
+            selectedAccess +
+            ">Access</option>" +
+            '<option value="Trunk" ' +
+            selectedTrunk +
+            ">Trunk</option>" +
+            "</select>" +
+            "</td>" +
+            "</tr>";
 
-            const row =
-                '<tr data-id="' +
-                iface.id +
-                '">' +
-                "<td>" +
-                nodesMap.get(targetDeviceId) +
-                "</td>" +
-                '<td><input type="text" value="' +
-                vlan +
-                '" class="form-control vlan-input" /></td>' +
-                "<td>" +
-                '<select class="form-select type-connection-select">' +
-                '<option value="Access" ' +
-                selectedAccess +
-                ">Access</option>" +
-                '<option value="Trunk" ' +
-                selectedTrunk +
-                ">Trunk</option>" +
-                "</select>" +
-                "</td>" +
-                "</tr>";
-
-            $(tableSelector + " tbody").append(row);
-        }
+        tbody.insertAdjacentHTML("beforeend", row);
     }
 
-    $(".type-connection-select").change(function (this: any) {
-        const typeConnection = $(this).val();
-        const vlanInput = $(this).closest("tr").find(".vlan-input");
+    document.querySelectorAll<HTMLSelectElement>(".type-connection-select").forEach((sel) => {
+        sel.addEventListener("change", function () {
+            const typeConnection = this.value;
+            const row = this.closest("tr");
+            const vlanInput = row?.querySelector(".vlan-input") as HTMLInputElement | null;
+            if (!vlanInput) return;
 
-        // Number from 1 to 4094
-        const vlanPattern = "^(?:[1-9]|[1-9]\\d{1,2}|[1-3]\\d{3}|40[0-9]{2}|409[0-4])";
+            const vlanPattern = "^(?:[1-9]|[1-9]\\d{1,2}|[1-3]\\d{3}|40[0-9]{2}|409[0-4])";
+            const vlanListPattern = "^" + vlanPattern + "(\\s*(,|\\s)\\s*" + vlanPattern + ")*$";
 
-        // List of VLANs, separated by spaces or commas
-        const vlanListPattern = "^" + vlanPattern + "(\\s*(,|\\s)\\s*" + vlanPattern + ")*$";
-
-        if (typeConnection === "Trunk") {
-            vlanInput.attr("pattern", vlanListPattern);
-        } else {
-            const raw = vlanInput.val();
-            const currentVlanValues = String(raw)
-                .split(/[\s,]+/)
-                .map(Number);
-            vlanInput.val(currentVlanValues[0] || 1).attr("pattern", vlanPattern);
-        }
+            if (typeConnection === "Trunk") {
+                vlanInput.setAttribute("pattern", vlanListPattern);
+            } else {
+                const raw = vlanInput.value;
+                const currentVlanValues = String(raw)
+                    .split(/[\s,]+/)
+                    .map(Number);
+                vlanInput.value = String(currentVlanValues[0] || 1);
+                vlanInput.setAttribute("pattern", vlanPattern);
+            }
+        });
     });
 }
 
 function saveCurrentFormData(currentDevice: any, tableSelector: string) {
-    $(tableSelector + " tbody tr").each(function (_index: number, rowEl: any) {
-        const row = $(rowEl);
-        const interfaceId = row.data("id");
-        const vlanInput = row.find("input").val();
-        const type_connection = row.find("select").val() === "Access" ? 0 : 1;
+    document.querySelectorAll(tableSelector + " tbody tr").forEach((row) => {
+        const interfaceId = (row as HTMLElement).dataset.id;
+        const vlanInput = (row.querySelector("input") as HTMLInputElement | null)?.value ?? "";
+        const selVal = (row.querySelector("select") as HTMLSelectElement | null)?.value ?? "Access";
+        const type_connection = selVal === "Access" ? 0 : 1;
 
-        const iface = currentDevice.interface.find(function (item: any) {
-            return item.id === interfaceId;
-        });
+        const iface = currentDevice.interface.find((item: any) => item.id === interfaceId);
+        if (!iface) return;
 
-        if (iface) {
-            const vlanSplit = /[\s,]+/;
-            const vlanValues =
-                type_connection === 1
-                    ? String(vlanInput).split(vlanSplit).map(Number)
-                    : [Number(vlanInput)];
-            const validVlanValues = vlanValues.every(function (value) {
-                return value >= 1 && value <= 4094;
-            });
+        const vlanSplit = /[\s,]+/;
+        const vlanValues =
+            type_connection === 1
+                ? String(vlanInput).split(vlanSplit).map(Number)
+                : [Number(vlanInput)];
+        const validVlanValues = vlanValues.every((value) => value >= 1 && value <= 4094);
 
-            if (validVlanValues) {
-                iface.vlan = type_connection === 1 ? vlanValues : vlanValues[0];
-            }
-            iface.type_connection = type_connection;
+        if (validVlanValues) {
+            iface.vlan = type_connection === 1 ? vlanValues : vlanValues[0];
         }
+        iface.type_connection = type_connection;
     });
 }
 
 function restoreFormData(currentDevice: any, tableSelector: string) {
-    $(tableSelector + " tbody tr").each(function (_index: number, rowEl: any) {
-        const row = $(rowEl);
-        const interfaceId = row.data("id");
+    document.querySelectorAll(tableSelector + " tbody tr").forEach((row) => {
+        const interfaceId = (row as HTMLElement).dataset.id;
+        const iface = currentDevice.interface.find((item: any) => item.id === interfaceId);
+        if (!iface) return;
 
-        const iface = currentDevice.interface.find(function (item: any) {
-            return item.id === interfaceId;
-        });
-        if (iface) {
-            let vlanValue: any = iface.vlan;
-            if (Array.isArray(vlanValue)) {
-                vlanValue = vlanValue.join(", ");
-            } else if (vlanValue === null || vlanValue === undefined) {
-                vlanValue = 1;
-            }
-
-            row.find("input").val(vlanValue);
-            row.find("select").val(iface.type_connection === 0 ? "Access" : "Trunk");
+        let vlanValue: any = iface.vlan;
+        if (Array.isArray(vlanValue)) {
+            vlanValue = vlanValue.join(", ");
+        } else if (vlanValue === null || vlanValue === undefined) {
+            vlanValue = 1;
         }
+
+        const inp = row.querySelector("input") as HTMLInputElement | null;
+        if (inp) inp.value = String(vlanValue);
+        const sel = row.querySelector("select") as HTMLSelectElement | null;
+        if (sel) sel.value = iface.type_connection === 0 ? "Access" : "Trunk";
     });
 }
 
 function setupEventHandlers(currentDevice: any, modalId: string, tableId: string) {
-    $("#" + modalId)
-        .find("#config_switch_vlan")
-        .off("click")
-        .on("click", function (this: any) {
-            if ($(this).is(":checked")) {
-                $("#" + tableId).show();
+    const modalEl = document.getElementById(modalId);
+    if (!modalEl) return;
+    const modal = window.bootstrap.Modal.getOrCreateInstance(modalEl);
+
+    const enableCheckbox = modalEl.querySelector("#config_switch_vlan") as HTMLInputElement | null;
+    if (enableCheckbox) {
+        const fresh = enableCheckbox.cloneNode(true) as HTMLInputElement;
+        enableCheckbox.parentNode?.replaceChild(fresh, enableCheckbox);
+        fresh.addEventListener("click", function () {
+            const table = document.getElementById(tableId);
+            if (!table) return;
+            if (fresh.checked) {
+                table.style.display = "";
                 generateTableContent(currentDevice, "#" + tableId);
             } else {
-                $("#" + tableId).hide();
+                table.style.display = "none";
             }
         });
+    }
 
-    $("#" + modalId)
-        .find("#vlanConfigurationCancelIcon, #vlanConfigurationCancel")
-        .on("click", function () {
-            restoreFormData(currentDevice, "#" + tableId);
-            ($("#" + modalId) as any).modal("hide");
+    modalEl
+        .querySelectorAll("#vlanConfigurationCancelIcon, #vlanConfigurationCancel")
+        .forEach((el) => {
+            el.addEventListener("click", () => {
+                restoreFormData(currentDevice, "#" + tableId);
+                modal.hide();
+            });
         });
 
-    $("#" + modalId)
-        .find("#vlanConfigurationSubmit")
-        .on("click", function () {
-            if (
-                $("#" + modalId)
-                    .find("#config_switch_vlan")
-                    .is(":checked")
-            ) {
+    const submitBtn = modalEl.querySelector("#vlanConfigurationSubmit");
+    if (submitBtn) {
+        submitBtn.addEventListener("click", () => {
+            const checkbox = modalEl.querySelector(
+                "#config_switch_vlan"
+            ) as HTMLInputElement | null;
+            if (checkbox?.checked) {
                 saveCurrentFormData(currentDevice, "#" + tableId);
-
-                // TODO explain why we need this fix
-                // (for some reason, state.nodes aren't updating fast enough)
-                const index = state.nodes.findIndex(function (n: any) {
-                    return n.data.id == currentDevice.data.id;
-                });
-
-                state.nodes[index].interface = currentDevice.interface;
+                const index = state.nodes.findIndex((n: any) => n.data.id == currentDevice.data.id);
+                if (index >= 0) {
+                    state.nodes[index].interface = currentDevice.interface;
+                }
             } else {
                 resetInterfaceFields(currentDevice);
             }
-            ($("#" + modalId) as any).modal("hide");
+            modal.hide();
             updateVlanButtonStyle(currentDevice);
 
-            // Reset network state
             SetNetworkPlayerState(-1);
             DrawGraph();
             PostNodesEdges();
         });
+    }
 
-    $("#config_button_vlan")
-        .off("click")
-        .on("click", function () {
+    const openBtn = document.getElementById("config_button_vlan");
+    if (openBtn) {
+        const fresh = openBtn.cloneNode(true) as HTMLElement;
+        openBtn.parentNode?.replaceChild(fresh, openBtn);
+        fresh.addEventListener("click", () => {
+            const table = document.getElementById(tableId);
+            const checkbox = modalEl.querySelector(
+                "#config_switch_vlan"
+            ) as HTMLInputElement | null;
             if (areInterfaceFieldsFilled(currentDevice)) {
-                $("#" + modalId)
-                    .find("#config_switch_vlan")
-                    .prop("checked", true);
-                $("#" + tableId).show();
+                if (checkbox) checkbox.checked = true;
+                if (table) table.style.display = "";
                 generateTableContent(currentDevice, "#" + tableId);
             } else {
-                $("#" + modalId)
-                    .find("#config_switch_vlan")
-                    .prop("checked", false);
-                $("#" + tableId).hide();
+                if (checkbox) checkbox.checked = false;
+                if (table) table.style.display = "none";
             }
-            ($("#" + modalId) as any).modal("show");
+            modal.show();
         });
+    }
 
     updateVlanButtonStyle(currentDevice);
 }
@@ -250,7 +246,7 @@ export const ConfigVLAN = function (currentDevice: any) {
     const modalId = "VlanModal_" + currentDevice.data.id;
     const tableId = "config_table_vlan_" + currentDevice.data.id;
 
-    $("#" + modalId).remove();
+    document.getElementById(modalId)?.remove();
 
     const buttonHTML = document.getElementById("config_button_vlan_script")!.innerHTML;
     let modalHTML = document.getElementById("config_modal_vlan_script")!.innerHTML;
@@ -259,16 +255,30 @@ export const ConfigVLAN = function (currentDevice: any) {
     modalHTML = modalHTML.replace('id="VlanModal"', 'id="' + modalId + '"');
     tableHTML = tableHTML.replace('id="config_table_vlan"', 'id="' + tableId + '"');
 
-    const buttonElem = $(buttonHTML).appendTo("#config_switch_name");
-    buttonElem.attr("data-bs-target", "#" + modalId);
+    const nameWrap = document.getElementById("config_switch_name");
+    if (nameWrap) {
+        const tmpl = document.createElement("template");
+        tmpl.innerHTML = buttonHTML;
+        nameWrap.append(tmpl.content);
+        const btn = document.getElementById("config_button_vlan");
+        btn?.setAttribute("data-bs-target", "#" + modalId);
+    }
 
-    $(modalHTML).appendTo("body");
-    $(tableHTML)
-        .appendTo("#" + modalId + " .modal-body")
-        .hide();
+    const modalTmpl = document.createElement("template");
+    modalTmpl.innerHTML = modalHTML;
+    document.body.append(modalTmpl.content);
 
-    $(function () {
-        ($('[data-bs-toggle="tooltip"]') as any).tooltip();
-        setupEventHandlers(currentDevice, modalId, tableId);
+    const modalBody = document.querySelector("#" + modalId + " .modal-body");
+    if (modalBody) {
+        const tableTmpl = document.createElement("template");
+        tableTmpl.innerHTML = tableHTML;
+        modalBody.append(tableTmpl.content);
+        const tableEl = document.getElementById(tableId);
+        if (tableEl) tableEl.style.display = "none";
+    }
+
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
+        new (window.bootstrap as any).Tooltip(el);
     });
+    setupEventHandlers(currentDevice, modalId, tableId);
 };

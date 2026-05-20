@@ -117,7 +117,7 @@ export const ShowHostConfig = function (n: any, shared: number = 0) {
     ConfigHostJob(host_jobs, shared);
 
     // Add interfaces
-    $.each(n.interface, function (i: number) {
+    n.interface.forEach(function (_item: any, i: number) {
         ActionWithInterface(n, i, ConfigHostInterface);
     });
 
@@ -165,7 +165,7 @@ export const ShowRouterConfig = function (n: any, shared: number = 0) {
     ConfigRouterJob(router_jobs, shared);
 
     // Add interfaces
-    $.each(n.interface, function (i: number) {
+    n.interface.forEach(function (_item: any, i: number) {
         ActionWithInterface(n, i, ConfigRouterInterface);
     });
 
@@ -216,7 +216,7 @@ export const ShowServerConfig = function (n: any, shared: number = 0) {
     ConfigServerJob(host_jobs, shared);
 
     // Add interfaces
-    $.each(n.interface, function (i: number) {
+    n.interface.forEach(function (_item: any, i: number) {
         ActionWithInterface(n, i, ConfigServerInterface);
     });
 
@@ -250,7 +250,7 @@ export const ShowHubConfig = function (n: any, shared: number = 0) {
     ConfigHubName(hostname);
 
     // Add interfaces
-    $.each(n.interface, function (i: number) {
+    n.interface.forEach(function (_item: any, i: number) {
         ActionWithInterface(n, i, ConfigHubInterface);
     });
 
@@ -295,7 +295,7 @@ export const ShowSwitchConfig = function (n: any, shared: number = 0) {
     ConfigVLAN(n);
 
     // Add interfaces
-    $.each(n.interface, function (i: number) {
+    n.interface.forEach(function (_item: any, i: number) {
         ActionWithInterface(n, i, ConfigSwitchInterface);
     });
 
