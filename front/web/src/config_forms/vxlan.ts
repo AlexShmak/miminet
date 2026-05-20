@@ -6,12 +6,12 @@ import { SetNetworkPlayerState } from "../netfront/runtime";
 import { DrawGraph } from "../netfront/draw";
 import { PostNodesEdges } from "../netfront/network_ops";
 
-function isValidVNI(vni: any): boolean {
+export function isValidVNI(vni: any): boolean {
     const num = Number(vni);
     return Number.isInteger(num) && num >= 1 && num <= 16777214;
 }
 
-function isValidIP(ip: string): boolean {
+export function isValidIP(ip: string): boolean {
     const ipv4Regex = /^(25[0-5]|2[0-4]\d|[0-1]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[0-1]?\d{1,2})){3}$/;
     return ipv4Regex.test(ip);
 }

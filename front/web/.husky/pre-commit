@@ -17,3 +17,6 @@ npx --no -- lint-staged || exit 1
 
 # Typecheck the whole front/web project (tsc can't be reduced to a file list cleanly).
 npm run -s typecheck || exit 1
+
+# Vitest run — pure-logic + component tests, ~30s. Fast enough to gate every commit.
+npm run -s test || exit 1
