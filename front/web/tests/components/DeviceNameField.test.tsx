@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DeviceNameField } from "../../src/components/DeviceNameField";
+import { DeviceNameField } from "../../src/device-config/DeviceNameField";
 
 describe("DeviceNameField", () => {
     it("renders the label, id and name from props", () => {

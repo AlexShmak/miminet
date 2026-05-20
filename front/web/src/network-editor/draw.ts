@@ -1,4 +1,4 @@
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 import { MarkLinkDownEdges, prepareStylesheet } from "./network_ops";
 import { initGrid } from "./runtime";
 import {
@@ -8,13 +8,13 @@ import {
     ShowHubConfig,
     ShowSwitchConfig,
     ShowEdgeConfig,
-} from "./show_config";
-import { ClearConfigForm } from "../config_forms/common";
-import { PacketPlayer } from "./packet_player";
-import { mountNetworkEditor } from "../lib/network_editor_mount";
+} from "../device-config/show_config";
+import { ClearConfigForm } from "../device-config/common";
+import { PacketPlayer } from "../simulation/packet_player";
+import { mountNetworkEditor } from "./mount";
 
 // Thin wrapper: cy + handlers + edge-handles plugin all live in
-// components/NetworkEditor.tsx. Each call mounts or re-renders that
+// network-editor/NetworkEditor.tsx. Each call mounts or re-renders that
 // component with a bumped revision, which re-syncs cy with the
 // current state.nodes/state.edges.
 export const DrawGraph = function () {
@@ -165,7 +165,7 @@ export const DrawIndexGraphStatic = function (
 };
 
 // Boot helper for the index.html demo. Reads the data from state
-// (populated by lib/initial_state.ts from the JSON script tag) and
+// (populated by shared/initial_state.ts from the JSON script tag) and
 // drives the playback loop. Exposed on window via attachGlobals so the
 // inline kickoff `<script>` in templates/index.html can call it.
 export const BootIndexDemo = function () {

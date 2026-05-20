@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { EdgeEndpoints } from "../../src/components/EdgeEndpoints";
+import { EdgeEndpoints } from "../../src/device-config/EdgeEndpoints";
 
 describe("EdgeEndpoints", () => {
     it("renders source and target as disabled inputs with the expected ids", () => {

@@ -1,11 +1,11 @@
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 import { UpdateJobCounter, config_content_id, config_content_save_tag } from "./common";
 import {
     DeleteJobFromHost,
     DeleteJobFromRouter,
     DeleteJobFromSwitch,
     DeleteJobFromServer,
-} from "../netfront/update_config";
+} from "./update_config";
 import { EditJobInHost, EditJobInRouter, EditJobInSwitch, EditJobInServer } from "./edit_jobs";
 
 const removeBySelector = (selector: string) => {

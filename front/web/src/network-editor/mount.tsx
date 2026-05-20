@@ -4,7 +4,7 @@
 // `state.nodes`/`state.edges`.
 
 import { createRoot, type Root } from "react-dom/client";
-import { NetworkEditor } from "../components/NetworkEditor";
+import { NetworkEditor } from "./NetworkEditor";
 
 let root: Root | null = null;
 let revision = 0;

@@ -1,11 +1,11 @@
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 
-// Migrated from front/src/static/netfront/state.js
+// Migrated from front/src/static/network-editor/state.js
 //
 // State vars are explicitly attached to `window` so unmigrated classic
 // scripts (netfront.js, miminet_animation.js, config_vlan.js, etc.) can
 // still resolve them via bare lookup, and the bridge in
-// front/web/src/lib/state.ts keeps reading/writing the same locations.
+// front/web/src/shared/state.ts keeps reading/writing the same locations.
 // `attachGlobals` in main.ts also exposes HostUid/RouterUid/ServerUid/
 // LINK_DOWN_JOB_ID/uid as window globals for the same reason.
 

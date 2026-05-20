@@ -1,4 +1,4 @@
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 // Drag-and-drop wiring: device palette icons (.drag) get dropped onto
 // the cytoscape canvas (#network_scheme) to create new state.nodes.
 //
@@ -15,10 +15,10 @@ import {
     TakeGraphPictureAndUpdate,
 } from "./runtime";
 import { HostUid, RouterUid, ServerUid } from "./state";
-import { l1HubUid, l2SwitchUid } from "./show_config";
+import { l1HubUid, l2SwitchUid } from "../device-config/show_config";
 import { PostNodes } from "./network_ops";
 import { DrawGraph } from "./draw";
-import { PacketPlayer } from "./packet_player";
+import { PacketPlayer } from "../simulation/packet_player";
 
 type DragSession = {
     sourceType: string;

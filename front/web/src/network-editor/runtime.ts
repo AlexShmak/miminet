@@ -1,7 +1,7 @@
-import { state } from "../lib/state";
-import { CheckSimulation } from "./simulation";
-import { ajaxWithAuth } from "../lib/jwt_auth";
-import { mountSimulationPlayer } from "../lib/simulation_player_mount";
+import { state } from "../shared/state";
+import { CheckSimulation } from "../simulation/simulation";
+import { ajaxWithAuth } from "../shared/jwt_auth";
+import { mountSimulationPlayer } from "../simulation/mount";
 
 export const RunSimulation = function (_network_guid: string) {
     ajaxWithAuth({
@@ -133,7 +133,7 @@ export const SetPacketFilter = function (shared: number = 0) {
     }
 };
 
-// Thin wrapper: real UI lives in components/SimulationPlayer.tsx. The
+// Thin wrapper: real UI lives in simulation/SimulationPlayer.tsx. The
 // reset case (-1) still needs imperative state cleanup because the
 // rest of the bundle calls this entrypoint to signal "the user did
 // something that invalidates packets" (config change, drag-and-drop,

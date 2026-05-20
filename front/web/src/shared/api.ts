@@ -7,10 +7,10 @@
 //
 // Inline templates use `miminet.X` (or `window.miminet.X`) instead of
 // bare-name calls. Inline `onclick="X()"` handlers are migrated to
-// `data-action="..."` attributes wired by lib/boot.ts.
+// `data-action="..."` attributes wired by shared/boot.ts.
 
 import { state } from "./state";
-import { DrawGraph, DrawSharedGraph, BootIndexDemo } from "../netfront/draw";
+import { DrawGraph, DrawSharedGraph, BootIndexDemo } from "../network-editor/draw";
 import {
     SetNetworkPlayerState,
     SetSharedNetworkPlayerState,
@@ -19,8 +19,8 @@ import {
     UpdateNetworkConfig,
     SaveAnimationFilters,
     UpdateFilterStates,
-} from "../netfront/runtime";
-import { AddEdge, PostNodesEdges } from "../netfront/network_ops";
+} from "../network-editor/runtime";
+import { AddEdge, PostNodesEdges } from "../network-editor/network_ops";
 import {
     ShowHostConfig,
     ShowRouterConfig,
@@ -28,7 +28,7 @@ import {
     ShowHubConfig,
     ShowSwitchConfig,
     ShowEdgeConfig,
-} from "../netfront/show_config";
+} from "../device-config/show_config";
 
 export const MiminetAPI = {
     state,

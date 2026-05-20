@@ -2,17 +2,17 @@
 // edge-handles plugin, click/zoom/pan/dragfree/keyup handlers, and the
 // selected-node/edge state.
 //
-// Replaces the imperative `DrawGraph` body in netfront/draw.ts. The
+// Replaces the imperative `DrawGraph` body in network-editor/draw.ts. The
 // component renders nothing (cytoscape mounts into the existing
 // `#network_scheme` div); its job is purely side-effect management.
 //
 // Subsequent `DrawGraph()` calls land here via the singleton mount in
-// lib/network_editor_mount.tsx, which bumps `revision`; a refresh
+// network-editor/mount.tsx, which bumps `revision`; a refresh
 // effect re-syncs the cy elements with `state.nodes`/`state.edges`
 // without rebuilding cy.
 
 import { useEffect, useRef, useState } from "react";
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 import {
     MarkLinkDownEdges,
     SnapNodesToGrid,
@@ -23,7 +23,7 @@ import {
     DeleteEdge,
     DeleteJob,
     PostNodesEdges,
-} from "../netfront/network_ops";
+} from "./network_ops";
 import {
     UpdateNetworkConfig,
     drawGrid,
@@ -32,7 +32,7 @@ import {
     SaveNetworkObject,
     RestoreNetworkObject,
     initGrid,
-} from "../netfront/runtime";
+} from "./runtime";
 import {
     ShowHostConfig,
     ShowRouterConfig,
@@ -40,8 +40,8 @@ import {
     ShowHubConfig,
     ShowSwitchConfig,
     ShowEdgeConfig,
-} from "../netfront/show_config";
-import { ClearConfigForm } from "../config_forms/common";
+} from "../device-config/show_config";
+import { ClearConfigForm } from "../device-config/common";
 
 interface Props {
     revision: number;

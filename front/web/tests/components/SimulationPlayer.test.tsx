@@ -11,7 +11,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-vi.mock("../../src/netfront/packet_player", () => ({
+vi.mock("../../src/simulation/packet_player", () => ({
     PacketPlayer: {
         getInstance: () => ({
             InitPlayer: vi.fn(),
@@ -26,22 +26,22 @@ vi.mock("../../src/netfront/packet_player", () => ({
     },
 }));
 
-vi.mock("../../src/netfront/simulation", () => ({
+vi.mock("../../src/simulation/simulation", () => ({
     CheckSimulation: vi.fn(),
     InsertWaitingTime: vi.fn(),
 }));
 
-vi.mock("../../src/netfront/runtime", () => ({
+vi.mock("../../src/network-editor/runtime", () => ({
     RunSimulation: vi.fn(),
 }));
 
-vi.mock("../../src/netfront/draw", () => ({
+vi.mock("../../src/network-editor/draw", () => ({
     DrawGraphStatic: vi.fn(),
     DrawSharedGraph: vi.fn(),
 }));
 
-import { SimulationPlayer } from "../../src/components/SimulationPlayer";
-import { state } from "../../src/lib/state";
+import { SimulationPlayer } from "../../src/simulation/SimulationPlayer";
+import { state } from "../../src/shared/state";
 
 beforeEach(() => {
     state.packets = null;

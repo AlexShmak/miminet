@@ -2,11 +2,11 @@
 // truth for the bundle's runtime data and the window-bridge layer.
 
 import { describe, it, expect } from "vitest";
-import { state, LINK_DOWN_JOB_ID, uid } from "../../src/lib/state";
+import { state, LINK_DOWN_JOB_ID, uid } from "../../src/shared/state";
 
 describe("state initial defaults", () => {
     it("has empty arrays / safe scalars for initial-state fields", () => {
-        // These start empty and are populated by lib/initial_state.ts
+        // These start empty and are populated by shared/initial_state.ts
         // from the JSON `<script>` tag. Modules that read them at
         // bundle-load time depend on the defaults below being safe.
         expect(Array.isArray(state.nodes)).toBe(true);

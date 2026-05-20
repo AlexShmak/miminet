@@ -18,7 +18,7 @@
  *
  * Phase 3b migration step: for each .js file moved into web/src/, add
  *
- *   import { state, LINK_DOWN_JOB_ID, uid } from "../lib/state";
+ *   import { state, LINK_DOWN_JOB_ID, uid } from "../network-editor/state";
  *
  * and replace bare references like `SimulationId` → `state.simulationId`.
  */
@@ -45,7 +45,7 @@ export interface MiminetState {
     currentGridZoom: number;
 
     // Per-page initial state, populated from #miminet-initial-state JSON
-    // by lib/initial_state.ts. The arrays are mutated in place by the
+    // by shared/initial_state.ts. The arrays are mutated in place by the
     // bundle (nodes.push, jobs.splice, edges.findIndex, ...).
     nodes: any[];
     edges: any[];
@@ -60,7 +60,7 @@ export interface MiminetState {
     network_pan_x: number;
     network_pan_y: number;
 
-    // Boot dispatch: which page rendered us. Tells lib/boot.ts whether
+    // Boot dispatch: which page rendered us. Tells shared/boot.ts whether
     // to wire the network editor, shared view, or index-demo player.
     mode: "" | "editor" | "shared" | "index";
     // Editor only: the in-flight simulation id (or -1 when none).
@@ -154,7 +154,7 @@ export const state: MiminetState = {
     },
 
     // Initial-state fields. Plain storage, no window bridge: the values
-    // come from #miminet-initial-state JSON parsed in lib/initial_state.ts.
+    // come from #miminet-initial-state JSON parsed in shared/initial_state.ts.
     nodes: [],
     edges: [],
     jobs: [],

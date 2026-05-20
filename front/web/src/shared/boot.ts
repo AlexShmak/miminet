@@ -1,4 +1,4 @@
-// Page-aware bootstrap. Reads `state.mode` (set by lib/initial_state.ts
+// Page-aware bootstrap. Reads `state.mode` (set by shared/initial_state.ts
 // from the JSON script tag) and runs the matching wiring without any
 // inline kickoff <script> in the Jinja template.
 //
@@ -6,14 +6,14 @@
 // inline `onclick="X()"` attributes.
 
 import { state } from "./state";
-import { DrawGraph } from "../netfront/draw";
-import { DrawSharedGraph } from "../netfront/draw";
-import { BootIndexDemo } from "../netfront/draw";
+import { DrawGraph } from "../network-editor/draw";
+import { DrawSharedGraph } from "../network-editor/draw";
+import { BootIndexDemo } from "../network-editor/draw";
 import {
     SetNetworkPlayerState,
     SetSharedNetworkPlayerState,
     CopyNetwork,
-} from "../netfront/runtime";
+} from "../network-editor/runtime";
 
 declare const ym: any;
 

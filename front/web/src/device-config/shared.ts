@@ -1,4 +1,4 @@
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 import { config_content_id, config_content_save_id, config_content_save_tag } from "./common";
 
 // Shared (read-only) versions of the device config forms.

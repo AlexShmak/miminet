@@ -1,5 +1,5 @@
-import { state } from "../lib/state";
-import { ExitEditMode, editingJobId, editingDeviceType } from "./runtime";
+import { state } from "../shared/state";
+import { ExitEditMode, editingJobId, editingDeviceType } from "../network-editor/runtime";
 import {
     ConfigHostForm,
     ConfigRouterForm,
@@ -7,7 +7,7 @@ import {
     ConfigHubForm,
     ConfigSwitchForm,
     ConfigEdgeForm,
-} from "../config_forms/device";
+} from "./device";
 import {
     SharedConfigHostForm,
     SharedConfigRouterForm,
@@ -15,7 +15,7 @@ import {
     SharedConfigHubForm,
     SharedConfigSwitchForm,
     SharedConfigEdgeForm,
-} from "../config_forms/shared";
+} from "./shared";
 import {
     ConfigHostName,
     ConfigRouterName,
@@ -27,17 +27,17 @@ import {
     ConfigSwitchInterface,
     ConfigHubIndent,
     ConfigSwitchIndent,
-} from "../config_forms/helpers";
+} from "./helpers";
 import {
     ConfigHubName,
     ConfigSwitchName,
     ConfigEdgeNetworkIssues,
     ConfigEdgeEndpoints,
-} from "../config_forms/helpers";
-import { uid } from "./state";
-import { ConfigRSTP } from "../config_forms/stp";
-import { ConfigVLAN } from "../config_forms/vlan";
-import { ConfigVxlan } from "../config_forms/vxlan";
+} from "./helpers";
+import { uid } from "../network-editor/state";
+import { ConfigRSTP } from "./stp";
+import { ConfigVLAN } from "./vlan";
+import { ConfigVxlan } from "./vxlan";
 import {
     ConfigHostJob,
     ConfigRouterJob,
@@ -49,7 +49,7 @@ import {
     DisableFormInputs,
     DisableVLANInputs,
     DisableVXLANInputs,
-} from "../config_forms/jobs";
+} from "./jobs";
 
 export const ActionWithInterface = function (n: any, i: number, fun: (...args: any[]) => any) {
     const iface_id = n.interface[i].id;

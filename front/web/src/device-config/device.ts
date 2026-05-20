@@ -1,6 +1,6 @@
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 import { addIpFieldHandlers } from "./helpers";
-import { DeleteAndSaveJob, updateGridForConfigPanel } from "../netfront/runtime";
+import { DeleteAndSaveJob, updateGridForConfigPanel } from "../network-editor/runtime";
 import {
     UpdateHostConfigurationForm,
     config_content_id,
@@ -12,8 +12,8 @@ import {
     UpdateServerConfiguration,
     UpdateHubConfiguration,
     UpdateSwitchConfiguration,
-} from "../netfront/update_config";
-import { UpdateEdgeConfiguration } from "../netfront/simulation";
+} from "./update_config";
+import { UpdateEdgeConfiguration } from "../simulation/simulation";
 
 const setInputValue = (id: string, value: string) => {
     const el = document.getElementById(id) as HTMLInputElement | null;

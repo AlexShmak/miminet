@@ -2,7 +2,7 @@
  * Ambient declarations for runtime globals the bundle still touches.
  *
  * Most of what used to live here is gone now — the per-page state vars
- * (`nodes`, `edges`, `jobs`, …) moved into `lib/state.ts`, and the
+ * (`nodes`, `edges`, `jobs`, …) moved into `shared/state.ts`, and the
  * cross-module function references became real ESM imports.
  *
  * What's left:
@@ -11,7 +11,7 @@
  * - Per-page Jinja-emitted form-id constants — small enough to keep as
  *   ambient consts until templates emit them via `data-` attributes.
  * - Window properties the bundle reads/writes (auth flag set inline,
- *   classic-script state singletons in netfront/state.ts).
+ *   classic-script state singletons in network-editor/state.ts).
  */
 
 declare const cy: any;
@@ -70,7 +70,7 @@ interface Window {
     // Yandex Metrica.
     ym?: any;
 
-    // Classic-script state singletons that netfront/state.ts seeds on
+    // Classic-script state singletons that network-editor/state.ts seeds on
     // bundle load (kept for back-compat with the few selenium checks
     // that still go through window).
     SimulationId?: number;
@@ -89,7 +89,7 @@ interface Window {
     gridEnabled?: boolean;
     currentGridZoom?: number;
 
-    // Read by lib/initial_state.ts shim for selenium fixture compat.
+    // Read by shared/initial_state.ts shim for selenium fixture compat.
     packets?: any;
     pcaps?: string[];
 }

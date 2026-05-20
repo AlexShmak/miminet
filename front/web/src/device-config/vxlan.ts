@@ -1,9 +1,9 @@
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 // VXLAN modal config wiring for routers.
 
-import { SetNetworkPlayerState } from "../netfront/runtime";
-import { DrawGraph } from "../netfront/draw";
-import { PostNodesEdges } from "../netfront/network_ops";
+import { SetNetworkPlayerState } from "../network-editor/runtime";
+import { DrawGraph } from "../network-editor/draw";
+import { PostNodesEdges } from "../network-editor/network_ops";
 
 export function isValidVNI(vni: any): boolean {
     const num = Number(vni);

@@ -1,5 +1,5 @@
-import { state } from "../lib/state";
-import { EnterEditMode } from "../netfront/runtime";
+import { state } from "../shared/state";
+import { EnterEditMode } from "../network-editor/runtime";
 import { UpdateRouterForm, UpdateServerForm, UpdateSwitchForm, FillDeviceSelectIntf } from "./jobs";
 
 const setVal = (id: string, value: any) => {

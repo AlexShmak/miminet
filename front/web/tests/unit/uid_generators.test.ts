@@ -3,8 +3,8 @@
 // slots taken) returns "<prefix>_" + a random uid().
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { HostUid, RouterUid, ServerUid } from "../../src/netfront/state";
-import { state } from "../../src/lib/state";
+import { HostUid, RouterUid, ServerUid } from "../../src/network-editor/state";
+import { state } from "../../src/shared/state";
 
 beforeEach(() => {
     state.nodes = [];

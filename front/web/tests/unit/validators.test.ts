@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { isValidVNI, isValidIP, areVxlanInterfaceFieldsFilled } from "../../src/config_forms/vxlan";
-import { areInterfaceFieldsFilled } from "../../src/config_forms/vlan";
+import {
+    isValidVNI,
+    isValidIP,
+    areVxlanInterfaceFieldsFilled,
+} from "../../src/device-config/vxlan";
+import { areInterfaceFieldsFilled } from "../../src/device-config/vlan";
 
 describe("isValidVNI", () => {
     it("accepts 1 to 16777214", () => {

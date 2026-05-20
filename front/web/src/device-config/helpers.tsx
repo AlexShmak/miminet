@@ -1,4 +1,4 @@
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 import { createRoot, type Root } from "react-dom/client";
 import {
     config_main_form_id,
@@ -6,9 +6,9 @@ import {
     config_switch_main_form_id,
     config_edge_main_form_id,
 } from "./common";
-import { DeviceNameField } from "../components/DeviceNameField";
-import { EdgeEndpoints } from "../components/EdgeEndpoints";
-import { EdgeNetworkIssues } from "../components/EdgeNetworkIssues";
+import { DeviceNameField } from "./DeviceNameField";
+import { EdgeEndpoints } from "./EdgeEndpoints";
+import { EdgeNetworkIssues } from "./EdgeNetworkIssues";
 
 // One persistent React root per device-name field. Re-created whenever
 // the panel rebuilds; the previous root (if any) is unmounted first so

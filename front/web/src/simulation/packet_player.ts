@@ -1,4 +1,4 @@
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 // Packet animation player.
 // Migrated from front/src/static/miminet_animation.js.
 //
@@ -6,8 +6,8 @@ import { state } from "../lib/state";
 // returns a controller object. Kept the singleton shape for compatibility
 // with consumers that still call `PacketPlayer.getInstance().X(...)`.
 
-import { uid, LINK_DOWN_JOB_ID } from "./state";
-import { FindEdgeIdByJob, MarkLinkDownEdges } from "./network_ops";
+import { uid, LINK_DOWN_JOB_ID } from "../network-editor/state";
+import { FindEdgeIdByJob, MarkLinkDownEdges } from "../network-editor/network_ops";
 
 interface PlayerInstance {
     InitPlayer: (packet: any) => void;

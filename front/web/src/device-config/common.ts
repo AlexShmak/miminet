@@ -1,5 +1,5 @@
-import { DeleteAndSaveJob, updateGridForConfigPanel } from "../netfront/runtime";
-import { UpdateHostConfiguration } from "../netfront/update_config";
+import { DeleteAndSaveJob, updateGridForConfigPanel } from "../network-editor/runtime";
+import { UpdateHostConfiguration } from "./update_config";
 
 // Lazy-load the per-device config-form templates. Equivalent to jQuery's
 // `$(...).load(url)`: GET the URL, drop the response HTML into the

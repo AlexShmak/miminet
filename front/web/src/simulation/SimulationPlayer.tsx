@@ -13,11 +13,11 @@
 // whenever revision changes.
 
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import { state } from "../lib/state";
-import { PacketPlayer } from "../netfront/packet_player";
-import { CheckSimulation, InsertWaitingTime } from "../netfront/simulation";
-import { RunSimulation } from "../netfront/runtime";
-import { DrawGraphStatic, DrawSharedGraph } from "../netfront/draw";
+import { state } from "../shared/state";
+import { PacketPlayer } from "./packet_player";
+import { CheckSimulation, InsertWaitingTime } from "./simulation";
+import { RunSimulation } from "../network-editor/runtime";
+import { DrawGraphStatic, DrawSharedGraph } from "../network-editor/draw";
 
 interface Props {
     mode: "editor" | "shared";

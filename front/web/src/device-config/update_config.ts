@@ -1,7 +1,12 @@
-import { state } from "../lib/state";
-import { SetNetworkPlayerState, ExitEditMode, editingJobId, editingDeviceType } from "./runtime";
-import { DrawGraph } from "./draw";
-import { ajaxWithAuth } from "../lib/jwt_auth";
+import { state } from "../shared/state";
+import {
+    SetNetworkPlayerState,
+    ExitEditMode,
+    editingJobId,
+    editingDeviceType,
+} from "../network-editor/runtime";
+import { DrawGraph } from "../network-editor/draw";
+import { ajaxWithAuth } from "../shared/jwt_auth";
 import {
     ClearConfigForm,
     HostWarningMsg,
@@ -9,7 +14,7 @@ import {
     ServerWarningMsg,
     SwitchWarningMsg,
     UpdateJobCounter,
-} from "../config_forms/common";
+} from "./common";
 import {
     ShowHostConfig,
     ShowRouterConfig,

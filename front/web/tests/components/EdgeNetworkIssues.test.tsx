@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { EdgeNetworkIssues } from "../../src/components/EdgeNetworkIssues";
+import { EdgeNetworkIssues } from "../../src/device-config/EdgeNetworkIssues";
 
 describe("EdgeNetworkIssues", () => {
     it("renders loss and duplicate inputs with initial values", () => {

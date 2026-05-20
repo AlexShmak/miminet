@@ -1,7 +1,7 @@
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 // STP / RSTP modal config wiring for L2 switches.
 
-import { UpdateSwitchConfiguration } from "../netfront/update_config";
+import { UpdateSwitchConfiguration } from "./update_config";
 
 function updateRstpButtonStyle(_currentDevice: any, rstp_stp_config: any) {
     const btn = document.getElementById("config_button_rstp") as HTMLButtonElement | null;

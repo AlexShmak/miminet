@@ -1,10 +1,10 @@
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 import { SaveNetworkObject } from "./runtime";
-import { EdgeUid, InterfaceUid, l2SwitchPortUid, l1HubPortUid } from "./show_config";
+import { EdgeUid, InterfaceUid, l2SwitchPortUid, l1HubPortUid } from "../device-config/show_config";
 import { LINK_DOWN_JOB_ID } from "./state";
-import { DiagramIcons } from "../lib/icons";
-import { ajaxWithAuth } from "../lib/jwt_auth";
-import { areInterfaceFieldsFilled } from "../config_forms/vlan";
+import { DiagramIcons } from "../shared/icons";
+import { ajaxWithAuth } from "../shared/jwt_auth";
+import { areInterfaceFieldsFilled } from "../device-config/vlan";
 
 export const PostNodesEdges = function () {
     ajaxWithAuth({

@@ -1,10 +1,10 @@
 // Singleton React root for the SimulationPlayer component. The
 // existing `SetNetworkPlayerState` / `SetSharedNetworkPlayerState`
-// entrypoints in netfront/runtime.ts now call into here instead of
+// entrypoints in network-editor/runtime.ts now call into here instead of
 // imperatively rebuilding the DOM.
 
 import { createRoot, type Root } from "react-dom/client";
-import { SimulationPlayer } from "../components/SimulationPlayer";
+import { SimulationPlayer } from "./SimulationPlayer";
 
 let root: Root | null = null;
 let revision = 0;

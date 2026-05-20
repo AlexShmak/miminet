@@ -1,12 +1,12 @@
-import { state } from "../lib/state";
+import { state } from "../shared/state";
 // VLAN modal config wiring for L2 switches.
 //
 // `interface` is a reserved word in TypeScript, so the local-variable
 // `interface` from the source has been renamed to `iface`.
 
-import { SetNetworkPlayerState } from "../netfront/runtime";
-import { DrawGraph } from "../netfront/draw";
-import { PostNodesEdges } from "../netfront/network_ops";
+import { SetNetworkPlayerState } from "../network-editor/runtime";
+import { DrawGraph } from "../network-editor/draw";
+import { PostNodesEdges } from "../network-editor/network_ops";
 
 export function areInterfaceFieldsFilled(device: any): boolean {
     return device.interface.some(

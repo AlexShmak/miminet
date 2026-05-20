@@ -1,4 +1,4 @@
-// Migrated from front/src/static/netfront/simulation.js
+// Migrated from front/src/static/simulation/simulation.js
 //
 // State access goes through `state` (which bridges to window globals).
 // Bare references to other classic-script functions (ajaxWithAuth,
@@ -7,10 +7,10 @@
 // scope — the bundled IIFE is loaded as a classic <script>, so it
 // inherits that scope.
 
-import { state } from "../lib/state";
-import { SetPacketFilter, SetNetworkPlayerState } from "./runtime";
-import { DrawGraph } from "./draw";
-import { ajaxWithAuth } from "../lib/jwt_auth";
+import { state } from "../shared/state";
+import { SetPacketFilter, SetNetworkPlayerState } from "../network-editor/runtime";
+import { DrawGraph } from "../network-editor/draw";
+import { ajaxWithAuth } from "../shared/jwt_auth";
 
 export const CheckSimulation = function (simulation_id: number) {
     ajaxWithAuth({
